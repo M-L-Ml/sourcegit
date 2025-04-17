@@ -41,6 +41,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="Commands\Commands.csproj" />
+    <ProjectReference Include="Converters\Converters.csproj" />
+    <ProjectReference Include="Models\Models.csproj" />
+    <ProjectReference Include="Native\Native.csproj" />
+    <ProjectReference Include="Resources\Resources.csproj" />
+    <ProjectReference Include="ViewModels\ViewModels.csproj" />
+    <ProjectReference Include="Views\Views.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.6" />
     <PackageReference Include="Avalonia.Desktop" Version="11.2.6" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.6" />
