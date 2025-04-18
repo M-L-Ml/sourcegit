@@ -3,12 +3,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <!-- <ItemGroup>
-    <Compile Include="*.cs" />
-  </ItemGroup> -->
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.6" />
     <PackageReference Include="Avalonia.Desktop" Version="11.2.6" />
     <PackageReference Include="Avalonia.Diagnostics" Version="11.2.6" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="TextMateSharp" Version="1.0.66" />
   </ItemGroup>
 </Project>
