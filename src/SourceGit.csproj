@@ -222,14 +222,4 @@
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
     <LinkerArg Include="-mmacosx-version-min=11.0" Condition="'$(Configuration)' == 'Release'" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Commands\" />
-    <Folder Include="Converters\" />
-    <Folder Include="Models\" />
-    <Folder Include="Native\" />
-    <Folder Include="Resources\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="Views\" />
-  </ItemGroup>
 </Project>
