@@ -31,6 +31,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="Commands\Commands.csproj" />
+    <ProjectReference Include="Converters\Converters.csproj" />
+    <ProjectReference Include="Models\Models.csproj" />
+    <ProjectReference Include="Native\Native.csproj" />
+    <ProjectReference Include="Resources\Resources.csproj" />
+    <ProjectReference Include="ViewModels\ViewModels.csproj" />
+    <ProjectReference Include="Views\Views.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaResource Include="App.ico" />
   </ItemGroup>
 
@@ -204,15 +214,6 @@
     <AvaloniaXaml Remove="Views\WorkingCopy.axaml" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="Commands\Commands.csproj" />
-    <ProjectReference Include="Converters\Converters.csproj" />
-    <ProjectReference Include="Models\Models.csproj" />
-    <ProjectReference Include="Native\Native.csproj" />
-    <ProjectReference Include="Resources\Resources.csproj" />
-    <ProjectReference Include="ViewModels\ViewModels.csproj" />
-    <ProjectReference Include="Views\Views.csproj" />
-  </ItemGroup>
 
   <ItemGroup>
     <TrimmerRootAssembly Include="SourceGit" />
