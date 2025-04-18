@@ -43,7 +43,6 @@
   <ItemGroup>
     <AvaloniaResource Include="App.ico" />
   </ItemGroup>
-
   <ItemGroup>
     <AvaloniaXaml Remove="Commands\obj\**" />
     <AvaloniaXaml Remove="Converters\obj\**" />
@@ -212,6 +211,10 @@
     <AvaloniaXaml Remove="Views\Welcome.axaml" />
     <AvaloniaXaml Remove="Views\WelcomeToolbar.axaml" />
     <AvaloniaXaml Remove="Views\WorkingCopy.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="App.Utils.cs" />
   </ItemGroup>
 
 
