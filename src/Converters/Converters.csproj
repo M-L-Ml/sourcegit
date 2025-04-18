@@ -3,7 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <ItemGroup>
+  <!-- <ItemGroup>
     <Compile Include="*.cs" />
-  </ItemGroup>
+  </ItemGroup> -->
 </Project>
