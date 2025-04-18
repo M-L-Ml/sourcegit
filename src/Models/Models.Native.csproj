@@ -4,13 +4,21 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-   <Compile Remove="**/*" />
+    <AvaloniaXaml Remove="obj\**" />
+    <Compile Remove="**/*" />
+    <Compile Remove="obj\**" />
+    <Compile Include="..\Native\**\*.cs" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Compile Remove="..\Native\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
+    <Compile Remove="..\Native\obj\Debug\net8.0\Native.AssemblyInfo.cs" />
+    <Compile Include="App.cs" />
     <Compile Include="ExternalTool.cs" />
     <Compile Include="ShellOrTerminal.cs" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Avalonia" Version="11.2.6" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Native\Native.csproj" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.6" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.2.6" Condition="'$(Configuration)' == 'Debug'" />
+
   </ItemGroup>
 </Project>
