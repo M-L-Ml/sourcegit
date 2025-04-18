@@ -35,13 +35,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Commands\**\*.cs" />
-    <Compile Remove="Converters\**\*.cs" />
-    <Compile Remove="Models\**\*.cs" />
-    <Compile Remove="Native\**\*.cs" />
+    <Compile Remove="Commands\**\*" />
+    <Compile Remove="Converters\**\*" />
+    <Compile Remove="Models\**\*" />
+    <Compile Remove="Native\**\*" />
     <Compile Remove="Resources\**\*" />
-    <Compile Remove="ViewModels\**\*.cs" />
-    <Compile Remove="Views\**\*.cs" />
+    <Compile Remove="ViewModels\**\*" />
+    <Compile Remove="Views\**\*" />
   </ItemGroup>
 
   <ItemGroup>
