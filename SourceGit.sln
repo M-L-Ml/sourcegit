@@ -101,6 +101,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModels", "src\ViewModel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Views", "src\Views\Views.csproj", "{301FB1F0-4E9C-92FD-BDA7-3B2745EC5C91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models.Native", "src\Models\Models.Native.csproj", "{6C20058A-DC39-A038-9F5E-92822D2F138C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,10 @@ Global
 		{301FB1F0-4E9C-92FD-BDA7-3B2745EC5C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{301FB1F0-4E9C-92FD-BDA7-3B2745EC5C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{301FB1F0-4E9C-92FD-BDA7-3B2745EC5C91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C20058A-DC39-A038-9F5E-92822D2F138C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C20058A-DC39-A038-9F5E-92822D2F138C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C20058A-DC39-A038-9F5E-92822D2F138C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C20058A-DC39-A038-9F5E-92822D2F138C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,6 +177,7 @@ Global
 		{AB15CAD4-218C-CBBE-7399-7E31DA0885F2} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}
 		{D701BDC8-F309-C05D-9A76-CAD39266CDA1} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}
 		{301FB1F0-4E9C-92FD-BDA7-3B2745EC5C91} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}
+		{6C20058A-DC39-A038-9F5E-92822D2F138C} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7FF1B9C6-B5BF-4A50-949F-4B407A0E31C9}

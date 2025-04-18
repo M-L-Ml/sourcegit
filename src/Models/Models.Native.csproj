@@ -4,9 +4,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+   <Compile Remove="**/*" />
     <Compile Include="ExternalTool.cs" />
     <Compile Include="ShellOrTerminal.cs" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Avalonia" Version="11.2.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Native\Native.csproj" />
   </ItemGroup>
 </Project>
