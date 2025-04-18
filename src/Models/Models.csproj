@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>  
+   <ProjectReference Include="..\Native\Native.csproj" />
    <PackageReference Include="Avalonia" Version="11.2.6" />  
    <PackageReference Include="AvaloniaEdit.TextMate" Version="11.2.0" />  
    <PackageReference Include="Azure.AI.OpenAI" Version="2.2.0-beta.4" />  
