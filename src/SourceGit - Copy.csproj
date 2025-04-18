@@ -1,0 +1,225 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>App.manifest</ApplicationManifest>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)\\..\\VERSION"))</Version>
+    <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+
+    <Product>SourceGit</Product>
+    <Description>OpenSource GIT client</Description>
+    <Company>sourcegit-scm</Company>
+    <Copyright>Copyright © $([System.DateTime]::Now.Year) sourcegit-scm.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/sourcegit-scm/sourcegit.git</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/sourcegit-scm/sourcegit.git</RepositoryUrl>
+    <RepositoryType>Public</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(DisableAOT)' != 'true'">
+    <PublishAot>true</PublishAot>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>link</TrimMode>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DisableUpdateDetection)' == 'true'">
+    <DefineConstants>$(DefineConstants);DISABLE_UPDATE_DETECTION</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="App.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Remove="Commands\obj\**" />
+    <AvaloniaXaml Remove="Converters\obj\**" />
+    <AvaloniaXaml Remove="Models\obj\**" />
+    <AvaloniaXaml Remove="Native\obj\**" />
+    <AvaloniaXaml Remove="Resources\Fonts\**" />
+    <AvaloniaXaml Remove="Resources\Grammars\**" />
+    <AvaloniaXaml Remove="Resources\Images\**" />
+    <AvaloniaXaml Remove="Resources\Locales\**" />
+    <AvaloniaXaml Remove="Resources\obj\**" />
+    <AvaloniaXaml Remove="ViewModels\obj\**" />
+    <AvaloniaXaml Remove="Views\obj\**" />
+    <Compile Remove="Commands\**\*" />
+    <Compile Remove="Commands\obj\**" />
+    <Compile Remove="Converters\**\*" />
+    <Compile Remove="Converters\obj\**" />
+    <Compile Remove="Models\**\*" />
+    <Compile Remove="Models\obj\**" />
+    <Compile Remove="Native\**\*" />
+    <Compile Remove="Native\obj\**" />
+    <Compile Remove="Resources\**\*" />
+    <Compile Remove="Resources\Fonts\**" />
+    <Compile Remove="Resources\Grammars\**" />
+    <Compile Remove="Resources\Images\**" />
+    <Compile Remove="Resources\Locales\**" />
+    <Compile Remove="Resources\obj\**" />
+    <Compile Remove="ViewModels\**\*" />
+    <Compile Remove="ViewModels\obj\**" />
+    <Compile Remove="Views\**\*" />
+    <Compile Remove="Views\obj\**" />
+    <EmbeddedResource Remove="Commands\obj\**" />
+    <EmbeddedResource Remove="Converters\obj\**" />
+    <EmbeddedResource Remove="Models\obj\**" />
+    <EmbeddedResource Remove="Native\obj\**" />
+    <EmbeddedResource Remove="Resources\Fonts\**" />
+    <EmbeddedResource Remove="Resources\Grammars\**" />
+    <EmbeddedResource Remove="Resources\Images\**" />
+    <EmbeddedResource Remove="Resources\Locales\**" />
+    <EmbeddedResource Remove="Resources\obj\**" />
+    <EmbeddedResource Remove="ViewModels\obj\**" />
+    <EmbeddedResource Remove="Views\obj\**" />
+    <None Remove="Commands\obj\**" />
+    <None Remove="Converters\obj\**" />
+    <None Remove="Models\obj\**" />
+    <None Remove="Native\obj\**" />
+    <None Remove="Resources\Fonts\**" />
+    <None Remove="Resources\Grammars\**" />
+    <None Remove="Resources\Images\**" />
+    <None Remove="Resources\Locales\**" />
+    <None Remove="Resources\obj\**" />
+    <None Remove="ViewModels\obj\**" />
+    <None Remove="Views\obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Remove="Resources\Icons.axaml" />
+    <AvaloniaXaml Remove="Resources\Styles.axaml" />
+    <AvaloniaXaml Remove="Resources\Themes.axaml" />
+    <AvaloniaXaml Remove="Views\About.axaml" />
+    <AvaloniaXaml Remove="Views\AddRemote.axaml" />
+    <AvaloniaXaml Remove="Views\AddSubmodule.axaml" />
+    <AvaloniaXaml Remove="Views\AddWorktree.axaml" />
+    <AvaloniaXaml Remove="Views\AIAssistant.axaml" />
+    <AvaloniaXaml Remove="Views\Apply.axaml" />
+    <AvaloniaXaml Remove="Views\ApplyStash.axaml" />
+    <AvaloniaXaml Remove="Views\Archive.axaml" />
+    <AvaloniaXaml Remove="Views\Askpass.axaml" />
+    <AvaloniaXaml Remove="Views\AssumeUnchangedManager.axaml" />
+    <AvaloniaXaml Remove="Views\Blame.axaml" />
+    <AvaloniaXaml Remove="Views\BranchCompare.axaml" />
+    <AvaloniaXaml Remove="Views\BranchTree.axaml" />
+    <AvaloniaXaml Remove="Views\CaptionButtons.axaml" />
+    <AvaloniaXaml Remove="Views\ChangeCollectionView.axaml" />
+    <AvaloniaXaml Remove="Views\ChangeViewModeSwitcher.axaml" />
+    <AvaloniaXaml Remove="Views\Checkout.axaml" />
+    <AvaloniaXaml Remove="Views\CheckoutCommit.axaml" />
+    <AvaloniaXaml Remove="Views\CherryPick.axaml" />
+    <AvaloniaXaml Remove="Views\Cleanup.axaml" />
+    <AvaloniaXaml Remove="Views\ClearStashes.axaml" />
+    <AvaloniaXaml Remove="Views\Clone.axaml" />
+    <AvaloniaXaml Remove="Views\CommitBaseInfo.axaml" />
+    <AvaloniaXaml Remove="Views\CommitChanges.axaml" />
+    <AvaloniaXaml Remove="Views\CommitDetail.axaml" />
+    <AvaloniaXaml Remove="Views\CommitMessageTextBox.axaml" />
+    <AvaloniaXaml Remove="Views\CommitRelationTracking.axaml" />
+    <AvaloniaXaml Remove="Views\ConfigureWorkspace.axaml" />
+    <AvaloniaXaml Remove="Views\ConfirmCommit.axaml" />
+    <AvaloniaXaml Remove="Views\ConfirmEmptyCommit.axaml" />
+    <AvaloniaXaml Remove="Views\ConfirmRestart.axaml" />
+    <AvaloniaXaml Remove="Views\Conflict.axaml" />
+    <AvaloniaXaml Remove="Views\ConventionalCommitMessageBuilder.axaml" />
+    <AvaloniaXaml Remove="Views\CreateBranch.axaml" />
+    <AvaloniaXaml Remove="Views\CreateGroup.axaml" />
+    <AvaloniaXaml Remove="Views\CreateTag.axaml" />
+    <AvaloniaXaml Remove="Views\DeleteBranch.axaml" />
+    <AvaloniaXaml Remove="Views\DeleteMultipleBranches.axaml" />
+    <AvaloniaXaml Remove="Views\DeleteRemote.axaml" />
+    <AvaloniaXaml Remove="Views\DeleteRepositoryNode.axaml" />
+    <AvaloniaXaml Remove="Views\DeleteSubmodule.axaml" />
+    <AvaloniaXaml Remove="Views\DeleteTag.axaml" />
+    <AvaloniaXaml Remove="Views\DiffView.axaml" />
+    <AvaloniaXaml Remove="Views\Discard.axaml" />
+    <AvaloniaXaml Remove="Views\DropStash.axaml" />
+    <AvaloniaXaml Remove="Views\EditRemote.axaml" />
+    <AvaloniaXaml Remove="Views\EditRepositoryNode.axaml" />
+    <AvaloniaXaml Remove="Views\ExecuteCustomAction.axaml" />
+    <AvaloniaXaml Remove="Views\FastForwardWithoutCheckout.axaml" />
+    <AvaloniaXaml Remove="Views\Fetch.axaml" />
+    <AvaloniaXaml Remove="Views\FetchInto.axaml" />
+    <AvaloniaXaml Remove="Views\FileHistories.axaml" />
+    <AvaloniaXaml Remove="Views\FilterModeSwitchButton.axaml" />
+    <AvaloniaXaml Remove="Views\GitFlowFinish.axaml" />
+    <AvaloniaXaml Remove="Views\GitFlowStart.axaml" />
+    <AvaloniaXaml Remove="Views\Histories.axaml" />
+    <AvaloniaXaml Remove="Views\Hotkeys.axaml" />
+    <AvaloniaXaml Remove="Views\ImageDiffView.axaml" />
+    <AvaloniaXaml Remove="Views\Init.axaml" />
+    <AvaloniaXaml Remove="Views\InitGitFlow.axaml" />
+    <AvaloniaXaml Remove="Views\InteractiveRebase.axaml" />
+    <AvaloniaXaml Remove="Views\Launcher.axaml" />
+    <AvaloniaXaml Remove="Views\LauncherPage.axaml" />
+    <AvaloniaXaml Remove="Views\LauncherTabBar.axaml" />
+    <AvaloniaXaml Remove="Views\LauncherTabsSelector.axaml" />
+    <AvaloniaXaml Remove="Views\LFSFetch.axaml" />
+    <AvaloniaXaml Remove="Views\LFSLocks.axaml" />
+    <AvaloniaXaml Remove="Views\LFSPrune.axaml" />
+    <AvaloniaXaml Remove="Views\LFSPull.axaml" />
+    <AvaloniaXaml Remove="Views\LFSPush.axaml" />
+    <AvaloniaXaml Remove="Views\LFSTrackCustomPattern.axaml" />
+    <AvaloniaXaml Remove="Views\LoadingIcon.axaml" />
+    <AvaloniaXaml Remove="Views\Merge.axaml" />
+    <AvaloniaXaml Remove="Views\MergeMultiple.axaml" />
+    <AvaloniaXaml Remove="Views\MoveRepositoryNode.axaml" />
+    <AvaloniaXaml Remove="Views\PopupRunningStatus.axaml" />
+    <AvaloniaXaml Remove="Views\Preferences.axaml" />
+    <AvaloniaXaml Remove="Views\PruneRemote.axaml" />
+    <AvaloniaXaml Remove="Views\PruneWorktrees.axaml" />
+    <AvaloniaXaml Remove="Views\Pull.axaml" />
+    <AvaloniaXaml Remove="Views\Push.axaml" />
+    <AvaloniaXaml Remove="Views\PushTag.axaml" />
+    <AvaloniaXaml Remove="Views\Rebase.axaml" />
+    <AvaloniaXaml Remove="Views\RemoveWorktree.axaml" />
+    <AvaloniaXaml Remove="Views\RenameBranch.axaml" />
+    <AvaloniaXaml Remove="Views\Repository.axaml" />
+    <AvaloniaXaml Remove="Views\RepositoryConfigure.axaml" />
+    <AvaloniaXaml Remove="Views\RepositoryToolbar.axaml" />
+    <AvaloniaXaml Remove="Views\Reset.axaml" />
+    <AvaloniaXaml Remove="Views\Revert.axaml" />
+    <AvaloniaXaml Remove="Views\RevisionCompare.axaml" />
+    <AvaloniaXaml Remove="Views\RevisionFileContentViewer.axaml" />
+    <AvaloniaXaml Remove="Views\RevisionFiles.axaml" />
+    <AvaloniaXaml Remove="Views\RevisionFileTreeView.axaml" />
+    <AvaloniaXaml Remove="Views\Reword.axaml" />
+    <AvaloniaXaml Remove="Views\ScanRepositories.axaml" />
+    <AvaloniaXaml Remove="Views\SelfUpdate.axaml" />
+    <AvaloniaXaml Remove="Views\SetUpstream.axaml" />
+    <AvaloniaXaml Remove="Views\Squash.axaml" />
+    <AvaloniaXaml Remove="Views\StandaloneCommitMessageEditor.axaml" />
+    <AvaloniaXaml Remove="Views\StashChanges.axaml" />
+    <AvaloniaXaml Remove="Views\StashesPage.axaml" />
+    <AvaloniaXaml Remove="Views\Statistics.axaml" />
+    <AvaloniaXaml Remove="Views\TagsView.axaml" />
+    <AvaloniaXaml Remove="Views\TextDiffView.axaml" />
+    <AvaloniaXaml Remove="Views\UpdateSubmodules.axaml" />
+    <AvaloniaXaml Remove="Views\ViewLogs.axaml" />
+    <AvaloniaXaml Remove="Views\Welcome.axaml" />
+    <AvaloniaXaml Remove="Views\WelcomeToolbar.axaml" />
+    <AvaloniaXaml Remove="Views\WorkingCopy.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="Commands\Commands.csproj" />
+    <ProjectReference Include="Converters\Converters.csproj" />
+    <ProjectReference Include="Models\Models.csproj" />
+    <ProjectReference Include="Native\Native.csproj" />
+    <ProjectReference Include="Resources\Resources.csproj" />
+    <ProjectReference Include="ViewModels\ViewModels.csproj" />
+    <ProjectReference Include="Views\Views.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="SourceGit" />
+    <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <LinkerArg Include="-mmacosx-version-min=11.0" Condition="'$(Configuration)' == 'Release'" />
+  </ItemGroup>
+</Project>
