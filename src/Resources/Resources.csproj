@@ -5,5 +5,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="*.cs" />
+    <AvaloniaResource Include="Fonts/*" />
+    <AvaloniaResource Include="Grammars/*" />
+    <AvaloniaResource Include="Images/*" />
+    <AvaloniaResource Include="Images/ExternalToolIcons/*" />
+    <AvaloniaResource Include="Images/ExternalToolIcons/JetBrains/*" />
+    <AvaloniaResource Include="Images/ShellIcons/*" />
   </ItemGroup>
 </Project>
