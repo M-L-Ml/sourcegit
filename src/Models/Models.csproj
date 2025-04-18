@@ -14,4 +14,8 @@
    <PackageReference Include="TextMateSharp" Version="1.0.66" />  
    <PackageReference Include="TextMateSharp.Grammars" Version="1.0.66" />  
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="ExternalTool.cs" />
+    <Compile Remove="ShellOrTerminal.cs" />
+  </ItemGroup>
 </Project>
