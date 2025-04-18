@@ -41,6 +41,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\**\*.cs" />
+    <Compile Remove="Converters\**\*.cs" />
+    <Compile Remove="Models\**\*.cs" />
+    <Compile Remove="Native\**\*.cs" />
+    <Compile Remove="Resources\**\*.cs" />
+    <Compile Remove="ViewModels\**\*.cs" />
+    <Compile Remove="Views\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="Commands\Commands.csproj" />
     <ProjectReference Include="Converters\Converters.csproj" />
     <ProjectReference Include="Models\Models.csproj" />
