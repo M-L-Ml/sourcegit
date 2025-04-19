@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text.Json.Serialization;
 
-namespace SourceGit.Native
+namespace SourceGit
 {
-    internal class App
+    public class App
     {
         public delegate void RaiseExceptionDelegate(string context, string message);
 
