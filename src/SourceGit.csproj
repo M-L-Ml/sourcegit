@@ -9,6 +9,7 @@
     <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <Product>SourceGit</Product>
     <Description>OpenSource GIT client</Description>
