@@ -13,7 +13,7 @@ using Avalonia.Styling;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Fonts;
 using SourceGit.ViewModels;
-using Native = global::Native;
+using Native = SourceGit.Native;
 
 namespace SourceGit.ViewModels
 {
