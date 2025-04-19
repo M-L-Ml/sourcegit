@@ -123,7 +123,7 @@ namespace SourceGit
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                Avalonia.Data.Core.Plugins.DataValidators.RemoveAt(0);
+                BindingPlugins.DataValidators.RemoveAt(0);
 
                 if (TryLaunchAsCoreEditor(desktop))
                     return;
