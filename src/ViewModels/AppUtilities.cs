@@ -13,6 +13,7 @@ using Avalonia.Styling;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Fonts;
 using SourceGit.ViewModels;
+using Native = global::Native;
 
 namespace SourceGit.ViewModels
 {
@@ -233,6 +234,35 @@ namespace SourceGit.ViewModels
             {
                 Environment.Exit(exitCode);
             }
+        }
+
+        public static void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            Native.OS.SetupEnternalTools();
+            Models.AvatarManager.Instance.Start();
+
+            string startupRepo = null;
+            if (desktop.Args != null && desktop.Args.Length == 1 && Directory.Exists(desktop.Args[0]))
+                startupRepo = desktop.Args[0];
+
+            var pref = Preferences.Instance;
+            pref.SetCanModify();
+
+            var launcher = new Launcher(startupRepo);
+            if (desktop.MainWindow is IDisposable disposable)
+                disposable.Dispose();
+            desktop.MainWindow = new Views.Launcher() { DataContext = launcher };
+
+    #if !DISABLE_UPDATE_DETECTION
+            if (pref.ShouldCheck4UpdateOnStartup())
+                AppUtilities.Check4Update();
+    #endif
+        }
+
+        public static void TryOpenRepositoryInTab(object node, object arg)
+        {
+            if (Application.Current is SourceGit.App app && app._launcher != null)
+                app._launcher.OpenRepositoryInTab(node, arg);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace SourceGit.Views
             App.Quit(-1);
         }
 
+        public TextBlock TxtDescription => this.FindControl<TextBlock>("TxtDescription");
+
         private void EnterPassword(object _1, RoutedEventArgs _2)
         {
             var passphrase = TxtPassphrase.Text ?? string.Empty;

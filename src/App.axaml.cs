@@ -19,8 +19,8 @@ using Avalonia.Styling;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using Avalonia.Threading;
+using System.Text.RegularExpressions;
 
 namespace SourceGit
 {
@@ -32,7 +32,7 @@ namespace SourceGit
         [STAThread]
         public static void Main(string[] args)
         {
-            OSNative.SetupDataDir();
+            Native.OS.SetupDataDir();
 
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
             {
@@ -77,7 +77,7 @@ namespace SourceGit
                 manager.AddFontCollection(monospace);
             });
 
-            OSNative.SetupApp(builder);
+            Native.OS.SetupApp(builder);
             return builder;
         }
 
@@ -102,7 +102,7 @@ namespace SourceGit
             builder.Append(ex);
 
             var time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            var file = Path.Combine(OSNative.DataDir, $"crash_{time}.log");
+            var file = Path.Combine(Native.OS.DataDir, $"crash_{time}.log");
             File.WriteAllText(file, builder.ToString());
         }
         #endregion
@@ -119,16 +119,16 @@ namespace SourceGit
             var pref = ViewModels.Preferences.Instance;
             pref.PropertyChanged += (_, _) => pref.Save();
 
-            SourceGit.ViewModels.AppUtilities.SetLocale(pref.Locale);
-            SourceGit.ViewModels.AppUtilities.SetTheme(pref.Theme, pref.ThemeOverrides);
-            SourceGit.ViewModels.AppUtilities.SetFonts(pref.DefaultFontFamily, pref.MonospaceFontFamily, pref.OnlyUseMonoFontInEditor);
+            ViewModels.AppUtilities.SetLocale(pref.Locale);
+            ViewModels.AppUtilities.SetTheme(pref.Theme, pref.ThemeOverrides);
+            ViewModels.AppUtilities.SetFonts(pref.DefaultFontFamily, pref.MonospaceFontFamily, pref.OnlyUseMonoFontInEditor);
         }
 
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                BindingPlugins.DataValidators.RemoveAt(0);
+                Avalonia.Data.Core.Plugins.DataValidators.RemoveAt(0);
 
                 if (TryLaunchAsCoreEditor(desktop))
                     return;
@@ -146,7 +146,7 @@ namespace SourceGit
                 {
                     _ipcChannel.MessageReceived += TryOpenRepository;
                     desktop.Exit += (_, _) => _ipcChannel.Dispose();
-                    TryLaunchAsNormal(desktop);
+                    ViewModels.AppUtilities.TryLaunchAsNormal(desktop);
                 }
             }
         }
@@ -292,27 +292,6 @@ namespace SourceGit
             return false;
         }
 
-        private void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            OSNative.SetupEnternalTools();
-            Models.AvatarManager.Instance.Start();
-
-            string startupRepo = null;
-            if (desktop.Args != null && desktop.Args.Length == 1 && Directory.Exists(desktop.Args[0]))
-                startupRepo = desktop.Args[0];
-
-            var pref = ViewModels.Preferences.Instance;
-            pref.SetCanModify();
-
-            _launcher = new ViewModels.Launcher(startupRepo);
-            desktop.MainWindow = new Views.Launcher() { DataContext = _launcher };
-
-#if !DISABLE_UPDATE_DETECTION
-            if (pref.ShouldCheck4UpdateOnStartup())
-                Check4Update();
-#endif
-        }
-
         private void TryOpenRepository(string repo)
         {
             if (!string.IsNullOrEmpty(repo) && Directory.Exists(repo))
@@ -324,7 +303,7 @@ namespace SourceGit
                     {
                         var node = ViewModels.Preferences.Instance.FindOrAddNodeByRepositoryPath(test.StdOut.Trim(), null, false);
                         ViewModels.Welcome.Instance.Refresh();
-                        _launcher?.OpenRepositoryInTab(node, null);
+                        ViewModels.AppUtilities.TryOpenRepositoryInTab(node, null);
 
                         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: Views.Launcher wnd })
                             wnd.BringToTop();
@@ -427,12 +406,8 @@ namespace SourceGit
         }
 
         [GeneratedRegex(@"^[a-z]+\s+([a-fA-F0-9]{4,40})(\s+.*)?$")]
-        private static partial Regex REG_REBASE_TODO()
-        {
-            return new Regex(@"^[a-z]+\s+([a-fA-F0-9]{4,40})(\s+.*)?$");
-        }
+        private static partial Regex REG_REBASE_TODO();
 
         private Models.IpcChannel _ipcChannel = null;
-        private ViewModels.Launcher _launcher = null;
     }
 }
