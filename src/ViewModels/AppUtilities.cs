@@ -21,6 +21,7 @@ namespace SourceGit.ViewModels
     {
         // Static property to encapsulate Application.Current as SourceGit.App
         public static SourceGit.App? CurrentApp => Application.Current as SourceGit.App;
+        private static ViewModels.Launcher _launcher = null;
 
         public static void OpenDialog(Window window)
         {
@@ -30,14 +31,14 @@ namespace SourceGit.ViewModels
 
         public static void RaiseException(string context, string message)
         {
-            if (CurrentApp != null && CurrentApp._launcher != null)
-                CurrentApp._launcher.DispatchNotification(context, message, true);
+            if (_launcher() != null)
+                _launcher.DispatchNotification(context, message, true);
         }
 
         public static void SendNotification(string context, string message)
         {
-            if (CurrentApp != null && CurrentApp._launcher != null)
-                CurrentApp._launcher.DispatchNotification(context, message, false);
+            if (_launcher != null)
+                _launcher.DispatchNotification(context, message, false);
         }
 
         public static void SetLocale(string localeKey)
@@ -223,7 +224,7 @@ namespace SourceGit.ViewModels
 
         public static Launcher GetLauncer()
         {
-            return Application.Current is SourceGit.App app ? app._launcher : null;
+            return _launcher;// Application.Current is SourceGit.App app ? app._launcher : null;
         }
 
         public static void Quit(int exitCode)
@@ -251,7 +252,7 @@ namespace SourceGit.ViewModels
             var pref = Preferences.Instance;
             pref.SetCanModify();
 
-            var launcher = new Launcher(startupRepo);
+            var launcher = _launcher = new Launcher(startupRepo);
             if (desktop.MainWindow is IDisposable disposable)
                 disposable.Dispose();
             desktop.MainWindow = new Views.Launcher() { DataContext = launcher };
