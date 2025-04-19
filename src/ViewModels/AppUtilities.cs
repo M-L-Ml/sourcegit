@@ -19,6 +19,9 @@ namespace SourceGit.ViewModels
 {
     public static class AppUtilities
     {
+        // Static property to encapsulate Application.Current as SourceGit.App
+        public static SourceGit.App? CurrentApp => Application.Current as SourceGit.App;
+
         public static void OpenDialog(Window window)
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } owner })
@@ -27,19 +30,19 @@ namespace SourceGit.ViewModels
 
         public static void RaiseException(string context, string message)
         {
-            if (Application.Current is SourceGit.App app && app._launcher != null)
-                app._launcher.DispatchNotification(context, message, true);
+            if (CurrentApp != null && CurrentApp._launcher != null)
+                CurrentApp._launcher.DispatchNotification(context, message, true);
         }
 
         public static void SendNotification(string context, string message)
         {
-            if (Application.Current is SourceGit.App app && app._launcher != null)
-                app._launcher.DispatchNotification(context, message, false);
+            if (CurrentApp != null && CurrentApp._launcher != null)
+                CurrentApp._launcher.DispatchNotification(context, message, false);
         }
 
         public static void SetLocale(string localeKey)
         {
-            var app = Application.Current as SourceGit.App;
+            var app = CurrentApp;
             if (app == null)
                 return;
 
@@ -56,7 +59,7 @@ namespace SourceGit.ViewModels
 
         public static void SetTheme(string theme, string themeOverridesFile)
         {
-            var app = Application.Current as SourceGit.App;
+            var app = CurrentApp;
             if (app == null)
                 return;
 
@@ -110,7 +113,7 @@ namespace SourceGit.ViewModels
 
         public static void SetFonts(string defaultFont, string monospaceFont, bool onlyUseMonospaceFontInEditor)
         {
-            var app = Application.Current as SourceGit.App;
+            var app = CurrentApp;
             if (app == null)
                 return;
 
@@ -261,8 +264,8 @@ namespace SourceGit.ViewModels
 
         public static void TryOpenRepositoryInTab(object node, object arg)
         {
-            if (Application.Current is SourceGit.App app && app._launcher != null)
-                app._launcher.OpenRepositoryInTab(node, arg);
+            if (CurrentApp != null && CurrentApp._launcher != null)
+                CurrentApp._launcher.OpenRepositoryInTab(node, arg);
         }
     }
 }
