@@ -4,7 +4,7 @@
     <!--<Nullable>enable</Nullable>-->
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../Models/Models.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\Models\Models.Native.csproj" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Avalonia" Version="11.2.6" />
