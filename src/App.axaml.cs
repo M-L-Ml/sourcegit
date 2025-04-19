@@ -2,34 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
-using System.Reflection;
+using System.Linq;
 using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Fonts;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+
+using System.Net.Http;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using Avalonia.Threading;
 
 namespace SourceGit
 {
     public partial class App : Application
     {
+        private const string REBASE_MERGE_DIR = "rebase-merge";
+
         #region App Entry Point
         [STAThread]
         public static void Main(string[] args)
         {
-            Native.OS.SetupDataDir();
+            OSNative.SetupDataDir();
 
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
             {
@@ -74,7 +77,7 @@ namespace SourceGit
                 manager.AddFontCollection(monospace);
             });
 
-            Native.OS.SetupApp(builder);
+            OSNative.SetupApp(builder);
             return builder;
         }
 
@@ -99,7 +102,7 @@ namespace SourceGit
             builder.Append(ex);
 
             var time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            var file = Path.Combine(Native.OS.DataDir, $"crash_{time}.log");
+            var file = Path.Combine(OSNative.DataDir, $"crash_{time}.log");
             File.WriteAllText(file, builder.ToString());
         }
         #endregion
@@ -162,7 +165,7 @@ namespace SourceGit
                 return true;
 
             var dirInfo = new DirectoryInfo(Path.GetDirectoryName(file)!);
-            if (!dirInfo.Exists || !dirInfo.Name.Equals("rebase-merge", StringComparison.Ordinal))
+            if (!dirInfo.Exists || !dirInfo.Name.Equals(REBASE_MERGE_DIR, StringComparison.Ordinal))
                 return true;
 
             var jobsFile = Path.Combine(dirInfo.Parent!.FullName, "sourcegit_rebase_jobs.json");
@@ -217,9 +220,9 @@ namespace SourceGit
                 return true;
 
             var gitDir = Path.GetDirectoryName(file)!;
-            var origHeadFile = Path.Combine(gitDir, "rebase-merge", "orig-head");
-            var ontoFile = Path.Combine(gitDir, "rebase-merge", "onto");
-            var doneFile = Path.Combine(gitDir, "rebase-merge", "done");
+            var origHeadFile = Path.Combine(gitDir, REBASE_MERGE_DIR, "orig-head");
+            var ontoFile = Path.Combine(gitDir, REBASE_MERGE_DIR, "onto");
+            var doneFile = Path.Combine(gitDir, REBASE_MERGE_DIR, "done");
             var jobsFile = Path.Combine(gitDir, "sourcegit_rebase_jobs.json");
             if (!File.Exists(ontoFile) || !File.Exists(origHeadFile) || !File.Exists(doneFile) || !File.Exists(jobsFile))
                 return true;
@@ -252,7 +255,7 @@ namespace SourceGit
             return true;
         }
 
-        private bool TryLaunchAsCoreEditor(IClassicDesktopStyleApplicationLifetime desktop)
+        private static bool TryLaunchAsCoreEditor(IClassicDesktopStyleApplicationLifetime desktop)
         {
             var args = desktop.Args;
             if (args == null || args.Length <= 1 || !args[0].Equals("--core-editor", StringComparison.Ordinal))
@@ -271,7 +274,7 @@ namespace SourceGit
             return true;
         }
 
-        private bool TryLaunchAsAskpass(IClassicDesktopStyleApplicationLifetime desktop)
+        private static bool TryLaunchAsAskpass(IClassicDesktopStyleApplicationLifetime desktop)
         {
             var launchAsAskpass = Environment.GetEnvironmentVariable("SOURCEGIT_LAUNCH_AS_ASKPASS");
             if (launchAsAskpass is not "TRUE")
@@ -291,7 +294,7 @@ namespace SourceGit
 
         private void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
         {
-            Native.OS.SetupEnternalTools();
+            OSNative.SetupEnternalTools();
             Models.AvatarManager.Instance.Start();
 
             string startupRepo = null;
@@ -391,7 +394,7 @@ namespace SourceGit
             });
         }
 
-        private string FixFontFamilyName(string input)
+        private static string FixFontFamilyName(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return string.Empty;
@@ -424,12 +427,12 @@ namespace SourceGit
         }
 
         [GeneratedRegex(@"^[a-z]+\s+([a-fA-F0-9]{4,40})(\s+.*)?$")]
-        private static partial Regex REG_REBASE_TODO();
+        private static partial Regex REG_REBASE_TODO()
+        {
+            return new Regex(@"^[a-z]+\s+([a-fA-F0-9]{4,40})(\s+.*)?$");
+        }
 
         private Models.IpcChannel _ipcChannel = null;
         private ViewModels.Launcher _launcher = null;
-        private ResourceDictionary _activeLocale = null;
-        private ResourceDictionary _themeOverrides = null;
-        private ResourceDictionary _fontsOverrides = null;
     }
 }
