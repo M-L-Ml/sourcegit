@@ -5,15 +5,14 @@ Users currently cannot easily modify or customize the UI. Enabling user-editable
 
 ## Practical Considerations
 
-While editing AXAML (Avalonia XAML) files can be challenging for non-technical users, a well-designed customization system can make the process safe and approachable:
+While editing AXAML (Avalonia XAML) files can be challenging for non-technical users, a thoughtfully designed customization system can make the process safe, intuitive, and rewarding:
 
-- **Safety:** If implemented correctly, user edits cannot break the application in a critical way. The system can validate and sandbox changes, ensuring stability.
-- **Community Sharing:** Users can benefit from AXAML files or templates provided by more experienced community members, allowing easy adoption of new layouts or styles. Some proffesionals also could provide signed authored axaml files or in form of plugins. And signing them and switching them in the app may benefit from some features from Prism framework, as it famous for plugin support.   
-- **Intuitive Customization:** Even if users do not understand the full AXAML syntax, we can expose simple, valuable customization points (such as colors, labels, or layout options) with clear comments and documentation. This enables users to tweak small aspects of the UI without deep technical knowledge.
-- **Not Critical, But Valuable:** While full AXAML editing is not a critical feature for the project right now, enabling some level of safe and documented customization—even if limited—can empower users and foster a more engaged community.
+- **Safety:** With proper validation and sandboxing, user edits can be protected from breaking the application. The system can automatically check for errors and revert or warn about invalid changes, ensuring stability.
+- **Community Sharing:** Users can benefit from AXAML templates and layouts shared by experienced community members or professionals. Trusted contributors could provide signed AXAML files or plugins, and the app could support easy switching between them. Prism's robust plugin architecture can facilitate secure distribution and management of these shared resources.
+- **Intuitive Customization:** Even without deep AXAML knowledge, users can personalize aspects of the UI—such as colors, labels, or layouts—by editing clearly commented sections. Well-documented customization points and helper tools can make small tweaks accessible to everyone.
+- **Not Critical, But Valuable:** While full AXAML editing is not an immediate priority, offering limited, safe, and well-documented customization empowers users and encourages engagement. Even simple changes can make the app feel more personal and adaptable.
 
-AXAML is declarative and pretty intuitive for some changes .
-By focusing on simple, well-commented customization areas, we can make the UI flexible for power users and accessible for beginners, without sacrificing reliability.
+AXAML's declarative nature makes it relatively approachable for making targeted adjustments. By focusing on well-commented and isolated customization areas, we can ensure the UI remains robust for beginners while offering flexibility for power users.
 
 ## Theming, Color Customization, and Plugin Support
 
@@ -21,14 +20,15 @@ Changing colors, fonts, and other visual properties is a common and intuitive wa
 
 - **Themes:** Provide several pre-defined or user-editable AXAML theme files that control colors, fonts, and styles. Users can switch between themes or tweak them to their liking.
 - **Theme Plugins:** For more advanced users or scenarios, allow themes to be loaded as plugins, enabling even more flexibility and community sharing.
-- **Prism Framework Advantage:** Migrating to the Prism framework is especially beneficial here. Prism's modularity and region management make it easier to implement theme/plugin systems and support runtime switching or extension of UI elements. This also lays the groundwork for broader plugin support in the future, making the application more extensible and adaptable.
+- **Maybe Prism Framework Advantage:** Migrating to the Prism framework is maybe beneficial here. Prism's modularity and region management make it easier to implement theme/plugin systems and support runtime switching or extension of UI elements. This also lays the groundwork for broader plugin support in the future, making the application more extensible and adaptable. Although, from what I understand, dynamic axaml switching is supported by Avalonia, right out the box. So Prism seems isn't so necessary.
 
 By enabling both simple theme switching and more advanced plugin-based customization, we can cater to a wide range of user needs—from basic personalization to deep UI extension.
 
 ## Proposal
-- Integrate support for user-editable UI definitions (e.g., AXAML, Avalonia XAML, or JSON-based UI schemas).
-- Provide a UI editor or documentation for editing AXAML layouts.
-- Ensure changes are hot-reloadable and sandboxed for safety.
+- Integrate support for user-editable UI definitions (AXAML (Avalonia XAML), or their alternative UI schemas).
+- Provide a UI hints or documentation for setting up user edited AXAML layouts.
+- Implement hot-reloading for UI changes while enforcing safety constraints to prevent execution of unsafe code.
+- Include clear disclaimers in the UI about limitations of responsibility for user-modified interfaces.
 
 ## Benefits
 - **User Empowerment:** Users can tailor the UI to their workflows.
