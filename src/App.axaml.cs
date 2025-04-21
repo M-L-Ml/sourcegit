@@ -2,27 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
+using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Fonts;
-
-using System.Net.Http;
-using System.Reflection;
-using System.Text.Json;
+using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using Avalonia.Threading;
-using System.Text.RegularExpressions;
 
 namespace SourceGit
 {
     public partial class App : Application
     {
-        private const string REBASE_MERGE_DIR = "rebase-merge";
-
         #region App Entry Point
         [STAThread]
         public static void Main(string[] args)
@@ -230,9 +232,77 @@ namespace SourceGit
             }
         }
 
+        public static async void CopyText(string data)
+        {
+            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                if (desktop.MainWindow?.Clipboard is { } clipboard)
+                    await clipboard.SetTextAsync(data ?? "");
+            }
+        }
+
+        public static async Task<string> GetClipboardTextAsync()
+        {
+            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                if (desktop.MainWindow?.Clipboard is { } clipboard)
+                {
+                    return await clipboard.GetTextAsync();
+                }
+            }
+            return default;
+        }
+
+        public static string Text(string key, params object[] args)
+        {
+            var fmt = Current?.FindResource($"Text.{key}") as string;
+            if (string.IsNullOrWhiteSpace(fmt))
+                return $"Text.{key}";
+
+            if (args == null || args.Length == 0)
+                return fmt;
+
+            return string.Format(fmt, args);
+        }
+
+        public static Avalonia.Controls.Shapes.Path CreateMenuIcon(string key)
+        {
+            var icon = new Avalonia.Controls.Shapes.Path();
+            icon.Width = 12;
+            icon.Height = 12;
+            icon.Stretch = Stretch.Uniform;
+
+            var geo = Current?.FindResource(key) as StreamGeometry;
+            if (geo != null)
+                icon.Data = geo;
+
+            return icon;
+        }
+
+        public static IStorageProvider GetStorageProvider()
+        {
+            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                return desktop.MainWindow?.StorageProvider;
+
+            return null;
+        }
+
         public static ViewModels.Launcher GetLauncer()
         {
-            return Currentt is App app ? AppUtilities.GetLauncer() : null;
+            return Current is App app ? app._launcher : null;
+        }
+
+        public static void Quit(int exitCode)
+        {
+            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.MainWindow?.Close();
+                desktop.Shutdown(exitCode);
+            }
+            else
+            {
+                Environment.Exit(exitCode);
+            }
         }
         #endregion
 
@@ -244,9 +314,9 @@ namespace SourceGit
             var pref = ViewModels.Preferences.Instance;
             pref.PropertyChanged += (_, _) => pref.Save();
 
-            ViewModels.AppUtilities.SetLocale(pref.Locale);
-            ViewModels.AppUtilities.SetTheme(pref.Theme, pref.ThemeOverrides);
-            ViewModels.AppUtilities.SetFonts(pref.DefaultFontFamily, pref.MonospaceFontFamily, pref.OnlyUseMonoFontInEditor);
+            SetLocale(pref.Locale);
+            SetTheme(pref.Theme, pref.ThemeOverrides);
+            SetFonts(pref.DefaultFontFamily, pref.MonospaceFontFamily, pref.OnlyUseMonoFontInEditor);
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -271,7 +341,7 @@ namespace SourceGit
                 {
                     _ipcChannel.MessageReceived += TryOpenRepository;
                     desktop.Exit += (_, _) => _ipcChannel.Dispose();
-                    ViewModels.AppUtilities.TryLaunchAsNormal(desktop);
+                    TryLaunchAsNormal(desktop);
                 }
             }
         }
@@ -290,7 +360,7 @@ namespace SourceGit
                 return true;
 
             var dirInfo = new DirectoryInfo(Path.GetDirectoryName(file)!);
-            if (!dirInfo.Exists || !dirInfo.Name.Equals(REBASE_MERGE_DIR, StringComparison.Ordinal))
+            if (!dirInfo.Exists || !dirInfo.Name.Equals("rebase-merge", StringComparison.Ordinal))
                 return true;
 
             var jobsFile = Path.Combine(dirInfo.Parent!.FullName, "sourcegit_rebase_jobs.json");
@@ -345,9 +415,9 @@ namespace SourceGit
                 return true;
 
             var gitDir = Path.GetDirectoryName(file)!;
-            var origHeadFile = Path.Combine(gitDir, REBASE_MERGE_DIR, "orig-head");
-            var ontoFile = Path.Combine(gitDir, REBASE_MERGE_DIR, "onto");
-            var doneFile = Path.Combine(gitDir, REBASE_MERGE_DIR, "done");
+            var origHeadFile = Path.Combine(gitDir, "rebase-merge", "orig-head");
+            var ontoFile = Path.Combine(gitDir, "rebase-merge", "onto");
+            var doneFile = Path.Combine(gitDir, "rebase-merge", "done");
             var jobsFile = Path.Combine(gitDir, "sourcegit_rebase_jobs.json");
             if (!File.Exists(ontoFile) || !File.Exists(origHeadFile) || !File.Exists(doneFile) || !File.Exists(jobsFile))
                 return true;
@@ -380,7 +450,7 @@ namespace SourceGit
             return true;
         }
 
-        private static bool TryLaunchAsCoreEditor(IClassicDesktopStyleApplicationLifetime desktop)
+        private bool TryLaunchAsCoreEditor(IClassicDesktopStyleApplicationLifetime desktop)
         {
             var args = desktop.Args;
             if (args == null || args.Length <= 1 || !args[0].Equals("--core-editor", StringComparison.Ordinal))
@@ -399,7 +469,7 @@ namespace SourceGit
             return true;
         }
 
-        private static bool TryLaunchAsAskpass(IClassicDesktopStyleApplicationLifetime desktop)
+        private bool TryLaunchAsAskpass(IClassicDesktopStyleApplicationLifetime desktop)
         {
             var launchAsAskpass = Environment.GetEnvironmentVariable("SOURCEGIT_LAUNCH_AS_ASKPASS");
             if (launchAsAskpass is not "TRUE")
@@ -447,9 +517,9 @@ namespace SourceGit
                 {
                     Dispatcher.UIThread.Invoke(() =>
                     {
-                        ViewModels.RepositoryNode node = ViewModels.Preferences.Instance.FindOrAddNodeByRepositoryPath(test.StdOut.Trim(), null, false);
+                        var node = ViewModels.Preferences.Instance.FindOrAddNodeByRepositoryPath(test.StdOut.Trim(), null, false);
                         ViewModels.Welcome.Instance.Refresh();
-                        ViewModels.AppUtilities.TryOpenRepositoryInTab(node, null);
+                        _launcher?.OpenRepositoryInTab(node, null);
 
                         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: Views.Launcher wnd })
                             wnd.BringToTop();
@@ -519,7 +589,7 @@ namespace SourceGit
             });
         }
 
-        private static string FixFontFamilyName(string input)
+        private string FixFontFamilyName(string input)
         {
             if (string.IsNullOrEmpty(input))
                 return string.Empty;
@@ -555,5 +625,9 @@ namespace SourceGit
         private static partial Regex REG_REBASE_TODO();
 
         private Models.IpcChannel _ipcChannel = null;
+        private ViewModels.Launcher _launcher = null;
+        private ResourceDictionary _activeLocale = null;
+        private ResourceDictionary _themeOverrides = null;
+        private ResourceDictionary _fontsOverrides = null;
     }
 }

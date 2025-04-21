@@ -134,31 +134,7 @@ namespace SourceGit.ViewModels
         public CommitDetail(Repository repo)
         {
             _repo = repo;
-
-            foreach (var remote in repo.Remotes)
-            {
-                if (remote.TryGetVisitURL(out var url))
-                {
-                    var trimmedUrl = url;
-                    if (url.EndsWith(".git"))
-                        trimmedUrl = url.Substring(0, url.Length - 4);
-
-                    if (url.StartsWith("https://github.com/", StringComparison.Ordinal))
-                        WebLinks.Add(new Models.CommitLink() { Name = $"Github ({trimmedUrl.Substring(19)})", URLPrefix = $"{url}/commit/" });
-                    else if (url.StartsWith("https://gitlab.", StringComparison.Ordinal))
-                        WebLinks.Add(new Models.CommitLink() { Name = $"GitLab ({trimmedUrl.Substring(trimmedUrl.Substring(15).IndexOf('/') + 16)})", URLPrefix = $"{url}/-/commit/" });
-                    else if (url.StartsWith("https://gitee.com/", StringComparison.Ordinal))
-                        WebLinks.Add(new Models.CommitLink() { Name = $"Gitee ({trimmedUrl.Substring(18)})", URLPrefix = $"{url}/commit/" });
-                    else if (url.StartsWith("https://bitbucket.org/", StringComparison.Ordinal))
-                        WebLinks.Add(new Models.CommitLink() { Name = $"BitBucket ({trimmedUrl.Substring(22)})", URLPrefix = $"{url}/commits/" });
-                    else if (url.StartsWith("https://codeberg.org/", StringComparison.Ordinal))
-                        WebLinks.Add(new Models.CommitLink() { Name = $"Codeberg ({trimmedUrl.Substring(21)})", URLPrefix = $"{url}/commit/" });
-                    else if (url.StartsWith("https://gitea.org/", StringComparison.Ordinal))
-                        WebLinks.Add(new Models.CommitLink() { Name = $"Gitea ({trimmedUrl.Substring(18)})", URLPrefix = $"{url}/commit/" });
-                    else if (url.StartsWith("https://git.sr.ht/", StringComparison.Ordinal))
-                        WebLinks.Add(new Models.CommitLink() { Name = $"sourcehut ({trimmedUrl.Substring(18)})", URLPrefix = $"{url}/commit/" });
-                }
-            }
+            WebLinks = Models.CommitLink.Get(repo.Remotes);
         }
 
         public void Cleanup()
@@ -173,7 +149,6 @@ namespace SourceGit.ViewModels
             _diffContext = null;
             _viewRevisionFileContent = null;
             _cancellationSource = null;
-            WebLinks.Clear();
             _revisionFiles = null;
             _revisionFileSearchSuggestion = null;
         }
@@ -332,8 +307,7 @@ namespace SourceGit.ViewModels
             history.Icon = App.CreateMenuIcon("Icons.Histories");
             history.Click += (_, ev) =>
             {
-                var window = new Views.FileHistories() { DataContext = new FileHistories(_repo, change.Path, _commit.SHA) };
-                window.Show();
+                App.ShowWindow(new FileHistories(_repo, change.Path, _commit.SHA), false);
                 ev.Handled = true;
             };
 
@@ -343,8 +317,7 @@ namespace SourceGit.ViewModels
             blame.IsEnabled = change.Index != Models.ChangeState.Deleted;
             blame.Click += (_, ev) =>
             {
-                var window = new Views.Blame() { DataContext = new Blame(_repo.FullPath, change.Path, _commit.SHA) };
-                window.Show();
+                App.ShowWindow(new Blame(_repo.FullPath, change.Path, _commit.SHA), false);
                 ev.Handled = true;
             };
 
@@ -508,8 +481,7 @@ namespace SourceGit.ViewModels
             history.Icon = App.CreateMenuIcon("Icons.Histories");
             history.Click += (_, ev) =>
             {
-                var window = new Views.FileHistories() { DataContext = new FileHistories(_repo, file.Path, _commit.SHA) };
-                window.Show();
+                App.ShowWindow(new FileHistories(_repo, file.Path, _commit.SHA), false);
                 ev.Handled = true;
             };
 
@@ -519,8 +491,7 @@ namespace SourceGit.ViewModels
             blame.IsEnabled = file.Type == Models.ObjectType.Blob;
             blame.Click += (_, ev) =>
             {
-                var window = new Views.Blame() { DataContext = new Blame(_repo.FullPath, file.Path, _commit.SHA) };
-                window.Show();
+                App.ShowWindow(new Blame(_repo.FullPath, file.Path, _commit.SHA), false);
                 ev.Handled = true;
             };
 
