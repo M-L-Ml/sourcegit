@@ -104,6 +104,136 @@ namespace SourceGit
 
         #region Utility Functions
         // Utility functions moved to SourceGit.ViewModels.AppUtilities
+        public static void SetLocale(string localeKey)
+        {
+            var app = Current as App;
+            if (app == null)
+                return;
+
+            var targetLocale = app.Resources[localeKey] as ResourceDictionary;
+            if (targetLocale == null || targetLocale == app._activeLocale)
+                return;
+
+            if (app._activeLocale != null)
+                app.Resources.MergedDictionaries.Remove(app._activeLocale);
+
+            app.Resources.MergedDictionaries.Add(targetLocale);
+            app._activeLocale = targetLocale;
+        }
+
+        public static void SetTheme(string theme, string themeOverridesFile)
+        {
+            var app = Current as App;
+            if (app == null)
+                return;
+
+            if (theme.Equals("Light", StringComparison.OrdinalIgnoreCase))
+                app.RequestedThemeVariant = ThemeVariant.Light;
+            else if (theme.Equals("Dark", StringComparison.OrdinalIgnoreCase))
+                app.RequestedThemeVariant = ThemeVariant.Dark;
+            else
+                app.RequestedThemeVariant = ThemeVariant.Default;
+
+            if (app._themeOverrides != null)
+            {
+                app.Resources.MergedDictionaries.Remove(app._themeOverrides);
+                app._themeOverrides = null;
+            }
+
+            if (!string.IsNullOrEmpty(themeOverridesFile) && File.Exists(themeOverridesFile))
+            {
+                try
+                {
+                    var resDic = new ResourceDictionary();
+                    var overrides = JsonSerializer.Deserialize(File.ReadAllText(themeOverridesFile), JsonCodeGen.Default.ThemeOverrides);
+                    foreach (var kv in overrides.BasicColors)
+                    {
+                        if (kv.Key.Equals("SystemAccentColor", StringComparison.Ordinal))
+                            resDic["SystemAccentColor"] = kv.Value;
+                        else
+                            resDic[$"Color.{kv.Key}"] = kv.Value;
+                    }
+
+                    if (overrides.GraphColors.Count > 0)
+                        Models.CommitGraph.SetPens(overrides.GraphColors, overrides.GraphPenThickness);
+                    else
+                        Models.CommitGraph.SetDefaultPens(overrides.GraphPenThickness);
+
+                    Models.Commit.OpacityForNotMerged = overrides.OpacityForNotMergedCommits;
+
+                    app.Resources.MergedDictionaries.Add(resDic);
+                    app._themeOverrides = resDic;
+                }
+                catch
+                {
+                    // ignore
+                }
+            }
+            else
+            {
+                Models.CommitGraph.SetDefaultPens();
+            }
+        }
+
+        public static void SetFonts(string defaultFont, string monospaceFont, bool onlyUseMonospaceFontInEditor)
+        {
+            var app = Current as App;
+            if (app == null)
+                return;
+
+            if (app._fontsOverrides != null)
+            {
+                app.Resources.MergedDictionaries.Remove(app._fontsOverrides);
+                app._fontsOverrides = null;
+            }
+
+            defaultFont = app.FixFontFamilyName(defaultFont);
+            monospaceFont = app.FixFontFamilyName(monospaceFont);
+
+            var resDic = new ResourceDictionary();
+            if (!string.IsNullOrEmpty(defaultFont))
+                resDic.Add("Fonts.Default", new FontFamily(defaultFont));
+
+            if (string.IsNullOrEmpty(monospaceFont))
+            {
+                if (!string.IsNullOrEmpty(defaultFont))
+                {
+                    monospaceFont = $"fonts:SourceGit#JetBrains Mono,{defaultFont}";
+                    resDic.Add("Fonts.Monospace", new FontFamily(monospaceFont));
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(defaultFont) && !monospaceFont.Contains(defaultFont, StringComparison.Ordinal))
+                    monospaceFont = $"{monospaceFont},{defaultFont}";
+
+                resDic.Add("Fonts.Monospace", new FontFamily(monospaceFont));
+            }
+
+            if (onlyUseMonospaceFontInEditor)
+            {
+                if (string.IsNullOrEmpty(defaultFont))
+                    resDic.Add("Fonts.Primary", new FontFamily("fonts:Inter#Inter"));
+                else
+                    resDic.Add("Fonts.Primary", new FontFamily(defaultFont));
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(monospaceFont))
+                    resDic.Add("Fonts.Primary", new FontFamily(monospaceFont));
+            }
+
+            if (resDic.Count > 0)
+            {
+                app.Resources.MergedDictionaries.Add(resDic);
+                app._fontsOverrides = resDic;
+            }
+        }
+
+        public static ViewModels.Launcher GetLauncer()
+        {
+            return Currentt is App app ? AppUtilities.GetLauncer() : null;
+        }
         #endregion
 
         #region Overrides
@@ -287,6 +417,27 @@ namespace SourceGit
             return false;
         }
 
+        private void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            Native.OS.SetupEnternalTools();
+            Models.AvatarManager.Instance.Start();
+
+            string startupRepo = null;
+            if (desktop.Args != null && desktop.Args.Length == 1 && Directory.Exists(desktop.Args[0]))
+                startupRepo = desktop.Args[0];
+
+            var pref = ViewModels.Preferences.Instance;
+            pref.SetCanModify();
+
+            _launcher = new ViewModels.Launcher(startupRepo);
+            desktop.MainWindow = new Views.Launcher() { DataContext = _launcher };
+
+#if !DISABLE_UPDATE_DETECTION
+            if (pref.ShouldCheck4UpdateOnStartup())
+                Check4Update();
+#endif
+        }
+
         private void TryOpenRepository(string repo)
         {
             if (!string.IsNullOrEmpty(repo) && Directory.Exists(repo))
@@ -296,7 +447,7 @@ namespace SourceGit
                 {
                     Dispatcher.UIThread.Invoke(() =>
                     {
-                        var node = ViewModels.Preferences.Instance.FindOrAddNodeByRepositoryPath(test.StdOut.Trim(), null, false);
+                        ViewModels.RepositoryNode node = ViewModels.Preferences.Instance.FindOrAddNodeByRepositoryPath(test.StdOut.Trim(), null, false);
                         ViewModels.Welcome.Instance.Refresh();
                         ViewModels.AppUtilities.TryOpenRepositoryInTab(node, null);
 

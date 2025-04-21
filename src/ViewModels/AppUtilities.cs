@@ -20,7 +20,6 @@ namespace SourceGit.ViewModels
     public static class AppUtilities
     {
         // Static property to encapsulate Application.Current as SourceGit.App
-        public static SourceGit.App? CurrentApp => Application.Current as SourceGit.App;
         private static ViewModels.Launcher _launcher = null;
 
         public static void OpenDialog(Window window)
@@ -31,7 +30,7 @@ namespace SourceGit.ViewModels
 
         public static void RaiseException(string context, string message)
         {
-            if (_launcher() != null)
+            if (_launcher != null)
                 _launcher.DispatchNotification(context, message, true);
         }
 
@@ -115,33 +114,33 @@ namespace SourceGit.ViewModels
             }
         }
 
-        public static void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
+    //    public static void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
+    //    {
+    //        Native.OS.SetupEnternalTools();
+    //        Models.AvatarManager.Instance.Start();
+
+    //        string startupRepo = null;
+    //        if (desktop.Args != null && desktop.Args.Length == 1 && Directory.Exists(desktop.Args[0]))
+    //            startupRepo = desktop.Args[0];
+
+    //        var pref = Preferences.Instance;
+    //        pref.SetCanModify();
+
+    //        var launcher = _launcher = new Launcher(startupRepo);
+    //        if (desktop.MainWindow is IDisposable disposable)
+    //            disposable.Dispose();
+    //        desktop.MainWindow = new Views.Launcher() { DataContext = launcher };
+
+    //#if !DISABLE_UPDATE_DETECTION
+    //        if (pref.ShouldCheck4UpdateOnStartup())
+    //            AppUtilities.Check4Update();
+    //#endif
+    //    }
+
+        public static void TryOpenRepositoryInTab(ViewModels.RepositoryNode node, LauncherPage arg)
         {
-            Native.OS.SetupEnternalTools();
-            Models.AvatarManager.Instance.Start();
-
-            string startupRepo = null;
-            if (desktop.Args != null && desktop.Args.Length == 1 && Directory.Exists(desktop.Args[0]))
-                startupRepo = desktop.Args[0];
-
-            var pref = Preferences.Instance;
-            pref.SetCanModify();
-
-            var launcher = _launcher = new Launcher(startupRepo);
-            if (desktop.MainWindow is IDisposable disposable)
-                disposable.Dispose();
-            desktop.MainWindow = new Views.Launcher() { DataContext = launcher };
-
-    #if !DISABLE_UPDATE_DETECTION
-            if (pref.ShouldCheck4UpdateOnStartup())
-                AppUtilities.Check4Update();
-    #endif
-        }
-
-        public static void TryOpenRepositoryInTab(object node, object arg)
-        {
-            if (CurrentApp != null && CurrentApp._launcher != null)
-                CurrentApp._launcher.OpenRepositoryInTab(node, arg);
+            if (_launcher != null)
+                _launcher.OpenRepositoryInTab(node, arg);
         }
     }
 }

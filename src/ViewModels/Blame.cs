@@ -44,7 +44,7 @@ namespace SourceGit.ViewModels
 
         public void NavigateToCommit(string commitSHA)
         {
-            var launcher = App.GetLauncer();
+            var launcher = AppUtilities.GetLauncer();
             if (launcher == null)
                 return;
 
