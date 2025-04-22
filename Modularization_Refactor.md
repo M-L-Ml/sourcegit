@@ -5,23 +5,24 @@ The current codebase is monolithic, making it difficult to maintain, test, and e
 
 ## Proposal
 - Split the codebase into several projects/libraries 
-- 1st prposal:
--  Core, UI, Plugins, VCS_Access,.
--  2nd proposal:
+
+-  1nd proposal:
 -  
 ```  
+src/App/sourcegit.csproj
 src/Commands/Commands.csproj
 src/Converters/Converters.csproj
-src/Models/App.cs
-src/Models/ExternalTool.cs
 src/Models/Models.csproj
-src/Models/Models.Native.csproj
+src/Models_and_Native/Models_and_Native.csproj
 src/Utils/Utils.csproj
+src/VCS_Access/VCS_Access.csproj
 src/Resources/Resources.csproj
 src/ViewModels/ViewModels.csproj
 src/Views/Views.csproj
-src/App/sourcegit.csproj
+src/Tests/Tests.csproj
 ```
+- 2st prposal:
+-  Core, UI, Plugins, VCS_Access,.
 - Clearly define interfaces and contracts between modules.
 - Ensure each module is independently testable and reusable.
 
