@@ -72,7 +72,7 @@ namespace SourceGit.ViewModels
             {
                 try
                 {
-                    var text = await App.GetClipboardTextAsync();
+                    var text = await AppUtilities.GetClipboardTextAsync();
                     if (Models.Remote.IsValidURL(text))
                         Dispatcher.UIThread.Invoke(() => Remote = text);
                 }

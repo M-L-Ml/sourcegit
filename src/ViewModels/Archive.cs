@@ -60,7 +60,7 @@ namespace SourceGit.ViewModels
                 {
                     _repo.SetWatcherEnabled(true);
                     if (succ)
-                        App.SendNotification(_repo.FullPath, $"Save archive to : {_saveFile}");
+                        AppUtilities.SendNotification(_repo.FullPath, $"Save archive to : {_saveFile}");
                 });
 
                 return succ;
