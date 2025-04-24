@@ -4,5 +4,18 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageVersion Include="Avalonia" Version="11.2.8" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.2.8" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.2.8" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.2.8" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.2.8" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="11.2.0" />
+    <PackageVersion Include="AvaloniaEdit.TextMate" Version="11.2.0" />
+    <PackageVersion Include="Azure.AI.OpenAI" Version="2.2.0-beta.4" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.4" />
+    <PackageVersion Include="OpenAI" Version="2.2.0-beta.4" />
+    <PackageVersion Include="TextMateSharp" Version="1.0.66" />
+    <PackageVersion Include="TextMateSharp.Grammars" Version="1.0.66" />
   </ItemGroup>
 </Project>
