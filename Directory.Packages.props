@@ -3,7 +3,6 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageVersion Include="Avalonia" Version="11.2.8" />
     <PackageVersion Include="Avalonia.Desktop" Version="11.2.8" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.2.8" />
