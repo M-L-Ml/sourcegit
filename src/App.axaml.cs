@@ -105,7 +105,47 @@ namespace SourceGit
         #endregion
 
         #region Utility Functions
-        // Utility functions moved to SourceGit.ViewModels.AppUtilities
+        // some Utility functions moved to SourceGit.ViewModels.AppUtilities
+        public void ShowWindow(object data, bool showAsDialog)
+        {
+            /// <summary>   
+            /// <see cref="SourceGit.ViewModels.AppUtilities.ShowWindow"/>
+            /// </summary>
+            //dynamic appd = Application.Current;
+            //appd.ShowWindow(data, showAsDialog);
+            var current = this;
+            if (current != Application.Current)
+                throw new InvalidOperationException(" strange, app is not current (current != Current)");
+
+            if (data is Views.ChromelessWindow window)
+            {
+                if (showAsDialog && current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } owner })
+                    window.ShowDialog(owner);
+                else
+                    window.Show();
+
+                return;
+            }
+
+            var dataTypeName = data.GetType().FullName;
+            if (string.IsNullOrEmpty(dataTypeName) || !dataTypeName.Contains(".ViewModels.", StringComparison.Ordinal))
+                return;
+
+            var viewTypeName = dataTypeName.Replace(".ViewModels.", ".Views.");
+            var viewType = Type.GetType(viewTypeName);
+            if (viewType == null || !viewType.IsSubclassOf(typeof(Views.ChromelessWindow)))
+                return;
+
+            window = Activator.CreateInstance(viewType) as Views.ChromelessWindow;
+            if (window != null)
+            {
+                window.DataContext = data;
+                if (showAsDialog && current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } owner })
+                    window.ShowDialog(owner);
+                else
+                    window.Show();
+            }
+        }
         public static void SetLocale(string localeKey)
         {
             var app = Current as App;
@@ -436,7 +476,7 @@ namespace SourceGit
             if (!collection.Onto.Equals(onto) || !collection.OrigHead.Equals(origHead))
                 return true;
 
-            var done = File.ReadAllText(doneFile).Trim().Split([ '\r', '\n' ], StringSplitOptions.RemoveEmptyEntries);
+            var done = File.ReadAllText(doneFile).Trim().Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
             if (done.Length == 0)
                 return true;
 

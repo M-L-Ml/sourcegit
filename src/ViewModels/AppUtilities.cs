@@ -17,41 +17,21 @@ using Native = SourceGit.Native;
 
 namespace SourceGit.ViewModels
 {
-    public static class AppUtilities
+    public static class App
     {
+        //public static void ShowWindow(object data, bool showAsDialog)
+        //=>
+        //    AppUtilities.ShowWindow(data, showAsDialog);
+    //}
+    //public static class AppUtilities
+    //{
         // Static property to encapsulate Application.Current as SourceGit.App
         private static ViewModels.Launcher _launcher = null;
 
         public static void ShowWindow(object data, bool showAsDialog)
         {
-            if (data is Views.ChromelessWindow window)
-            {
-                if (showAsDialog && Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } owner })
-                    window.ShowDialog(owner);
-                else
-                    window.Show();
-
-                return;
-            }
-
-            var dataTypeName = data.GetType().FullName;
-            if (string.IsNullOrEmpty(dataTypeName) || !dataTypeName.Contains(".ViewModels.", StringComparison.Ordinal))
-                return;
-
-            var viewTypeName = dataTypeName.Replace(".ViewModels.", ".Views.");
-            var viewType = Type.GetType(viewTypeName);
-            if (viewType == null || !viewType.IsSubclassOf(typeof(Views.ChromelessWindow)))
-                return;
-
-            window = Activator.CreateInstance(viewType) as Views.ChromelessWindow;
-            if (window != null)
-            {
-                window.DataContext = data;
-                if (showAsDialog && Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } owner })
-                    window.ShowDialog(owner);
-                else
-                    window.Show();
-            }
+            dynamic appd = Application.Current;
+            appd.ShowWindow(data, showAsDialog);
         }
         public static void RaiseException(string context, string message)
         {
@@ -139,28 +119,28 @@ namespace SourceGit.ViewModels
             }
         }
 
-    //    public static void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
-    //    {
-    //        Native.OS.SetupEnternalTools();
-    //        Models.AvatarManager.Instance.Start();
+        //    public static void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
+        //    {
+        //        Native.OS.SetupEnternalTools();
+        //        Models.AvatarManager.Instance.Start();
 
-    //        string startupRepo = null;
-    //        if (desktop.Args != null && desktop.Args.Length == 1 && Directory.Exists(desktop.Args[0]))
-    //            startupRepo = desktop.Args[0];
+        //        string startupRepo = null;
+        //        if (desktop.Args != null && desktop.Args.Length == 1 && Directory.Exists(desktop.Args[0]))
+        //            startupRepo = desktop.Args[0];
 
-    //        var pref = Preferences.Instance;
-    //        pref.SetCanModify();
+        //        var pref = Preferences.Instance;
+        //        pref.SetCanModify();
 
-    //        var launcher = _launcher = new Launcher(startupRepo);
-    //        if (desktop.MainWindow is IDisposable disposable)
-    //            disposable.Dispose();
-    //        desktop.MainWindow = new Views.Launcher() { DataContext = launcher };
+        //        var launcher = _launcher = new Launcher(startupRepo);
+        //        if (desktop.MainWindow is IDisposable disposable)
+        //            disposable.Dispose();
+        //        desktop.MainWindow = new Views.Launcher() { DataContext = launcher };
 
-    //#if !DISABLE_UPDATE_DETECTION
-    //        if (pref.ShouldCheck4UpdateOnStartup())
-    //            AppUtilities.Check4Update();
-    //#endif
-    //    }
+        //#if !DISABLE_UPDATE_DETECTION
+        //        if (pref.ShouldCheck4UpdateOnStartup())
+        //            AppUtilities.Check4Update();
+        //#endif
+        //    }
 
         public static void TryOpenRepositoryInTab(ViewModels.RepositoryNode node, LauncherPage arg)
         {
