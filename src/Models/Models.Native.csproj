@@ -8,7 +8,7 @@
     <PackageReference Include="Avalonia"/>
     <PackageReference Include="Avalonia.Desktop"/>
     <PackageReference Include="Avalonia.Diagnostics"Condition="'$(Configuration)' == 'Debug'" />
-    <PackageReference Include="OpenAI" Version="2.2.0-beta.4" />
+    <PackageReference Include="OpenAI"/>
   </ItemGroup>
   
   <ItemGroup>
