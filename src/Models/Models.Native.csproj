@@ -7,7 +7,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm"/>
     <PackageReference Include="Avalonia"/>
     <PackageReference Include="Avalonia.Desktop"/>
-    <PackageReference Include="Avalonia.Diagnostics"Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
     <PackageReference Include="OpenAI"/>
   </ItemGroup>
   
