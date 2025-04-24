@@ -34,6 +34,6 @@ namespace SourceGit
     [JsonSerializable(typeof(Models.ExternalToolPaths))]
     //[JsonSerializable(typeof(Models.InteractiveRebaseJobCollection))]
     [JsonSerializable(typeof(Models.JetBrainsState))]
-    internal partial class JsonCodeGen : JsonSerializerContext { }
+    public partial class JsonCodeGen : JsonSerializerContext { }
 
 }

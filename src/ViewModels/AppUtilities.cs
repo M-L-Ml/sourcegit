@@ -22,16 +22,31 @@ namespace SourceGit.ViewModels
         //public static void ShowWindow(object data, bool showAsDialog)
         //=>
         //    AppUtilities.ShowWindow(data, showAsDialog);
-    //}
-    //public static class AppUtilities
-    //{
+        //}
+        //public static class AppUtilities
+        //{
         // Static property to encapsulate Application.Current as SourceGit.App
         private static ViewModels.Launcher _launcher = null;
 
+        private static dynamic AppDyn =>
+            Application.Current;
+
         public static void ShowWindow(object data, bool showAsDialog)
         {
-            dynamic appd = Application.Current;
-            appd.ShowWindow(data, showAsDialog);
+            AppDyn.ShowWindow(data, showAsDialog);
+        }
+
+        public static void SetTheme(string theme, string themeOverridesFile)
+        {
+            AppDyn.SetTheme(theme, themeOverridesFile);
+        }
+        public static void SetLocale(string localeKey)
+        {
+            AppDyn.SetLocale(localeKey);
+        }
+        public static void SetFonts(string defaultFont, string monospaceFont, bool onlyUseMonospaceFontInEditor)
+        {
+            AppDyn.SetFonts(defaultFont, monospaceFont, onlyUseMonospaceFontInEditor);
         }
         public static void RaiseException(string context, string message)
         {
@@ -138,7 +153,7 @@ namespace SourceGit.ViewModels
 
         //#if !DISABLE_UPDATE_DETECTION
         //        if (pref.ShouldCheck4UpdateOnStartup())
-        //            AppUtilities.Check4Update();
+        //            App.Check4Update();
         //#endif
         //    }
 

@@ -105,17 +105,27 @@ namespace SourceGit
         #endregion
 
         #region Utility Functions
-        // some Utility functions moved to SourceGit.ViewModels.AppUtilities
+        // some Utility functions moved to SourceGit.ViewModels.App
+
+        private App ThisChecked
+        {
+            get
+            {
+                //dynamic appd = Application.Current;
+                //appd.ShowWindow(data, showAsDialog);
+                var current = this;
+                if (current != Application.Current)
+                    throw new InvalidOperationException(" strange, app is not current (current != Current)");
+                return current;
+            }
+        }
+
         public void ShowWindow(object data, bool showAsDialog)
         {
             /// <summary>   
-            /// <see cref="SourceGit.ViewModels.AppUtilities.ShowWindow"/>
+            /// <see cref="SourceGit.ViewModels.App.ShowWindow"/>
             /// </summary>
-            //dynamic appd = Application.Current;
-            //appd.ShowWindow(data, showAsDialog);
-            var current = this;
-            if (current != Application.Current)
-                throw new InvalidOperationException(" strange, app is not current (current != Current)");
+            var current = ThisChecked;
 
             if (data is Views.ChromelessWindow window)
             {
@@ -146,9 +156,11 @@ namespace SourceGit
                     window.Show();
             }
         }
-        public static void SetLocale(string localeKey)
+
+
+        public void SetLocale(string localeKey)
         {
-            var app = Current as App;
+            var app = ThisChecked;
             if (app == null)
                 return;
 
@@ -163,9 +175,9 @@ namespace SourceGit
             app._activeLocale = targetLocale;
         }
 
-        public static void SetTheme(string theme, string themeOverridesFile)
+        public void SetTheme(string theme, string themeOverridesFile)
         {
-            var app = Current as App;
+            var app = ThisChecked;
             if (app == null)
                 return;
 
