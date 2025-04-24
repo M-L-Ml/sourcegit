@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -635,7 +635,7 @@ namespace SourceGit.ViewModels
                     }
                     else if (_inProgressContext is RevertInProgress revert)
                     {
-                        useTheirs.Header = App.Text("FileCM.ResolveUsing", revert.Head.SHA.Substring(0, 10) + " (revert)");
+                        useTheirs.Header = App.Text("FileCM.ResolveUsing", $"{revert.Head.SHA.AsSpan().Slice(0, 10)} (revert)");
                         useMine.Header = App.Text("FileCM.ResolveUsing", _repo.CurrentBranch.Name);
                     }
                     else if (_inProgressContext is MergeInProgress merge)
@@ -771,7 +771,7 @@ namespace SourceGit.ViewModels
                             byExtension.Header = App.Text("WorkingCopy.AddToGitIgnore.Extension", extension);
                             byExtension.Click += (_, e) =>
                             {
-                                Commands.GitIgnore.Add(_repo.FullPath, "*" + extension);
+                                Commands.GitIgnore.Add(_repo.FullPath, $"*{extension}");
                                 e.Handled = true;
                             };
                             addToIgnore.Items.Add(byExtension);
@@ -782,7 +782,7 @@ namespace SourceGit.ViewModels
                             byExtensionInSameFolder.Click += (_, e) =>
                             {
                                 var dir = Path.GetDirectoryName(change.Path).Replace("\\", "/");
-                                Commands.GitIgnore.Add(_repo.FullPath, dir + "/*" + extension);
+                                Commands.GitIgnore.Add(_repo.FullPath, $"{dir}/*{extension}");
                                 e.Handled = true;
                             };
                             addToIgnore.Items.Add(byExtensionInSameFolder);
@@ -824,7 +824,7 @@ namespace SourceGit.ViewModels
                                 lfsTrackByExtension.Click += async (_, e) =>
                                 {
                                     var log = _repo.CreateLog("Track LFS");
-                                    var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Track("*" + extension, false, log));
+                                    var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Track($"*{extension}", false, log));
                                     if (succ)
                                         App.SendNotification(_repo.FullPath, $"Tracking all *{extension} files successfully!");
 
@@ -993,7 +993,7 @@ namespace SourceGit.ViewModels
                     }
                     else if (_inProgressContext is RevertInProgress revert)
                     {
-                        useTheirs.Header = App.Text("FileCM.ResolveUsing", revert.Head.SHA.Substring(0, 10) + " (revert)");
+                        useTheirs.Header = App.Text("FileCM.ResolveUsing", $"{revert.Head.SHA.AsSpan().Slice(0, 10)} (revert)");
                         useMine.Header = App.Text("FileCM.ResolveUsing", _repo.CurrentBranch.Name);
                     }
                     else if (_inProgressContext is MergeInProgress merge)
@@ -1417,7 +1417,7 @@ namespace SourceGit.ViewModels
                         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                         var prefixLen = home.EndsWith('/') ? home.Length - 1 : home.Length;
                         if (gitTemplate.StartsWith(home, StringComparison.Ordinal))
-                            friendlyName = "~" + gitTemplate.Substring(prefixLen);
+                            friendlyName = $"~{gitTemplate.AsSpan().Slice(prefixLen)}";
                     }
 
                     var gitTemplateItem = new MenuItem();
@@ -1524,7 +1524,10 @@ namespace SourceGit.ViewModels
         private List<Models.Change> GetStagedChanges()
         {
             if (_useAmend)
-                return new Commands.QueryStagedChangesWithAmend(_repo.FullPath).Result();
+            {
+                var head = new Commands.QuerySingleCommit(_repo.FullPath, "HEAD").Result();
+                return new Commands.QueryStagedChangesWithAmend(_repo.FullPath, head.Parents.Count == 0 ? "4b825dc642cb6eb9a060e54bf8d69288fbee4904" : $"{head.SHA}^").Result();
+            }
 
             var rs = new List<Models.Change>();
             foreach (var c in _cached)
@@ -1733,7 +1736,18 @@ namespace SourceGit.ViewModels
                         UseAmend = false;
 
                         if (autoPush && _repo.Remotes.Count > 0)
-                            _repo.ShowAndStartPopup(new Push(_repo, null));
+                        {
+                            if (_repo.CurrentBranch == null)
+                            {
+                                var currentBranchName = Commands.Branch.ShowCurrent(_repo.FullPath);
+                                var tmp = new Models.Branch() { Name = currentBranchName };
+                                _repo.ShowAndStartPopup(new Push(_repo, tmp));
+                            }
+                            else
+                            {
+                                _repo.ShowAndStartPopup(new Push(_repo, null));
+                            }
+                        }
                     }
 
                     _repo.MarkBranchesDirtyManually();
