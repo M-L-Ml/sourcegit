@@ -19,6 +19,48 @@ namespace SourceGit.Models
     {
         public bool IsMatch(string url) => url.StartsWith(HostPrefix, StringComparison.Ordinal);
     }
+
+        public readonly record struct ProviderInfo2(
+        string Name,
+        /// <summary>
+/// Example URL for Host of the provider same as old HostPrefix . e.g. "https://github.com/",
+/// Don't use it for matching. Only for historical reasons.
+/// </summary>
+        string ExampleHostURL,
+// e.g. github.com
+          string HostURLMainPart,
+   // e.g. "/commit/" for github.com
+          string UrlSubPartForCommit
+               ///<summary>
+/// </summary>
+       // Func<string, string> ExtractRepo,
+      //  Func<string, string> BuildCommitUrlPrefix
+        )
+    {
+        //TODO: rewrite not using ExampleHostURL
+        public bool IsMatch(string url) => url.StartsWith(HostPrefix, StringComparison.Ordinal);
+     
+      public bool IsMatch(Uri url)
+        {
+          
+        }
+
+        /// <summary>
+        /// ExtractRepo - get part of Uri  related to repo - without host part. 
+        /// TODO: what is like Uri class but suitable for containig Uri parts?
+        // </summary>
+        /// <param name="url">full URL of a repo</param>
+        /// <returns></returns>
+          public  string  ExtractRepo(string url)
+        {
+         
+        }
+
+     public  string  ExtractRepo(Uri uri)
+        {
+
+        }
+    }
     public static class CommitLinkDetails // Changed from private to internal to fix CS1527  
     {
         static readonly ProviderInfo[] Providers = new[]
