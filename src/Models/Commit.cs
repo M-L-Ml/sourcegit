@@ -119,4 +119,10 @@ namespace SourceGit.Models
         public string Message { get; set; } = string.Empty;
         public List<Hyperlink> Links { get; set; } = [];
     }
+
+    public class InteractiveCommit
+    {
+        public Commit Commit { get; set; } = new Commit();
+        public string Message { get; set; } = string.Empty;
+    }
 }
