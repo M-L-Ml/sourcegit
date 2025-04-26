@@ -34,7 +34,7 @@ namespace SourceGit.Models
         }
     }
 
-    public readonly record struct ProviderInfo2(
+    public readonly record struct ProviderInfo(
         string Name,
         string ExampleHostURL,
         string HostURLMainPart,
@@ -71,15 +71,15 @@ namespace SourceGit.Models
 
     public static class CommitLinkDetails
     {
-        static readonly ProviderInfo2[] Providers = new[]
+        static readonly ProviderInfo[] Providers = new[]
         {
-            new ProviderInfo2("Github", "https://github.com/", "github.com", "/commit/", false),
-            new ProviderInfo2("GitLab", "https://gitlab.com/", "gitlab.com", "/-/commit/", false),
-            new ProviderInfo2("Gitee", "https://gitee.com/", "gitee.com", "/commit/", false),
-            new ProviderInfo2("BitBucket", "https://bitbucket.org/", "bitbucket.org", "/commits/", false),
-            new ProviderInfo2("Codeberg", "https://codeberg.org/", "codeberg.org", "/commit/", false),
-            new ProviderInfo2("Gitea", "https://gitea.org/", "gitea.org", "/commit/", false),
-            new ProviderInfo2("sourcehut", "https://git.sr.ht/", "git.sr.ht", "/commit/", false)
+            new ProviderInfo("Github", "https://github.com/", "github.com", "/commit/", false),
+            new ProviderInfo("GitLab", "https://gitlab.com/", "gitlab.com", "/-/commit/", false),
+            new ProviderInfo("Gitee", "https://gitee.com/", "gitee.com", "/commit/", false),
+            new ProviderInfo("BitBucket", "https://bitbucket.org/", "bitbucket.org", "/commits/", false),
+            new ProviderInfo("Codeberg", "https://codeberg.org/", "codeberg.org", "/commit/", false),
+            new ProviderInfo("Gitea", "https://gitea.org/", "gitea.org", "/commit/", false),
+            new ProviderInfo("sourcehut", "https://git.sr.ht/", "git.sr.ht", "/commit/", false)
         };
 
         private static CommitLink? TryCreateCommitLink(Remote remote)
