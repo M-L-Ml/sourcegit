@@ -400,12 +400,7 @@ namespace SourceGit.Native
             return null;
         }
 
-        // IOSPlatform implementation
-        public string GetProgramFilesPath() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+         public string GetProgramFilesPath() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
         public string GetLocalAppDataPath() => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        public string GetEnvVariable(string name) => Environment.GetEnvironmentVariable(name) ?? string.Empty;
-        public bool FileExists(string path) => File.Exists(path);
-        public bool DirectoryExists(string path) => Directory.Exists(path);
-        // Add more as needed for tool discovery
-    }
+     }
 }
