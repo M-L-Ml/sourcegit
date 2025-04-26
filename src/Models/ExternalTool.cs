@@ -123,14 +123,22 @@ namespace SourceGit.Models
         }
 
         /// <summary>
-        /// Information for parameterizing editor tools.
+        /// Encapsulates information for any external tool (editor or otherwise).
         /// </summary>
-        public class EditorToolInfo
+        public class ExternalToolInfo
         {
             public required string Name { get; set; }
             public required string Icon { get; set; }
-            public required Func<string> Finder { get; set; }
             public Func<string, string>? ExecArgsGenerator { get; set; }
+            // Add more as needed for broader tool support
+        }
+
+        /// <summary>
+        /// Information for parameterizing editor tools (inherits from ExternalToolInfo for backward compatibility).
+        /// </summary>
+        public class EditorToolInfo : ExternalToolInfo
+        {
+            public required Func<string> Finder { get; set; }
         }
 
         /// <summary>
