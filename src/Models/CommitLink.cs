@@ -11,114 +11,71 @@ namespace SourceGit.Models
     public readonly record struct CommitLink(string Name, string URLPrefix)
     {
     }
-    public readonly record struct ProviderInfo(
-        string Name,
-        string HostPrefix,
-        Func<string, string> ExtractRepo,
-        Func<string, string> BuildCommitUrlPrefix)
-    {
-        public bool IsMatch(string url) => url.StartsWith(HostPrefix, StringComparison.Ordinal);
-    }
 
-        public readonly record struct ProviderInfo2(
+    public readonly record struct ProviderInfo2(
         string Name,
         /// <summary>
-/// Example URL for Host of the provider same as old HostPrefix . e.g. "https://github.com/",
-/// Don't use it for matching. Only for historical reasons.
-/// </summary>
+        /// Example URL for Host of the provider same as old HostPrefix . e.g. "https://github.com/",
+        /// Don't use it for matching. Only for historical reasons.
+        /// </summary>
         string ExampleHostURL,
-// e.g. github.com
-          string HostURLMainPart,
-   // e.g. "/commit/" for github.com
-          string UrlSubPartForCommit,
-               ///<summary>
-/// do <code> int idx = res.IndexOf('/') + 1;
-                   return res[idx..];</code> </summary>
-bool NeedTrim = false
-
-       // Func<string, string> ExtractRepo,
-      //  Func<string, string> BuildCommitUrlPrefix
-        )
+        // e.g. github.com
+        string HostURLMainPart,
+        // e.g. "/commit/" for github.com
+        string UrlSubPartForCommit,
+        ///<summary>
+        /// If true, after removing the host, do: int idx = res.IndexOf('/') + 1; return res[idx..];
+        /// </summary>
+        bool NeedTrim = false
+    )
     {
-        //TODO: rewrite not using ExampleHostURL
-        public bool IsMatch(string url) => url.StartsWith(HostPrefix, StringComparison.Ordinal);
-     
-      public bool IsMatch(Uri url)
+        public bool IsMatch(string url)
         {
-          
+            // Use Uri parsing for robust matching
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri)) return false;
+            return uri.Host.Equals(HostURLMainPart, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
-        /// ExtractRepo - get part of Uri  related to repo - without host part. 
-        /// TODO: what is like Uri class but suitable for containig Uri parts?
-        // </summary>
-        /// <param name="url">full URL of a repo</param>
-        /// <returns></returns>
-          public  string  ExtractRepo(string url)
+        /// Extracts the repo path from the full URL, optionally trimming as needed.
+        /// </summary>
+        public string ExtractRepo(string url)
         {
-         
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri)) return string.Empty;
+            var res = uri.AbsolutePath.TrimStart('/');
+            if (NeedTrim)
+            {
+                int idx = res.IndexOf('/') + 1;
+                if (idx > 0 && idx < res.Length)
+                    res = res[idx..];
+            }
+            if (res.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
+                res = res[..^4];
+            return res;
         }
 
-     public  string  ExtractRepo(Uri uri)
+        public string BuildCommitUrlPrefix(string url)
         {
-
+            // Remove .git if present, then append the commit subpart
+            if (url.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
+                url = url[..^4];
+            return url + UrlSubPartForCommit;
         }
     }
-    public static class CommitLinkDetails // Changed from private to internal to fix CS1527  
-    {
-        static readonly ProviderInfo[] Providers = new[]
-        {
-           new ProviderInfo(
-               "Github",
-               "https://github.com/",
-               url => url.EndsWith(".git") ? url[19..^4] : url[19..],
-               baseUrl => $"{baseUrl}/commit/"
-           ),
-           new ProviderInfo(
-               "GitLab",
-               "https://gitlab.",
-               url => {
-                   var trimmed = url.EndsWith(".git") ? url[15..^4] : url[15..];
-                   int idx = trimmed.IndexOf('/') + 1;
-                   return trimmed[idx..];
-               },
-               baseUrl => $"{baseUrl}/-/commit/"
-           ),
-           new ProviderInfo(
-               "Gitee",
-               "https://gitee.com/",
-               url => url.EndsWith(".git") ? url[18..^4] : url[18..],
-               baseUrl => $"{baseUrl}/commit/"
-           ),
-           new ProviderInfo(
-               "BitBucket",
-               "https://bitbucket.org/",
-               url => url.EndsWith(".git") ? url[22..^4] : url[22..],
-               baseUrl => $"{baseUrl}/commits/"
-           ),
-           new ProviderInfo(
-               "Codeberg",
-               "https://codeberg.org/",
-               url => url.EndsWith(".git") ? url[21..^4] : url[21..],
-               baseUrl => $"{baseUrl}/commit/"
-           ),
-           new ProviderInfo(
-               "Gitea",
-               "https://gitea.org/",
-               url => url.EndsWith(".git") ? url[18..^4] : url[18..],
-               baseUrl => $"{baseUrl}/commit/"
-           ),
-           new ProviderInfo(
-               "sourcehut",
-               "https://git.sr.ht/",
-               url => url.EndsWith(".git") ? url[18..^4] : url[18..],
-               baseUrl => $"{baseUrl}/commit/"
-           )
-       };
 
-        /// <summary>  
-        /// Attempts to create a CommitLink for a given remote by matching a provider.  
-        /// </summary>  
+    public static class CommitLinkDetails
+    {
+        static readonly ProviderInfo2[] Providers = new[]
+        {
+            new ProviderInfo2("Github", "https://github.com/", "github.com", "/commit/", false),
+            new ProviderInfo2("GitLab", "https://gitlab.com/", "gitlab.com", "/-/commit/", false),
+            new ProviderInfo2("Gitee", "https://gitee.com/", "gitee.com", "/commit/", false),
+            new ProviderInfo2("BitBucket", "https://bitbucket.org/", "bitbucket.org", "/commits/", false),
+            new ProviderInfo2("Codeberg", "https://codeberg.org/", "codeberg.org", "/commit/", false),
+            new ProviderInfo2("Gitea", "https://gitea.org/", "gitea.org", "/commit/", false),
+            new ProviderInfo2("sourcehut", "https://git.sr.ht/", "git.sr.ht", "/commit/", false)
+        };
+
         private static CommitLink? TryCreateCommitLink(Remote remote)
         {
             if (!remote.TryGetVisitURL(out var url))
@@ -130,18 +87,12 @@ bool NeedTrim = false
             return new CommitLink($"{provider.Name} ({repoName})", provider.BuildCommitUrlPrefix(url));
         }
 
-        /// <summary>  
-        /// Translates remotes to CommitLinks. TODO: rename  
-        /// </summary>  
         public static List<CommitLink> Get(List<Remote> remotes)
         {
             return remotes.Select(static remote =>
             {
-
                 var rr = TryCreateCommitLink(remote);
 #if DEBUG
-                /// Inplace Test  
-
                 if (remote.TryGetVisitURL(out var url))
                 {
                     var commitLink = GetCommitLinkOriginalImplementionForTestPurposes(url);
@@ -149,23 +100,16 @@ bool NeedTrim = false
                 }
 #endif
                 return rr;
-            }).Select(cl => cl.Value) // Convert nullable CommitLink to non-nullable CommitLink
-        .Where(cl => cl != null).ToList();
+            }).Where(cl => cl.HasValue).Select(cl => cl.Value).ToList();
         }
 
 #if DEBUG
-        // Minimal stub for Remote for testing  
-
-
-        // TODO : delete this after checking the implementation  
         private static CommitLink? GetCommitLinkOriginalImplementionForTestPurposes(string url)
         {
             var outs = new List<CommitLink>();
-
             var trimmedUrl = url;
             if (url.EndsWith(".git"))
                 trimmedUrl = url.Substring(0, url.Length - 4);
-
             if (url.StartsWith("https://github.com/", StringComparison.Ordinal))
                 outs.Add(new($"Github ({trimmedUrl.Substring(19)})", $"{url}/commit/"));
             else if (url.StartsWith("https://gitlab.", StringComparison.Ordinal))
@@ -180,28 +124,20 @@ bool NeedTrim = false
                 outs.Add(new($"Gitea ({trimmedUrl.Substring(18)})", $"{url}/commit/"));
             else if (url.StartsWith("https://git.sr.ht/", StringComparison.Ordinal))
                 outs.Add(new($"sourcehut ({trimmedUrl.Substring(18)})", $"{url}/commit/"));
-
             return outs.FirstOrDefault();
         }
         static CommitLinkDetails()
         {
-
-            //Unit tests , TODO: make normal UnitTests, delete this code.  
-            // Test Github  
             var githubRemote = new Remote() { URL = "https://github.com/user/repo.git" };
             var links = Get(new List<Remote> { githubRemote });
             Debug.Assert(links.Count == 1, "Should find one CommitLink for Github");
             Debug.Assert(links[0].Name.StartsWith("Github"), "Provider should be Github");
             Debug.Assert(links[0].URLPrefix == "https://github.com/user/repo/commit/", "URLPrefix should be correct for Github");
-
-            // Test BitBucket  
             var bitbucketRemote = new Remote() { URL = "https://bitbucket.org/team/project" };
             links = Get(new List<Remote> { bitbucketRemote });
             Debug.Assert(links.Count == 1, "Should find one CommitLink for BitBucket");
             Debug.Assert(links[0].Name.StartsWith("BitBucket"), "Provider should be BitBucket");
             Debug.Assert(links[0].URLPrefix == "https://bitbucket.org/team/project/commits/", "URLPrefix should be correct for BitBucket");
-
-            // Test GitLab  
             var gitlabRemote = new Remote() { URL = "https://gitlab.com/group/project.git" };
             links = Get(new List<Remote> { gitlabRemote });
             Debug.Assert(links.Count == 1, "Should find one CommitLink for GitLab");
