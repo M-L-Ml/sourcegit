@@ -100,6 +100,8 @@ namespace SourceGit.Models
             {
                 var rr = TryCreateCommitLink(remote);
 #if DEBUG
+                /// Inplace Test  
+
                 if (remote.TryGetVisitURL(out var url))
                 {
                     var commitLink = GetCommitLinkOriginalImplementionForTestPurposes(url);
@@ -111,6 +113,10 @@ namespace SourceGit.Models
         }
 
 #if DEBUG
+        // Minimal stub for Remote for testing  
+
+
+        // TODO : delete this after checking the implementation  
         private static CommitLink? GetCommitLinkOriginalImplementionForTestPurposes(string url)
         {
             var outs = new List<CommitLink>();
@@ -129,20 +135,28 @@ namespace SourceGit.Models
                 outs.Add(new($"Gitea ({trimmedUrl.Substring(18)})", $"{url}/commit/"));
             else if (url.StartsWith("https://git.sr.ht/", StringComparison.Ordinal))
                 outs.Add(new($"sourcehut ({trimmedUrl.Substring(18)})", $"{url}/commit/"));
+
             return outs.FirstOrDefault();
         }
         static CommitLinkDetails()
         {
+
+            //Unit tests , TODO: make normal UnitTests, delete this code.  
+            // Test Github  
             var githubRemote = new Remote() { URL = "https://github.com/user/repo.git" };
             var links = Get(new List<Remote> { githubRemote });
             Debug.Assert(links.Count == 1, "Should find one CommitLink for Github");
             Debug.Assert(links[0].Name.StartsWith("Github"), "Provider should be Github");
             Debug.Assert(links[0].URLPrefix == "https://github.com/user/repo/commit/", "URLPrefix should be correct for Github");
+
+            // Test BitBucket  
             var bitbucketRemote = new Remote() { URL = "https://bitbucket.org/team/project" };
             links = Get(new List<Remote> { bitbucketRemote });
             Debug.Assert(links.Count == 1, "Should find one CommitLink for BitBucket");
             Debug.Assert(links[0].Name.StartsWith("BitBucket"), "Provider should be BitBucket");
             Debug.Assert(links[0].URLPrefix == "https://bitbucket.org/team/project/commits/", "URLPrefix should be correct for BitBucket");
+
+            // Test GitLab  
             var gitlabRemote = new Remote() { URL = "https://gitlab.com/group/project.git" };
             links = Get(new List<Remote> { gitlabRemote });
             Debug.Assert(links.Count == 1, "Should find one CommitLink for GitLab");
