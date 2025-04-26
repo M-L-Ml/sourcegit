@@ -32,25 +32,32 @@ namespace SourceGit.Models
         public bool IsMatch(string url)
         {
             // Use Uri parsing for robust matching
-            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri)) return false;
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                return false;
+            return IsMatch(uri);
+        }
+        public bool IsMatch(Uri uri)
+        {
             return uri.Host.Equals(HostURLMainPart, StringComparison.OrdinalIgnoreCase);
         }
-
         /// <summary>
         /// Extracts the repo path from the full URL, optionally trimming as needed.
         /// </summary>
-        public string ExtractRepo(string url)
+        public string? ExtractRepo(string url)
         {
-            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri)) return string.Empty;
+
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                return null;
             var res = uri.AbsolutePath.TrimStart('/');
+            if (res.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
+                res = res[..^4];
+            
             if (NeedTrim)
             {
                 int idx = res.IndexOf('/') + 1;
                 if (idx > 0 && idx < res.Length)
                     res = res[idx..];
             }
-            if (res.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
-                res = res[..^4];
             return res;
         }
 
