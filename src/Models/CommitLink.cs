@@ -30,9 +30,12 @@ namespace SourceGit.Models
 // e.g. github.com
           string HostURLMainPart,
    // e.g. "/commit/" for github.com
-          string UrlSubPartForCommit
+          string UrlSubPartForCommit,
                ///<summary>
-/// </summary>
+/// do <code> int idx = res.IndexOf('/') + 1;
+                   return res[idx..];</code> </summary>
+bool NeedTrim = false
+
        // Func<string, string> ExtractRepo,
       //  Func<string, string> BuildCommitUrlPrefix
         )
