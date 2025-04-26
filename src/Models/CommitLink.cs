@@ -106,8 +106,8 @@ namespace SourceGit.Models
                 }
 #endif
                 return rr;
-            }).Select(cl => cl.Value) // Convert nullable CommitLink to non-nullable CommitLink
-        .Where(cl => cl != null).ToList();
+            }).Where(cl => cl.HasValue).Select(cl => cl.Value) // Convert nullable CommitLink to non-nullable CommitLink
+        .ToList();
         }
 
 #if DEBUG
