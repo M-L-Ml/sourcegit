@@ -126,10 +126,10 @@ namespace SourceGit.Models
         /// </summary>
         public class EditorToolInfo
         {
-            public string Name { get; set; }
-            public string Icon { get; set; }
-            public Func<string> Finder { get; set; }
-            public Func<string, string> ExecArgsGenerator { get; set; }
+            public required string Name { get; set; }
+            public required string Icon { get; set; }
+            public required Func<string> Finder { get; set; }
+            public Func<string, string>? ExecArgsGenerator { get; set; }
         }
 
         /// <summary>
