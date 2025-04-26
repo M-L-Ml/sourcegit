@@ -1,36 +1,27 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SourceGit.Native;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 
 namespace SourceGit.Models
 {
+    // Pure domain model: no UI dependencies
     public class ExternalTool
     {
         public string Name { get; private set; }
-        public Bitmap IconImage { get; private set; } = null;
+        public string IconName { get; private set; } // Store icon name as string, not Bitmap
+        public string ExecFile { get; private set; }
+        public Func<string, string> ExecArgsGenerator { get; private set; }
 
-        public ExternalTool(string name, string icon, string execFile, Func<string, string> execArgsGenerator = null)
+        public ExternalTool(string name, string iconName, string execFile, Func<string, string> execArgsGenerator = null)
         {
             Name = name;
-            _execFile = execFile;
-            _execArgsGenerator = execArgsGenerator ?? (repo => $"\"{repo}\"");
-
-            try
-            {
-                var asset = AssetLoader.Open(new Uri($"avares://SourceGit/Resources/Images/ExternalToolIcons/{icon}.png",
-                    UriKind.RelativeOrAbsolute));
-                IconImage = new Bitmap(asset);
-            }
-            catch
-            {
-                // ignore
-            }
+            IconName = iconName;
+            ExecFile = execFile;
+            ExecArgsGenerator = execArgsGenerator ?? (repo => $"\"{repo}\"");
         }
 
         public void Open(string repo)
@@ -38,14 +29,11 @@ namespace SourceGit.Models
             Process.Start(new ProcessStartInfo()
             {
                 WorkingDirectory = repo,
-                FileName = _execFile,
-                Arguments = _execArgsGenerator.Invoke(repo),
+                FileName = ExecFile,
+                Arguments = ExecArgsGenerator.Invoke(repo),
                 UseShellExecute = false,
             });
         }
-
-        private string _execFile = string.Empty;
-        private Func<string, string> _execArgsGenerator = null;
     }
 
     public class JetBrainsState
