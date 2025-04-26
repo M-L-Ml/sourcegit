@@ -21,16 +21,12 @@ namespace SourceGit.Models
             return input;
         }
 
-        public static bool TryParseUri(string url, out Uri? uri)
+        public static Uri? ParseUri(string url)
         {
-            uri = null;
-            if (string.IsNullOrWhiteSpace(url)) return false;
+            if (string.IsNullOrWhiteSpace(url)) return null;
             if (Uri.TryCreate(url, UriKind.Absolute, out var parsed))
-            {
-                uri = parsed;
-                return true;
-            }
-            return false;
+                return parsed;
+            return null;
         }
     }
 
@@ -44,13 +40,15 @@ namespace SourceGit.Models
     {
         public bool IsMatch(string url)
         {
-            if (!CommitLinkHelpers.TryParseUri(url, out var uri) || uri is null) return false;
+            var uri = CommitLinkHelpers.ParseUri(url);
+            if (uri is null) return false;
             return uri.Host.Equals(HostURLMainPart, StringComparison.OrdinalIgnoreCase);
         }
 
         public string ExtractRepo(string url)
         {
-            if (!CommitLinkHelpers.TryParseUri(url, out var uri) || uri is null) return string.Empty;
+            var uri = CommitLinkHelpers.ParseUri(url);
+            if (uri is null) return string.Empty;
             var res = uri.AbsolutePath.TrimStart('/');
             if (NeedTrim)
             {
