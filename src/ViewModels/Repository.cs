@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -612,7 +612,16 @@ namespace SourceGit.ViewModels
 
                 var item = new MenuItem();
                 item.Header = App.Text("Repository.OpenIn", dupTool.Name);
-                item.Icon = new Image { Width = 16, Height = 16, Source = dupTool.IconImage };
+                try
+                {
+                    var asset = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://SourceGit/Resources/Images/ExternalToolIcons/{dupTool.IconName}.png", UriKind.RelativeOrAbsolute));
+                    item.Icon = new Image { Width = 16, Height = 16, Source = new Bitmap(asset) };
+                }
+                catch
+                {
+                    // If icon not found, show no icon or a default one
+                    item.Icon = null;
+                }
                 item.Click += (_, e) =>
                 {
                     dupTool.Open(_fullpath);
