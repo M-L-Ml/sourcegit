@@ -5,11 +5,6 @@ namespace SourceGit.Native
     /// </summary>
     public interface IOSPlatform
     {
-        string GetProgramFilesPath();
-        string GetLocalAppDataPath();
-        string GetEnvVariable(string name);
-        bool FileExists(string path);
-        bool DirectoryExists(string path);
         // Add more as needed for tool discovery
     }
 }

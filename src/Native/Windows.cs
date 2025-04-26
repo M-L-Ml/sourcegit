@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,7 +13,7 @@ using Avalonia.Threading;
 namespace SourceGit.Native
 {
     [SupportedOSPlatform("windows")]
-    internal class Windows : OS.IBackend
+    internal class Windows : OS.IBackend, IOSPlatform
     {
         [StructLayout(LayoutKind.Sequential)]
         internal struct RTL_OSVERSIONINFOEX
@@ -399,5 +399,13 @@ namespace SourceGit.Native
 
             return null;
         }
+
+        // IOSPlatform implementation
+        public string GetProgramFilesPath() => Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+        public string GetLocalAppDataPath() => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        public string GetEnvVariable(string name) => Environment.GetEnvironmentVariable(name) ?? string.Empty;
+        public bool FileExists(string path) => File.Exists(path);
+        public bool DirectoryExists(string path) => Directory.Exists(path);
+        // Add more as needed for tool discovery
     }
 }

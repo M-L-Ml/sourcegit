@@ -77,13 +77,15 @@ namespace SourceGit.Models
 
     public class ExternalToolsFinder
     {
+        private readonly SourceGit.Native.IOSPlatform _os;
+
         public List<ExternalTool> Founded
         {
             get;
             private set;
         } = new List<ExternalTool>();
 
-        public ExternalToolsFinder()
+        public ExternalToolsFinder(SourceGit.Native.IOSPlatform os)
         {
             var customPathsConfig = Path.Combine(Native.OS.DataDir, "external_editors.json");
             try
@@ -95,7 +97,6 @@ namespace SourceGit.Models
             {
                 // Ignore
             }
-
             if (_customPaths == null)
                 _customPaths = new ExternalToolPaths();
         }
