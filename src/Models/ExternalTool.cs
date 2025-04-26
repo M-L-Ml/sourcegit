@@ -113,34 +113,71 @@ namespace SourceGit.Models
             }
         }
 
+        /// <summary>
+        /// Adds an external editor tool to the list, using the provided parameters.
+        /// </summary>
+        public void AddEditorTool(string name, string icon, Func<string> platformFinder, Func<string, string> execArgsGenerator = null)
+        {
+            TryAdd(name, icon, platformFinder, execArgsGenerator);
+        }
+
+        /// <summary>
+        /// Information for parameterizing editor tools.
+        /// </summary>
+        public class EditorToolInfo
+        {
+            public string Name { get; set; }
+            public string Icon { get; set; }
+            public Func<string> Finder { get; set; }
+            public Func<string, string> ExecArgsGenerator { get; set; }
+        }
+
+        /// <summary>
+        /// Adds a predefined set of common editor tools.
+        /// </summary>
+        public void AddDefaultEditorTools(IEnumerable<EditorToolInfo> tools)
+        {
+            foreach (var tool in tools)
+            {
+                AddEditorTool(tool.Name, tool.Icon, tool.Finder, tool.ExecArgsGenerator);
+            }
+        }
+
+        // Deprecated: Use AddEditorTool instead for new code
+        [Obsolete("Use AddEditorTool instead.")]
         public void VSCode(Func<string> platformFinder)
         {
-            TryAdd("Visual Studio Code", "vscode", platformFinder);
+            AddEditorTool("Visual Studio Code", "vscode", platformFinder);
         }
 
+        [Obsolete("Use AddEditorTool instead.")]
         public void VSCodeInsiders(Func<string> platformFinder)
         {
-            TryAdd("Visual Studio Code - Insiders", "vscode_insiders", platformFinder);
+            AddEditorTool("Visual Studio Code - Insiders", "vscode_insiders", platformFinder);
         }
 
+        [Obsolete("Use AddEditorTool instead.")]
         public void VSCodium(Func<string> platformFinder)
         {
-            TryAdd("VSCodium", "codium", platformFinder);
+            AddEditorTool("VSCodium", "codium", platformFinder);
         }
 
+        [Obsolete("Use AddEditorTool instead.")]
         public void Fleet(Func<string> platformFinder)
         {
-            TryAdd("Fleet", "fleet", platformFinder);
+            AddEditorTool("Fleet", "fleet", platformFinder);
         }
 
+        [Obsolete("Use AddEditorTool instead.")]
         public void SublimeText(Func<string> platformFinder)
         {
-            TryAdd("Sublime Text", "sublime_text", platformFinder);
+            AddEditorTool("Sublime Text", "sublime_text", platformFinder);
         }
 
+        [Obsolete("Use AddEditorTool instead.")]
         public void Zed(Func<string> platformFinder)
         {
-            TryAdd("Zed", "zed", platformFinder);
+            AddEditorTool("Zed", "zed", platformFinder);
         }
 
         public void FindJetBrainsFromToolbox(Func<string> platformFinder)
