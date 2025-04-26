@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SourceGit.Models
 {
@@ -45,10 +46,12 @@ namespace SourceGit.Models
             return uri.Host.Equals(HostURLMainPart, StringComparison.OrdinalIgnoreCase);
         }
 
+        [return: MaybeNull]
         public string ExtractRepo(string url)
         {
             var uri = CommitLinkHelpers.ParseUri(url);
-            if (uri is null) return string.Empty;
+            if (uri is null) 
+                return null;
             var res = uri.AbsolutePath.TrimStart('/');
             if (NeedTrim)
             {
