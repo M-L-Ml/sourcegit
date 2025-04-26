@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SourceGit.Native;
@@ -143,41 +144,75 @@ namespace SourceGit.Models
             }
         }
 
+        /// <summary>
+        /// Public static array of default editor definitions.
+        /// </summary>
+        public static readonly EditorToolInfo[] DefaultEditors = new EditorToolInfo[]
+        {
+            new EditorToolInfo { Name = "Visual Studio Code", Icon = "vscode", Finder = () => VSCodeFinder() },
+            new EditorToolInfo { Name = "Visual Studio Code - Insiders", Icon = "vscode_insiders", Finder = () => VSCodeInsidersFinder() },
+            new EditorToolInfo { Name = "VSCodium", Icon = "codium", Finder = () => VSCodiumFinder() },
+            new EditorToolInfo { Name = "Fleet", Icon = "fleet", Finder = () => FleetFinder() },
+            new EditorToolInfo { Name = "Sublime Text", Icon = "sublime_text", Finder = () => SublimeTextFinder() },
+            new EditorToolInfo { Name = "Zed", Icon = "zed", Finder = () => ZedFinder() },
+        };
+
+        // These static finder methods must be implemented elsewhere in the codebase or here as stubs.
+        // For illustration, here are stubs (replace with actual logic as needed):
+        private static string VSCodeFinder() => "";
+        private static string VSCodeInsidersFinder() => "";
+        private static string VSCodiumFinder() => "";
+        private static string FleetFinder() => "";
+        private static string SublimeTextFinder() => "";
+        private static string ZedFinder() => "";
+
         // Deprecated: Use AddEditorTool instead for new code
         [Obsolete("Use AddEditorTool instead.")]
         public void VSCode(Func<string> platformFinder)
         {
-            AddEditorTool("Visual Studio Code", "vscode", platformFinder);
+            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Visual Studio Code");
+            if (tool != null)
+                AddEditorTool(tool.Name, tool.Icon, platformFinder);
         }
 
         [Obsolete("Use AddEditorTool instead.")]
         public void VSCodeInsiders(Func<string> platformFinder)
         {
-            AddEditorTool("Visual Studio Code - Insiders", "vscode_insiders", platformFinder);
+            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Visual Studio Code - Insiders");
+            if (tool != null)
+                AddEditorTool(tool.Name, tool.Icon, platformFinder);
         }
 
         [Obsolete("Use AddEditorTool instead.")]
         public void VSCodium(Func<string> platformFinder)
         {
-            AddEditorTool("VSCodium", "codium", platformFinder);
+            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "VSCodium");
+            if (tool != null)
+                AddEditorTool(tool.Name, tool.Icon, platformFinder);
         }
 
         [Obsolete("Use AddEditorTool instead.")]
         public void Fleet(Func<string> platformFinder)
         {
-            AddEditorTool("Fleet", "fleet", platformFinder);
+            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Fleet");
+            if (tool != null)
+                AddEditorTool(tool.Name, tool.Icon, platformFinder);
         }
 
         [Obsolete("Use AddEditorTool instead.")]
         public void SublimeText(Func<string> platformFinder)
         {
-            AddEditorTool("Sublime Text", "sublime_text", platformFinder);
+            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Sublime Text");
+            if (tool != null)
+                AddEditorTool(tool.Name, tool.Icon, platformFinder);
         }
 
         [Obsolete("Use AddEditorTool instead.")]
         public void Zed(Func<string> platformFinder)
         {
-            AddEditorTool("Zed", "zed", platformFinder);
+            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Zed");
+            if (tool != null)
+                AddEditorTool(tool.Name, tool.Icon, platformFinder);
         }
 
         public void FindJetBrainsFromToolbox(Func<string> platformFinder)
