@@ -24,6 +24,7 @@
     <Compile Include="App.cs" />
     <Compile Include="ExternalTool.cs" />
     <Compile Include="ShellOrTerminal.cs" />
+    <Compile Include="InteractiveRebase.cs" />
   </ItemGroup>
 
 </Project>

@@ -17,6 +17,7 @@
     <Compile Remove="App.cs" />
     <Compile Remove="ExternalTool.cs" />
     <Compile Remove="ShellOrTerminal.cs" />
+    <Compile Remove="InteractiveRebase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Models.Native.csproj" />
