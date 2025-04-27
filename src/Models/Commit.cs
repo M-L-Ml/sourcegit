@@ -117,7 +117,7 @@ namespace SourceGit.Models
     public class CommitFullMessage
     {
         public string Message { get; set; } = string.Empty;
-        public List<Hyperlink> Links { get; set; } = [];
+        public List<InlineElement> Inlines { get; set; } = [];
     }
 
     public class InteractiveCommit
