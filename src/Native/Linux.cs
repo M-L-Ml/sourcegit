@@ -38,42 +38,42 @@ namespace SourceGit.Native
             { 
                 Name = "Visual Studio Code", 
                 Icon = "vscode", 
-                Finder = () => FindExecutable("code") 
+                LocationFinder = () => FindExecutable("code") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code - Insiders", 
                 Icon = "vscode_insiders", 
-                Finder = () => FindExecutable("code-insiders") 
+                LocationFinder = () => FindExecutable("code-insiders") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "VSCodium", 
                 Icon = "codium", 
-                Finder = () => FindExecutable("codium") 
+                LocationFinder = () => FindExecutable("codium") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Fleet", 
                 Icon = "fleet", 
-                Finder = FindJetBrainsFleet 
+                LocationFinder = FindJetBrainsFleet 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Sublime Text", 
                 Icon = "sublime_text", 
-                Finder = () => FindExecutable("subl") 
+                LocationFinder = () => FindExecutable("subl") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Zed", 
                 Icon = "zed", 
-                Finder = () => FindExecutable("zeditor") 
+                LocationFinder = () => FindExecutable("zeditor") 
             });
             
             finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/JetBrains/Toolbox");

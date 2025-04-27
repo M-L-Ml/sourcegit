@@ -147,42 +147,42 @@ namespace SourceGit.Native
             { 
                 Name = "Visual Studio Code", 
                 Icon = "vscode", 
-                Finder = FindVSCode 
+                LocationFinder = FindVSCode 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code - Insiders", 
                 Icon = "vscode_insiders", 
-                Finder = FindVSCodeInsiders 
+                LocationFinder = FindVSCodeInsiders 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "VSCodium", 
                 Icon = "codium", 
-                Finder = FindVSCodium 
+                LocationFinder = FindVSCodium 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Fleet", 
                 Icon = "fleet", 
-                Finder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\Fleet\\Fleet.exe" 
+                LocationFinder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\Fleet\\Fleet.exe" 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Sublime Text", 
                 Icon = "sublime_text", 
-                Finder = FindSublimeText 
+                LocationFinder = FindSublimeText 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio", 
                 Icon = "vs", 
-                Finder = FindVisualStudio,
+                LocationFinder = FindVisualStudio,
                 ExecArgsGenerator = GenerateCommandlineArgsForVisualStudio
             });
             

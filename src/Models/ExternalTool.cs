@@ -140,7 +140,7 @@ namespace SourceGit.Models
         /// <returns>True if the tool was added, false otherwise</returns>
         public bool AddEditorTool(EditorToolInfo toolInfo)
         {
-            return TryAdd(toolInfo.Name, toolInfo.Icon, toolInfo.Finder, toolInfo.ExecArgsGenerator);
+            return TryAdd(toolInfo.Name, toolInfo.Icon, toolInfo.LocationFinder, toolInfo.ExecArgsGenerator);
         }
 
         /// <summary>
@@ -161,6 +161,7 @@ namespace SourceGit.Models
             public required string Icon { get; set; }
             public Func<string, string>? ExecArgsGenerator { get; set; }
             // Add more as needed for broader tool support
+            public required Func<string> LocationFinder { get; set; }
         }
 
         /// <summary>
@@ -168,7 +169,6 @@ namespace SourceGit.Models
         /// </summary>
         public class EditorToolInfo : ExternalToolInfo
         {
-            public required Func<string> Finder { get; set; }
         }
 
         /// <summary>
@@ -184,12 +184,12 @@ namespace SourceGit.Models
 
         public static readonly EditorToolInfo[] DefaultEditors = new EditorToolInfo[]
         {
-            new EditorToolInfo { Name = "Visual Studio Code", Icon = "vscode", Finder = () => VSCodeFinder() },
-            new EditorToolInfo { Name = "Visual Studio Code - Insiders", Icon = "vscode_insiders", Finder = () => VSCodeInsidersFinder() },
-            new EditorToolInfo { Name = "VSCodium", Icon = "codium", Finder = () => VSCodiumFinder() },
-            new EditorToolInfo { Name = "Fleet", Icon = "fleet", Finder = () => FleetFinder() },
-            new EditorToolInfo { Name = "Sublime Text", Icon = "sublime_text", Finder = () => SublimeTextFinder() },
-            new EditorToolInfo { Name = "Zed", Icon = "zed", Finder = () => ZedFinder() },
+            new EditorToolInfo { Name = "Visual Studio Code", Icon = "vscode", LocationFinder = () => VSCodeFinder() },
+            new EditorToolInfo { Name = "Visual Studio Code - Insiders", Icon = "vscode_insiders", LocationFinder = () => VSCodeInsidersFinder() },
+            new EditorToolInfo { Name = "VSCodium", Icon = "codium", LocationFinder = () => VSCodiumFinder() },
+            new EditorToolInfo { Name = "Fleet", Icon = "fleet", LocationFinder = () => FleetFinder() },
+            new EditorToolInfo { Name = "Sublime Text", Icon = "sublime_text", LocationFinder = () => SublimeTextFinder() },
+            new EditorToolInfo { Name = "Zed", Icon = "zed", LocationFinder = () => ZedFinder() },
         };
 
         // These static finder methods must be implemented elsewhere in the codebase or here as stubs.
