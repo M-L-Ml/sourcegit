@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using App = SourceGit.Models.App;
 
 namespace SourceGit.Commands
 {

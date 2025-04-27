@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Avalonia.Threading;
+using App = SourceGit.Models.App;
 
 namespace SourceGit.Commands
 {

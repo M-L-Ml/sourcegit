@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 
 using Avalonia.Threading;
+using SourceGit.Models;
 
 namespace SourceGit.Commands
 {

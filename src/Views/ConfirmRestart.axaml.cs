@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 
 using Avalonia.Interactivity;
+using App = SourceGit.ViewModels.App;
 
 namespace SourceGit.Views
 {

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 
 using Avalonia.Threading;
+using SourceGit.Models;
 
 namespace SourceGit.Commands
 {
