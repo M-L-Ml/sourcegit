@@ -155,10 +155,9 @@ namespace SourceGit.Models
         public class ExternalToolInfo
         {
             public required string Name { get; set; }
-            public required string Icon { get; set; }
+            public string? Icon { get; set; }
             public Func<string, string>? ExecArgsGenerator { get; set; }
             // Add more as needed for broader tool support
-            public required Func<string> LocationFinder { get; set; }
         }
 
         /// <summary>
@@ -166,6 +165,7 @@ namespace SourceGit.Models
         /// </summary>
         public class EditorToolInfo : ExternalToolInfo
         {
+            public required Func<string> LocationFinder { get; set; }
         }
 
         /// <summary>
