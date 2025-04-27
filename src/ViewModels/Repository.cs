@@ -442,7 +442,7 @@ namespace SourceGit.ViewModels
             {
                 try
                 {
-                    _settings = JsonSerializer.Deserialize(File.ReadAllText(settingsFile), JsonCodeGen.Default.RepositorySettings);
+                    _settings = JsonSerializer.Deserialize(File.ReadAllText(settingsFile), Models.JsonCodeGen.Default.RepositorySettings);
                 }
                 catch
                 {
@@ -495,7 +495,7 @@ namespace SourceGit.ViewModels
 
             _settings.LastCommitMessage = _workingCopy.CommitMessage;
 
-            var settingsSerialized = JsonSerializer.Serialize(_settings, JsonCodeGen.Default.RepositorySettings);
+            var settingsSerialized = JsonSerializer.Serialize(_settings, Models.JsonCodeGen.Default.RepositorySettings);
             try
             {
                 File.WriteAllText(Path.Combine(_gitDir, "sourcegit.settings"), settingsSerialized);

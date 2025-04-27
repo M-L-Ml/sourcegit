@@ -174,7 +174,7 @@ namespace SourceGit.ViewModels
                     Message = item.FullMessage,
                 });
             }
-            File.WriteAllText(saveFile, JsonSerializer.Serialize(collection, JsonCodeGen.Default.InteractiveRebaseJobCollection));
+            File.WriteAllText(saveFile, JsonSerializer.Serialize(collection, ModelsN. JsonCodeGen.Default.InteractiveRebaseJobCollection));
 
             var log = _repo.CreateLog("Interactive Rebase");
             return Task.Run(() =>

@@ -21,7 +21,7 @@ namespace SourceGit
             Debug.WriteLine(context + ": " + message);
         }
     }
-    namespace Models
+    namespace ModelsN
     {
         [JsonSourceGenerationOptions(
          WriteIndented = true,
@@ -35,6 +35,8 @@ namespace SourceGit
         [JsonSerializable(typeof(Models.ExternalToolPaths))]
         [JsonSerializable(typeof(Models.InteractiveRebaseJobCollection))]
         [JsonSerializable(typeof(Models.JetBrainsState))]
+        //[JsonSerializable(typeof(Models.RepositorySettings))]
+        
         public partial class JsonCodeGen : JsonSerializerContext { }
     }
 }

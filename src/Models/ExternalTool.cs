@@ -104,7 +104,7 @@ namespace SourceGit.Models
             try
             {
                 if (File.Exists(customPathsConfig))
-                    _customPaths = JsonSerializer.Deserialize(File.ReadAllText(customPathsConfig), JsonCodeGen.Default.ExternalToolPaths);
+                    _customPaths = JsonSerializer.Deserialize(File.ReadAllText(customPathsConfig),ModelsN. JsonCodeGen.Default.ExternalToolPaths);
             }
             catch
             {
@@ -230,7 +230,7 @@ namespace SourceGit.Models
             var state = Path.Combine(platformFinder(), "state.json");
             if (File.Exists(state))
             {
-                var stateData = JsonSerializer.Deserialize(File.ReadAllText(state), JsonCodeGen.Default.JetBrainsState);
+                var stateData = JsonSerializer.Deserialize(File.ReadAllText(state), ModelsN.JsonCodeGen.Default.JetBrainsState);
                 foreach (var tool in stateData.Tools)
                 {
                     if (exclude.Contains(tool.ToolId.ToLowerInvariant()))

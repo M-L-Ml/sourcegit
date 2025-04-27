@@ -427,7 +427,7 @@ namespace SourceGit
             if (!File.Exists(jobsFile))
                 return true;
 
-            var collection = JsonSerializer.Deserialize(File.ReadAllText(jobsFile), JsonCodeGen.Default.InteractiveRebaseJobCollection);
+            var collection = JsonSerializer.Deserialize(File.ReadAllText(jobsFile), ModelsN.JsonCodeGen.Default.InteractiveRebaseJobCollection);
             var lines = new List<string>();
             foreach (var job in collection.Jobs)
             {
@@ -484,7 +484,7 @@ namespace SourceGit
 
             var origHead = File.ReadAllText(origHeadFile).Trim();
             var onto = File.ReadAllText(ontoFile).Trim();
-            var collection = JsonSerializer.Deserialize(File.ReadAllText(jobsFile), JsonCodeGen.Default.InteractiveRebaseJobCollection);
+            var collection = JsonSerializer.Deserialize(File.ReadAllText(jobsFile), ModelsN.JsonCodeGen.Default.InteractiveRebaseJobCollection);
             if (!collection.Onto.Equals(onto) || !collection.OrigHead.Equals(origHead))
                 return true;
 
