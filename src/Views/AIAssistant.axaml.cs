@@ -10,6 +10,7 @@ using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.TextMate;
+using SourceGit.ViewModels;
 
 namespace SourceGit.Views
 {

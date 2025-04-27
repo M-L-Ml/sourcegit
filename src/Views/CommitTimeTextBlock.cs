@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using SourceGit.ViewModels;
 
 namespace SourceGit.Views
 {

@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Avalonia;
+using SourceGit.Models;
 
 namespace SourceGit.Native
 {

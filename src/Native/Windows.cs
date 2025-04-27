@@ -10,6 +10,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 
+using SourceGit.Models;
+
 namespace SourceGit.Native
 {
     [SupportedOSPlatform("windows")]
