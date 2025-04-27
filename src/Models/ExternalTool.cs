@@ -75,7 +75,7 @@ namespace SourceGit.Models
     /// </summary>
     public class ExternalToolInfo
     {
-        public required string Name { get; set; }
+        public string Name { get; set; }
         public string? IconName { get; set; }
         public Func<string, string>? ExecArgsGenerator { get; set; }
         // Add more as needed for broader tool support
