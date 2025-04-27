@@ -144,15 +144,6 @@ namespace SourceGit.Models
         }
 
         /// <summary>
-        /// Adds an external editor tool to the list, using the provided parameters.
-        /// </summary>
-        /// <returns>True if the tool was added, false otherwise</returns>
-        public bool AddEditorTool(string name, string icon, Func<string> platformFinder, Func<string, string>? execArgsGenerator = null)
-        {
-            return TryAdd(name, icon, platformFinder, execArgsGenerator);
-        }
-
-        /// <summary>
         /// Encapsulates information for any external tool (editor or otherwise).
         /// </summary>
         public class ExternalToolInfo
@@ -184,12 +175,12 @@ namespace SourceGit.Models
 
         public static readonly EditorToolInfo[] DefaultEditors = new EditorToolInfo[]
         {
-            new EditorToolInfo { Name = "Visual Studio Code", Icon = "vscode", LocationFinder = () => VSCodeFinder() },
-            new EditorToolInfo { Name = "Visual Studio Code - Insiders", Icon = "vscode_insiders", LocationFinder = () => VSCodeInsidersFinder() },
-            new EditorToolInfo { Name = "VSCodium", Icon = "codium", LocationFinder = () => VSCodiumFinder() },
-            new EditorToolInfo { Name = "Fleet", Icon = "fleet", LocationFinder = () => FleetFinder() },
-            new EditorToolInfo { Name = "Sublime Text", Icon = "sublime_text", LocationFinder = () => SublimeTextFinder() },
-            new EditorToolInfo { Name = "Zed", Icon = "zed", LocationFinder = () => ZedFinder() },
+            new() { Name = "Visual Studio Code", Icon = "vscode", LocationFinder = () => VSCodeFinder() },
+            new() { Name = "Visual Studio Code - Insiders", Icon = "vscode_insiders", LocationFinder = () => VSCodeInsidersFinder() },
+            new() { Name = "VSCodium", Icon = "codium", LocationFinder = () => VSCodiumFinder() },
+            new() { Name = "Fleet", Icon = "fleet", LocationFinder = () => FleetFinder() },
+            new() { Name = "Sublime Text", Icon = "sublime_text", LocationFinder = () => SublimeTextFinder() },
+            new() { Name = "Zed", Icon = "zed", LocationFinder = () => ZedFinder() },
         };
 
         // These static finder methods must be implemented elsewhere in the codebase or here as stubs.
