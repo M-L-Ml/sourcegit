@@ -143,37 +143,37 @@ namespace SourceGit.Native
             var finder = new Models.ExternalToolsFinder();
             
             // Add standard editor tools using ExternalToolInfo2 objects
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code", 
                 LocationFinder = FindVSCode 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code - Insiders", 
                 LocationFinder = FindVSCodeInsiders 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "VSCodium", 
                 LocationFinder = FindVSCodium 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Fleet", 
                 LocationFinder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\Fleet\\Fleet.exe" 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Sublime Text", 
                 LocationFinder = FindSublimeText 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Visual Studio", 
                 LocationFinder = FindVisualStudio,

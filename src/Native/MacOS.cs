@@ -69,37 +69,37 @@ namespace SourceGit.Native
             var finder = new Models.ExternalToolsFinder();
             
             // Add standard editor tools using ExternalToolInfo2 objects
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code", 
                 LocationFinder = () => "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code - Insiders", 
                 LocationFinder = () => "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code" 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "VSCodium", 
                 LocationFinder = () => "/Applications/VSCodium.app/Contents/Resources/app/bin/codium" 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Fleet", 
                 LocationFinder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Applications/Fleet.app/Contents/MacOS/Fleet" 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Sublime Text", 
                 LocationFinder = () => "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
+            finder.AddEditorTool(new Models.ExternalToolInfo2 
             { 
                 Name = "Zed", 
                 LocationFinder = () => File.Exists("/usr/local/bin/zed") ? "/usr/local/bin/zed" : "/Applications/Zed.app/Contents/MacOS/cli" 

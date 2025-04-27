@@ -9,7 +9,7 @@ using SourceGit.Native;
 namespace SourceGit.Models
 {
     // Pure domain model: no UI dependencies
-    public class ExternalTool : ExternalToolsFinder.ExternalToolInfo
+    public class ExternalTool : ExternalToolInfo
     {
         public string ExecFile { get; private set; }
 
@@ -70,10 +70,27 @@ namespace SourceGit.Models
         [JsonPropertyName("tools")]
         public Dictionary<string, string> Tools { get; set; } = new Dictionary<string, string>();
     }
+    /// <summary>
+    /// Encapsulates information for any external tool (editor or otherwise).
+    /// </summary>
+    public class ExternalToolInfo
+    {
+        public required string Name { get; set; }
+        public string? IconName { get; set; }
+        public Func<string, string>? ExecArgsGenerator { get; set; }
+        // Add more as needed for broader tool support
+    }
 
+    /// <summary>
+    /// Information for parameterizing editor tools (inherits from ExternalToolInfo for backward compatibility).
+    /// </summary>
+    public class ExternalToolInfo2 : ExternalToolInfo
+    {
+        public required Func<string> LocationFinder { get; set; }
+    }
     public class ExternalToolsFinder
     {
-       // private readonly SourceGit.Native.IOSPlatform _os;
+        // private readonly SourceGit.Native.IOSPlatform _os;
 
         public List<ExternalTool> Founded
         {
@@ -105,7 +122,7 @@ namespace SourceGit.Models
         public bool TryAdd(ExternalToolInfo2 toolInfo)
         {
             string toolPath;
-            
+
             // First check for custom path in settings
             if (_customPaths.Tools.TryGetValue(toolInfo.Name, out var customPath) && File.Exists(customPath))
             {
@@ -120,7 +137,7 @@ namespace SourceGit.Models
                     return false;
                 }
             }
-            
+
             // Add the tool with the found path
             Founded_Add(new ExternalTool(toolInfo.Name, toolInfo.IconName ?? toolInfo.Name.ToLowerInvariant(), toolPath, toolInfo.ExecArgsGenerator));
             return true;
@@ -134,21 +151,21 @@ namespace SourceGit.Models
         /// <param name="finder">Function that returns the path to the tool</param>
         /// <param name="execArgsGenerator">Optional function to generate command line arguments</param>
         /// <returns>True if the tool was added, false otherwise</returns>
-        public bool TryAdd(string name, string icon, Func<string> finder, Func<string, string>? execArgsGenerator = null)
+        private bool TryAdd(string name, string icon, Func<string> finder, Func<string, string>? execArgsGenerator = null)
         {
-            var toolInfo = new ExternalToolInfo2 
-            { 
-                Name = name, 
-                IconName = icon, 
-                LocationFinder = finder, 
-                ExecArgsGenerator = execArgsGenerator 
+            var toolInfo = new ExternalToolInfo2
+            {
+                Name = name,
+                IconName = icon,
+                LocationFinder = finder,
+                ExecArgsGenerator = execArgsGenerator
             };
             return TryAdd(toolInfo);
         }
 
         private void Founded_Add(ExternalTool externalTool)
         {
-           Founded.Add(externalTool);
+            Founded.Add(externalTool);
         }
 
 
@@ -164,7 +181,7 @@ namespace SourceGit.Models
             {
                 toolInfo.IconName = iconName;
             }
-            
+
             return TryAdd(toolInfo);
         }
 
@@ -180,24 +197,7 @@ namespace SourceGit.Models
             ["Visual Studio"] = "vs"
         };
 
-        /// <summary>
-        /// Encapsulates information for any external tool (editor or otherwise).
-        /// </summary>
-        public class ExternalToolInfo
-        {
-            public required string Name { get; set; }
-            public string? IconName { get; set; }
-            public Func<string, string>? ExecArgsGenerator { get; set; }
-            // Add more as needed for broader tool support
-        }
 
-        /// <summary>
-        /// Information for parameterizing editor tools (inherits from ExternalToolInfo for backward compatibility).
-        /// </summary>
-        public class ExternalToolInfo2 : ExternalToolInfo
-        {
-            public required Func<string> LocationFinder { get; set; }
-        }
 
         /// <summary>
         /// Adds a predefined set of common editor tools.
@@ -209,10 +209,11 @@ namespace SourceGit.Models
                 AddEditorTool(tool);
             }
         }
-[Obsolete]
+
+
         [Obsolete("Use the AddEditorTool method with ExternalToolInfo2 instead")]
-        public static readonly ExternalToolInfo[] DefaultEditors = 
-        {
+        public static readonly ExternalToolInfo[] DefaultEditors =
+                {
             new() { Name = "Visual Studio Code", IconName = "vscode" },
             new() { Name = "Visual Studio Code - Insiders", IconName = "vscode_insiders" },
             new() { Name = "VSCodium", IconName = "codium" },
