@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SourceGit.Native;
@@ -112,7 +111,7 @@ namespace SourceGit.Models
         public bool TryAdd(string name, string icon, Func<string> finder, Func<string, string>? execArgsGenerator = null)
         {
             string toolPath;
-            
+
             // First check for custom path in settings
             if (_customPaths.Tools.TryGetValue(name, out var customPath) && File.Exists(customPath))
             {
@@ -127,10 +126,15 @@ namespace SourceGit.Models
                     return false;
                 }
             }
-            
+            NewMethod(name, icon, execArgsGenerator, toolPath);
+            return true;
+        }
+
+        private void NewMethod(string name, string icon, Func<string, string>? execArgsGenerator, string toolPath)
+        {
+
             // Add the tool with the found path
             Founded.Add(new ExternalTool(name, icon, toolPath, execArgsGenerator));
-            return true;
         }
 
         /// <summary>
@@ -213,6 +217,6 @@ namespace SourceGit.Models
             }
         }
 
-        private ExternalToolPaths _customPaths = null;
+        private readonly ExternalToolPaths _customPaths = null;
     }
 }
