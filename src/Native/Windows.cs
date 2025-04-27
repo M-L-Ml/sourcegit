@@ -229,110 +229,102 @@ namespace SourceGit.Native
         }
 
         #region EXTERNAL_EDITOR_FINDER
-        private string FindVSCode()
+        private class RegistryEditorFinder
         {
-            var localMachine = Microsoft.Win32.RegistryKey.OpenBaseKey(
+            private readonly string _systemRegistryPath;
+            private readonly string _userRegistryPath;
+            private readonly Func<string, string> _pathProcessor;
+
+            public RegistryEditorFinder(string systemRegistryPath, string userRegistryPath, Func<string, string> pathProcessor = null)
+            {
+                _systemRegistryPath = systemRegistryPath;
+                _userRegistryPath = userRegistryPath;
+                _pathProcessor = pathProcessor ?? (path => path);
+            }
+
+            public string Find()
+            {
+                // Try system-wide installation first
+                var localMachine = Microsoft.Win32.RegistryKey.OpenBaseKey(
                     Microsoft.Win32.RegistryHive.LocalMachine,
                     Microsoft.Win32.RegistryView.Registry64);
 
-            // VSCode (system)
-            var systemVScode = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{EA457B21-F73E-494C-ACAB-524FDE069978}_is1");
-            if (systemVScode != null)
+                var systemEditor = localMachine.OpenSubKey(_systemRegistryPath);
+                if (systemEditor != null)
+                {
+                    var path = systemEditor.GetValue("DisplayIcon") as string;
+                    return _pathProcessor(path);
+                }
+
+                // Then try user installation
+                if (!string.IsNullOrEmpty(_userRegistryPath))
+                {
+                    var currentUser = Microsoft.Win32.RegistryKey.OpenBaseKey(
+                        Microsoft.Win32.RegistryHive.CurrentUser,
+                        Microsoft.Win32.RegistryView.Registry64);
+
+                    var userEditor = currentUser.OpenSubKey(_userRegistryPath);
+                    if (userEditor != null)
+                    {
+                        var path = userEditor.GetValue("DisplayIcon") as string;
+                        return _pathProcessor(path);
+                    }
+                }
+
+                return string.Empty;
+            }
+        }
+
+        private static class EditorFinderFactory
+        {
+            public static RegistryEditorFinder CreateVSCodeFinder()
             {
-                return systemVScode.GetValue("DisplayIcon") as string;
+                return new RegistryEditorFinder(
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{EA457B21-F73E-494C-ACAB-524FDE069978}_is1",
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{771FD6B0-FA20-440A-A002-3B3BAC16DC50}_is1");
             }
 
-            var currentUser = Microsoft.Win32.RegistryKey.OpenBaseKey(
-                    Microsoft.Win32.RegistryHive.CurrentUser,
-                    Microsoft.Win32.RegistryView.Registry64);
-
-            // VSCode (user)
-            var vscode = currentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{771FD6B0-FA20-440A-A002-3B3BAC16DC50}_is1");
-            if (vscode != null)
+            public static RegistryEditorFinder CreateVSCodeInsidersFinder()
             {
-                return vscode.GetValue("DisplayIcon") as string;
+                return new RegistryEditorFinder(
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1287CAD5-7C8D-410D-88B9-0D1EE4A83FF2}_is1",
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{217B4C08-948D-4276-BFBB-BEE930AE5A2C}_is1");
             }
 
-            return string.Empty;
+            public static RegistryEditorFinder CreateVSCodiumFinder()
+            {
+                return new RegistryEditorFinder(
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{88DA3577-054F-4CA1-8122-7D820494CFFB}_is1",
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2E1F05D1-C245-4562-81EE-28188DB6FD17}_is1");
+            }
+
+            public static RegistryEditorFinder CreateSublimeTextFinder()
+            {
+                return new RegistryEditorFinder(
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Sublime Text_is1",
+                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Sublime Text 3_is1",
+                    path => Path.Combine(Path.GetDirectoryName(path)!, "subl.exe"));
+            }
+        }
+
+        private string FindVSCode()
+        {
+            return EditorFinderFactory.CreateVSCodeFinder().Find();
         }
 
         private string FindVSCodeInsiders()
         {
-            var localMachine = Microsoft.Win32.RegistryKey.OpenBaseKey(
-                    Microsoft.Win32.RegistryHive.LocalMachine,
-                    Microsoft.Win32.RegistryView.Registry64);
-
-            // VSCode - Insiders (system)
-            var systemVScodeInsiders = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1287CAD5-7C8D-410D-88B9-0D1EE4A83FF2}_is1");
-            if (systemVScodeInsiders != null)
-            {
-                return systemVScodeInsiders.GetValue("DisplayIcon") as string;
-            }
-
-            var currentUser = Microsoft.Win32.RegistryKey.OpenBaseKey(
-                    Microsoft.Win32.RegistryHive.CurrentUser,
-                    Microsoft.Win32.RegistryView.Registry64);
-
-            // VSCode - Insiders (user)
-            var vscodeInsiders = currentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{217B4C08-948D-4276-BFBB-BEE930AE5A2C}_is1");
-            if (vscodeInsiders != null)
-            {
-                return vscodeInsiders.GetValue("DisplayIcon") as string;
-            }
-
-            return string.Empty;
+            return EditorFinderFactory.CreateVSCodeInsidersFinder().Find();
         }
 
         private string FindVSCodium()
         {
-            var localMachine = Microsoft.Win32.RegistryKey.OpenBaseKey(
-                    Microsoft.Win32.RegistryHive.LocalMachine,
-                    Microsoft.Win32.RegistryView.Registry64);
-
-            // VSCodium (system)
-            var systemVScodium = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{88DA3577-054F-4CA1-8122-7D820494CFFB}_is1");
-            if (systemVScodium != null)
-            {
-                return systemVScodium.GetValue("DisplayIcon") as string;
-            }
-
-            var currentUser = Microsoft.Win32.RegistryKey.OpenBaseKey(
-                    Microsoft.Win32.RegistryHive.CurrentUser,
-                    Microsoft.Win32.RegistryView.Registry64);
-
-            // VSCodium (user)
-            var vscodium = currentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2E1F05D1-C245-4562-81EE-28188DB6FD17}_is1");
-            if (vscodium != null)
-            {
-                return vscodium.GetValue("DisplayIcon") as string;
-            }
-
-            return string.Empty;
+            return EditorFinderFactory.CreateVSCodiumFinder().Find();
         }
 
         private string FindSublimeText()
         {
-            var localMachine = Microsoft.Win32.RegistryKey.OpenBaseKey(
-                    Microsoft.Win32.RegistryHive.LocalMachine,
-                    Microsoft.Win32.RegistryView.Registry64);
-
-            // Sublime Text 4
-            var sublime = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Sublime Text_is1");
-            if (sublime != null)
-            {
-                var icon = sublime.GetValue("DisplayIcon") as string;
-                return Path.Combine(Path.GetDirectoryName(icon)!, "subl.exe");
-            }
-
-            // Sublime Text 3
-            var sublime3 = localMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Sublime Text 3_is1");
-            if (sublime3 != null)
-            {
-                var icon = sublime3.GetValue("DisplayIcon") as string;
-                return Path.Combine(Path.GetDirectoryName(icon)!, "subl.exe");
-            }
-
-            return string.Empty;
+            return EditorFinderFactory.CreateSublimeTextFinder().Find();
         }
 
         private string FindVisualStudio()
