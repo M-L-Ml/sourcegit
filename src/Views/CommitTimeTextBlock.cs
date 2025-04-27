@@ -126,7 +126,7 @@ namespace SourceGit.Views
                 return App.Text("Period.JustNow");
 
             if (span.TotalHours < 1)
-                return App.Text("Period.MinutesAgo", (int)span.TotalMinutes);
+                return ViewModels.App.Text("Period.MinutesAgo", (int)span.TotalMinutes);
 
             if (span.TotalDays < 1)
             {

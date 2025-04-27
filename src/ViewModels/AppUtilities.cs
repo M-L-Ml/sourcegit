@@ -17,7 +17,7 @@ using Native = SourceGit.Native;
 
 namespace SourceGit.ViewModels
 {
-    public static class App
+    public class App: SourceGit.App
     {
         //public static void ShowWindow(object data, bool showAsDialog)
         //=>
