@@ -5,14 +5,15 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Models/Models.csproj" />
+    <ProjectReference Include="..\Converters\Converters.csproj" />
     <ProjectReference Include="..\ViewModels\ViewModels.csproj" />
-    <PackageReference Include="Avalonia"/>
-    <PackageReference Include="Avalonia.Desktop"/>
-    <PackageReference Include="Avalonia.Fonts.Inter"/>
-    <PackageReference Include="Avalonia.Themes.Fluent"/>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
-    <PackageReference Include="Avalonia.AvaloniaEdit"/>
-    <PackageReference Include="AvaloniaEdit.TextMate"/>
-    <PackageReference Include="CommunityToolkit.Mvvm"/>
+    <PackageReference Include="Avalonia.AvaloniaEdit" />
+    <PackageReference Include="AvaloniaEdit.TextMate" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
 </Project>
