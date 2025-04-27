@@ -219,6 +219,6 @@ namespace SourceGit.Models
             }
         }
 
-        private ExternalToolPaths _customPaths = null;
+        private readonly ExternalToolPaths _customPaths = null;
     }
 }
