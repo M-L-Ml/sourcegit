@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SourceGit.Native;
@@ -10,12 +9,9 @@ using SourceGit.Native;
 namespace SourceGit.Models
 {
     // Pure domain model: no UI dependencies
-    public class ExternalTool
+    public class ExternalTool : ExternalToolsFinder.ExternalToolInfo
     {
-        public string Name { get; private set; }
-        public string IconName { get; private set; } // Store icon name as string, not Bitmap
         public string ExecFile { get; private set; }
-        public Func<string, string> ExecArgsGenerator { get; private set; }
 
         public ExternalTool(string name, string iconName, string execFile, Func<string, string> execArgsGenerator = null)
         {
@@ -31,7 +27,7 @@ namespace SourceGit.Models
             {
                 WorkingDirectory = repo,
                 FileName = ExecFile,
-                Arguments = ExecArgsGenerator.Invoke(repo),
+                Arguments = ExecArgsGenerator?.Invoke(repo) ?? $"\"{repo}\"",
                 UseShellExecute = false,
             });
         }
@@ -64,7 +60,7 @@ namespace SourceGit.Models
         [JsonPropertyName("buildNumber")]
         public string BuildNumber { get; set; }
         [JsonPropertyName("installLocation")]
-        public string InstallLocation { get; set; }
+        public string? InstallLocation { get; set; }
         [JsonPropertyName("launchCommand")]
         public string LaunchCommand { get; set; }
     }
@@ -146,7 +142,7 @@ namespace SourceGit.Models
         /// <returns>True if the tool was added, false otherwise</returns>
         public bool AddEditorTool(EditorToolInfo toolInfo)
         {
-            return TryAdd(toolInfo.Name, toolInfo.Icon, toolInfo.LocationFinder, toolInfo.ExecArgsGenerator);
+            return TryAdd(toolInfo.Name, toolInfo.IconName, toolInfo.LocationFinder, toolInfo.ExecArgsGenerator);
         }
 
         /// <summary>
@@ -155,7 +151,7 @@ namespace SourceGit.Models
         public class ExternalToolInfo
         {
             public required string Name { get; set; }
-            public string? Icon { get; set; }
+            public string? IconName { get; set; }
             public Func<string, string>? ExecArgsGenerator { get; set; }
             // Add more as needed for broader tool support
         }
@@ -181,12 +177,12 @@ namespace SourceGit.Models
 
         public static readonly EditorToolInfo[] DefaultEditors = new EditorToolInfo[]
         {
-            new() { Name = "Visual Studio Code", Icon = "vscode", LocationFinder = () => VSCodeFinder() },
-            new() { Name = "Visual Studio Code - Insiders", Icon = "vscode_insiders", LocationFinder = () => VSCodeInsidersFinder() },
-            new() { Name = "VSCodium", Icon = "codium", LocationFinder = () => VSCodiumFinder() },
-            new() { Name = "Fleet", Icon = "fleet", LocationFinder = () => FleetFinder() },
-            new() { Name = "Sublime Text", Icon = "sublime_text", LocationFinder = () => SublimeTextFinder() },
-            new() { Name = "Zed", Icon = "zed", LocationFinder = () => ZedFinder() },
+            new() { Name = "Visual Studio Code", IconName = "vscode", LocationFinder = () => VSCodeFinder() },
+            new() { Name = "Visual Studio Code - Insiders", IconName = "vscode_insiders", LocationFinder = () => VSCodeInsidersFinder() },
+            new() { Name = "VSCodium", IconName = "codium", LocationFinder = () => VSCodiumFinder() },
+            new() { Name = "Fleet", IconName = "fleet", LocationFinder = () => FleetFinder() },
+            new() { Name = "Sublime Text", IconName = "sublime_text", LocationFinder = () => SublimeTextFinder() },
+            new() { Name = "Zed", IconName = "zed", LocationFinder = () => ZedFinder() },
         };
 
         // These static finder methods must be implemented elsewhere in the codebase or here as stubs.
@@ -211,12 +207,20 @@ namespace SourceGit.Models
                     if (exclude.Contains(tool.ToolId.ToLowerInvariant()))
                         continue;
 
+                    if (string.IsNullOrEmpty(tool.InstallLocation) || string.IsNullOrEmpty(tool.LaunchCommand))
+                        continue;
+
                     Founded_Add(new ExternalTool(
                         $"{tool.DisplayName} {tool.DisplayVersion}",
                         supported_icons.Contains(tool.ProductCode) ? $"JetBrains/{tool.ProductCode}" : "JetBrains/JB",
                         Path.Combine(tool.InstallLocation, tool.LaunchCommand)));
                 }
             }
+        }
+
+        public List<ExternalTool> ToList()
+        {
+            return Founded;
         }
 
         private readonly ExternalToolPaths _customPaths = null;

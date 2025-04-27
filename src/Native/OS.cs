@@ -17,7 +17,7 @@ namespace SourceGit.Native
 
             string FindGitExecutable();
             string FindTerminal(Models.ShellOrTerminal shell);
-            List<Models.ExternalTool> FindExternalTools();
+            Models.ExternalToolsFinder FindExternalTools();
 
             void OpenTerminal(string workdir);
             void OpenInFileManager(string path, bool select);
@@ -118,7 +118,7 @@ namespace SourceGit.Native
 
         public static void SetupEnternalTools()
         {
-            ExternalTools = _backend.FindExternalTools();
+            ExternalTools = _backend.FindExternalTools().ToList();
         }
 
         public static string FindGitExecutable()

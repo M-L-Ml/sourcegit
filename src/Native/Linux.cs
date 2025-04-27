@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Runtime.Versioning;
 
 using Avalonia;
@@ -29,56 +29,56 @@ namespace SourceGit.Native
             return FindExecutable(shell.Exec);
         }
 
-        public List<Models.ExternalTool> FindExternalTools()
+        public Models.ExternalToolsFinder FindExternalTools()
         {
             var finder = new Models.ExternalToolsFinder();
             
-            // Add standard editor tools using EditorToolInfo objects
+            // Add standard editor tools using ExternalToolInfo objects
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code", 
-                Icon = "vscode", 
+                IconName = "vscode", 
                 LocationFinder = () => FindExecutable("code") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code - Insiders", 
-                Icon = "vscode_insiders", 
+                IconName = "vscode_insiders", 
                 LocationFinder = () => FindExecutable("code-insiders") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "VSCodium", 
-                Icon = "codium", 
+                IconName = "codium", 
                 LocationFinder = () => FindExecutable("codium") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Fleet", 
-                Icon = "fleet", 
+                IconName = "fleet", 
                 LocationFinder = FindJetBrainsFleet 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Sublime Text", 
-                Icon = "sublime_text", 
+                IconName = "sublime_text", 
                 LocationFinder = () => FindExecutable("subl") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Zed", 
-                Icon = "zed", 
+                IconName = "zed", 
                 LocationFinder = () => FindExecutable("zeditor") 
             });
             
             finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/JetBrains/Toolbox");
             
-            return finder.Founded;
+            return finder;
         }
 
         public void OpenBrowser(string url)

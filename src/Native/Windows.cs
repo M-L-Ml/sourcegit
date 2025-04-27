@@ -138,57 +138,57 @@ namespace SourceGit.Native
             return string.Empty;
         }
 
-        public List<Models.ExternalTool> FindExternalTools()
+        public Models.ExternalToolsFinder FindExternalTools()
         {
             var finder = new Models.ExternalToolsFinder();
             
-            // Add standard editor tools using EditorToolInfo objects
+            // Add standard editor tools using ExternalToolInfo objects
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code", 
-                Icon = "vscode", 
+                IconName = "vscode", 
                 LocationFinder = FindVSCode 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code - Insiders", 
-                Icon = "vscode_insiders", 
+                IconName = "vscode_insiders", 
                 LocationFinder = FindVSCodeInsiders 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "VSCodium", 
-                Icon = "codium", 
+                IconName = "codium", 
                 LocationFinder = FindVSCodium 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Fleet", 
-                Icon = "fleet", 
+                IconName = "fleet", 
                 LocationFinder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\Fleet\\Fleet.exe" 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Sublime Text", 
-                Icon = "sublime_text", 
+                IconName = "sublime_text", 
                 LocationFinder = FindSublimeText 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio", 
-                Icon = "vs", 
+                IconName = "vs", 
                 LocationFinder = FindVisualStudio,
                 ExecArgsGenerator = GenerateCommandlineArgsForVisualStudio
             });
             
             finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\JetBrains\\Toolbox");
             
-            return finder.Founded;
+            return finder;
         }
 
         public void OpenBrowser(string url)
