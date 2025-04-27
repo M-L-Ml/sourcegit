@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:s="using:SourceGit"
+                    
+                    xmlns:s="using:SourceGit.ViewModels"
                     xmlns:vm="using:SourceGit.ViewModels"
                     xmlns:v="using:SourceGit.Views"
                     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -13,6 +14,7 @@
                     Title="{Binding Title}"
                     MinWidth="1024" MinHeight="600"
                     WindowStartupLocation="CenterScreen">
+  <!-- xmlns:s - same as vm, but is for using  SourceGit.ViewModels.App;-->
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="{Binding #ThisControl.CaptionHeight}"/>
