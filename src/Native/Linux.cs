@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Runtime.Versioning;
-
+using SourceGit.Models;
 using Avalonia;
 
 namespace SourceGit.Native

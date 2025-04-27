@@ -5,20 +5,23 @@ using System.Text.Json.Serialization;
 
 namespace SourceGit
 {
-    public class App
+    namespace Models
     {
-        public delegate void RaiseExceptionDelegate(string context, string message);
-
-
-        public static RaiseExceptionDelegate RaiseException
+        public class App
         {
-            get; set;
-        } = RaiseExceptionDefault;
+            public delegate void RaiseExceptionDelegate(string context, string message);
 
-        public static void RaiseExceptionDefault(string context, string message)
-        {
-            Debug.Assert(context != null);
-            Debug.WriteLine(context + ": " + message);
+
+            public static RaiseExceptionDelegate RaiseException
+            {
+                get; set;
+            } = RaiseExceptionDefault;
+
+            public static void RaiseExceptionDefault(string context, string message)
+            {
+                Debug.Assert(context != null);
+                Debug.WriteLine(context + ": " + message);
+            }
         }
     }
     namespace ModelsN

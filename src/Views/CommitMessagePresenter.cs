@@ -8,6 +8,7 @@ using Avalonia.Controls.Documents;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using SourceGit.ViewModels;
 
 namespace SourceGit.Views
 {
