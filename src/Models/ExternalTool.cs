@@ -101,26 +101,45 @@ namespace SourceGit.Models
                 _customPaths = new ExternalToolPaths();
         }
 
-        public void TryAdd(string name, string icon, Func<string> finder, Func<string, string> execArgsGenerator = null)
+        /// <summary>
+        /// Tries to add an external tool to the list of founded tools.
+        /// </summary>
+        /// <param name="name">The name of the tool</param>
+        /// <param name="icon">The icon identifier for the tool</param>
+        /// <param name="finder">Function that returns the path to the tool</param>
+        /// <param name="execArgsGenerator">Optional function to generate command line arguments</param>
+        /// <returns>True if the tool was added, false otherwise</returns>
+        public bool TryAdd(string name, string icon, Func<string> finder, Func<string, string>? execArgsGenerator = null)
         {
+            string toolPath;
+            
+            // First check for custom path in settings
             if (_customPaths.Tools.TryGetValue(name, out var customPath) && File.Exists(customPath))
             {
-                Founded.Add(new ExternalTool(name, icon, customPath, execArgsGenerator));
+                toolPath = customPath;
             }
             else
             {
-                var path = finder();
-                if (!string.IsNullOrEmpty(path) && File.Exists(path))
-                    Founded.Add(new ExternalTool(name, icon, path, execArgsGenerator));
+                // Then try to find the tool using the provided finder
+                toolPath = finder();
+                if (string.IsNullOrEmpty(toolPath) || !File.Exists(toolPath))
+                {
+                    return false;
+                }
             }
+            
+            // Add the tool with the found path
+            Founded.Add(new ExternalTool(name, icon, toolPath, execArgsGenerator));
+            return true;
         }
 
         /// <summary>
         /// Adds an external editor tool to the list, using the provided parameters.
         /// </summary>
-        public void AddEditorTool(string name, string icon, Func<string> platformFinder, Func<string, string> execArgsGenerator = null)
+        /// <returns>True if the tool was added, false otherwise</returns>
+        public bool AddEditorTool(string name, string icon, Func<string> platformFinder, Func<string, string>? execArgsGenerator = null)
         {
-            TryAdd(name, icon, platformFinder, execArgsGenerator);
+            return TryAdd(name, icon, platformFinder, execArgsGenerator);
         }
 
         /// <summary>
@@ -175,7 +194,6 @@ namespace SourceGit.Models
         private static string SublimeTextFinder() => "";
         private static string ZedFinder() => "";
 
-        // Deprecated: Use AddEditorTool instead for new code
         [Obsolete("Use AddEditorTool instead.")]
         public void VSCode(Func<string> platformFinder)
         {
