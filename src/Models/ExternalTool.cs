@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using SourceGit.Native;
@@ -111,7 +112,7 @@ namespace SourceGit.Models
         public bool TryAdd(string name, string icon, Func<string> finder, Func<string, string>? execArgsGenerator = null)
         {
             string toolPath;
-
+            
             // First check for custom path in settings
             if (_customPaths.Tools.TryGetValue(name, out var customPath) && File.Exists(customPath))
             {
@@ -126,16 +127,17 @@ namespace SourceGit.Models
                     return false;
                 }
             }
-            NewMethod(name, icon, execArgsGenerator, toolPath);
+            
+            // Add the tool with the found path
+            Founded_Add(new ExternalTool(name, icon, toolPath, execArgsGenerator));
             return true;
         }
 
-        private void NewMethod(string name, string icon, Func<string, string>? execArgsGenerator, string toolPath)
+        private void Founded_Add(ExternalTool externalTool)
         {
-
-            // Add the tool with the found path
-            Founded.Add(new ExternalTool(name, icon, toolPath, execArgsGenerator));
+           Founded.Add(externalTool);
         }
+
 
         /// <summary>
         /// Adds an external editor tool to the list, using the provided parameters.
@@ -209,7 +211,7 @@ namespace SourceGit.Models
                     if (exclude.Contains(tool.ToolId.ToLowerInvariant()))
                         continue;
 
-                    Founded.Add(new ExternalTool(
+                    Founded_Add(new ExternalTool(
                         $"{tool.DisplayName} {tool.DisplayVersion}",
                         supported_icons.Contains(tool.ProductCode) ? $"JetBrains/{tool.ProductCode}" : "JetBrains/JB",
                         Path.Combine(tool.InstallLocation, tool.LaunchCommand)));
@@ -217,6 +219,6 @@ namespace SourceGit.Models
             }
         }
 
-        private readonly ExternalToolPaths _customPaths = null;
+        private ExternalToolPaths _customPaths = null;
     }
 }
