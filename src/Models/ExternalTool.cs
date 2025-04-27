@@ -142,8 +142,26 @@ namespace SourceGit.Models
         /// <returns>True if the tool was added, false otherwise</returns>
         public bool AddEditorTool(EditorToolInfo toolInfo)
         {
-            return TryAdd(toolInfo.Name, toolInfo.IconName, toolInfo.LocationFinder, toolInfo.ExecArgsGenerator);
+            // Set the IconName based on the editor name if not already set
+            if (string.IsNullOrEmpty(toolInfo.IconName) && EditorIconMap.TryGetValue(toolInfo.Name, out var iconName))
+            {
+                toolInfo.IconName = iconName;
+            }
+            
+            return TryAdd(toolInfo.Name, toolInfo.IconName ?? toolInfo.Name.ToLowerInvariant(), toolInfo.LocationFinder, toolInfo.ExecArgsGenerator);
         }
+
+        // Dictionary mapping editor names to their icon names
+        private static readonly Dictionary<string, string> EditorIconMap = new()
+        {
+            ["Visual Studio Code"] = "vscode",
+            ["Visual Studio Code - Insiders"] = "vscode_insiders",
+            ["VSCodium"] = "codium",
+            ["Fleet"] = "fleet",
+            ["Sublime Text"] = "sublime_text",
+            ["Zed"] = "zed",
+            ["Visual Studio"] = "vs"
+        };
 
         /// <summary>
         /// Encapsulates information for any external tool (editor or otherwise).

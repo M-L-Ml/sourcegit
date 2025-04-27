@@ -37,42 +37,36 @@ namespace SourceGit.Native
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code", 
-                IconName = "vscode", 
                 LocationFinder = () => FindExecutable("code") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code - Insiders", 
-                IconName = "vscode_insiders", 
                 LocationFinder = () => FindExecutable("code-insiders") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "VSCodium", 
-                IconName = "codium", 
                 LocationFinder = () => FindExecutable("codium") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Fleet", 
-                IconName = "fleet", 
                 LocationFinder = FindJetBrainsFleet 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Sublime Text", 
-                IconName = "sublime_text", 
                 LocationFinder = () => FindExecutable("subl") 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Zed", 
-                IconName = "zed", 
                 LocationFinder = () => FindExecutable("zeditor") 
             });
             

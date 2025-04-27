@@ -72,42 +72,36 @@ namespace SourceGit.Native
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code", 
-                IconName = "vscode", 
                 LocationFinder = () => "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Visual Studio Code - Insiders", 
-                IconName = "vscode_insiders", 
                 LocationFinder = () => "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code" 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "VSCodium", 
-                IconName = "codium", 
                 LocationFinder = () => "/Applications/VSCodium.app/Contents/Resources/app/bin/codium" 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Fleet", 
-                IconName = "fleet", 
                 LocationFinder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Applications/Fleet.app/Contents/MacOS/Fleet" 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Sublime Text", 
-                IconName = "sublime_text", 
                 LocationFinder = () => "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" 
             });
             
             finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
             { 
                 Name = "Zed", 
-                IconName = "zed", 
                 LocationFinder = () => File.Exists("/usr/local/bin/zed") ? "/usr/local/bin/zed" : "/Applications/Zed.app/Contents/MacOS/cli" 
             });
             
