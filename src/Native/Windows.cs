@@ -302,24 +302,26 @@ namespace SourceGit.Native
         /// </summary>
         private static class EditorFinderFactory
         {
+            private const string UninstallRegistryPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\";
+
             // Dictionary mapping editor types to their registry finder configurations
             private static readonly Dictionary<string, RegistryEditorFinder> EditorFinders = new()
             {
                 ["VSCode"] = new RegistryEditorFinder(
-                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{EA457B21-F73E-494C-ACAB-524FDE069978}_is1",
-                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{771FD6B0-FA20-440A-A002-3B3BAC16DC50}_is1"),
-                
+                    $"{UninstallRegistryPath}{{EA457B21-F73E-494C-ACAB-524FDE069978}}_is1",
+                    $"{UninstallRegistryPath}{{771FD6B0-FA20-440A-A002-3B3BAC16DC50}}_is1"),
+
                 ["VSCodeInsiders"] = new RegistryEditorFinder(
-                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{1287CAD5-7C8D-410D-88B9-0D1EE4A83FF2}_is1",
-                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{217B4C08-948D-4276-BFBB-BEE930AE5A2C}_is1"),
-                
+                    $"{UninstallRegistryPath}{{1287CAD5-7C8D-410D-88B9-0D1EE4A83FF2}}_is1",
+                    $"{UninstallRegistryPath}{{217B4C08-948D-4276-BFBB-BEE930AE5A2C}}_is1"),
+
                 ["VSCodium"] = new RegistryEditorFinder(
-                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{88DA3577-054F-4CA1-8122-7D820494CFFB}_is1",
-                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2E1F05D1-C245-4562-81EE-28188DB6FD17}_is1"),
-                
+                    $"{UninstallRegistryPath}{{88DA3577-054F-4CA1-8122-7D820494CFFB}}_is1",
+                    $"{UninstallRegistryPath}{{2E1F05D1-C245-4562-81EE-28188DB6FD17}}_is1"),
+
                 ["SublimeText"] = new RegistryEditorFinder(
-                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Sublime Text_is1",
-                    @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Sublime Text 3_is1",
+                    $"{UninstallRegistryPath}Sublime Text_is1",
+                    $"{UninstallRegistryPath}Sublime Text 3_is1",
                     path => Path.Combine(Path.GetDirectoryName(path)!, "subl.exe"))
             };
 
@@ -329,7 +331,7 @@ namespace SourceGit.Native
                 {
                     return finder;
                 }
-                
+
                 throw new ArgumentException($"No finder configured for editor type: {editorType}", nameof(editorType));
             }
         }
