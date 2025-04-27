@@ -268,7 +268,7 @@ namespace SourceGit.Native
             }, DispatcherPriority.Render);
         }
 
-        private void OpenFolderAndSelectFile(string folderPath)
+        private static void OpenFolderAndSelectFile(string folderPath)
         {
             var pidl = ILCreateFromPathW(folderPath);
 
