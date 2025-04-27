@@ -21,19 +21,20 @@ namespace SourceGit
             Debug.WriteLine(context + ": " + message);
         }
     }
+    namespace Models
+    {
+        [JsonSourceGenerationOptions(
+         WriteIndented = true,
+         IgnoreReadOnlyFields = true,
+         IgnoreReadOnlyProperties = true)]
+        //Converters = [
+        //    typeof(ColorConverter),
+        //       typeof(GridLengthConverter),
+        //]
 
-    [JsonSourceGenerationOptions(
-     WriteIndented = true,
-     IgnoreReadOnlyFields = true,
-     IgnoreReadOnlyProperties = true)]
-    //Converters = [
-    //    typeof(ColorConverter),
-    //       typeof(GridLengthConverter),
-    //]
-
-    [JsonSerializable(typeof(Models.ExternalToolPaths))]
-    [JsonSerializable(typeof(Models.InteractiveRebaseJobCollection))]
-    [JsonSerializable(typeof(Models.JetBrainsState))]
-    public partial class JsonCodeGen : JsonSerializerContext { }
-
+        [JsonSerializable(typeof(Models.ExternalToolPaths))]
+        [JsonSerializable(typeof(Models.InteractiveRebaseJobCollection))]
+        [JsonSerializable(typeof(Models.JetBrainsState))]
+        public partial class JsonCodeGen : JsonSerializerContext { }
+    }
 }
