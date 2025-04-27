@@ -136,6 +136,16 @@ namespace SourceGit.Models
         /// <summary>
         /// Adds an external editor tool to the list, using the provided parameters.
         /// </summary>
+        /// <param name="toolInfo">Information about the editor tool to add</param>
+        /// <returns>True if the tool was added, false otherwise</returns>
+        public bool AddEditorTool(EditorToolInfo toolInfo)
+        {
+            return TryAdd(toolInfo.Name, toolInfo.Icon, toolInfo.Finder, toolInfo.ExecArgsGenerator);
+        }
+
+        /// <summary>
+        /// Adds an external editor tool to the list, using the provided parameters.
+        /// </summary>
         /// <returns>True if the tool was added, false otherwise</returns>
         public bool AddEditorTool(string name, string icon, Func<string> platformFinder, Func<string, string>? execArgsGenerator = null)
         {
@@ -168,13 +178,10 @@ namespace SourceGit.Models
         {
             foreach (var tool in tools)
             {
-                AddEditorTool(tool.Name, tool.Icon, tool.Finder, tool.ExecArgsGenerator);
+                AddEditorTool(tool);
             }
         }
 
-        /// <summary>
-        /// Public static array of default editor definitions.
-        /// </summary>
         public static readonly EditorToolInfo[] DefaultEditors = new EditorToolInfo[]
         {
             new EditorToolInfo { Name = "Visual Studio Code", Icon = "vscode", Finder = () => VSCodeFinder() },
@@ -193,54 +200,6 @@ namespace SourceGit.Models
         private static string FleetFinder() => "";
         private static string SublimeTextFinder() => "";
         private static string ZedFinder() => "";
-
-        [Obsolete("Use AddEditorTool instead.")]
-        public void VSCode(Func<string> platformFinder)
-        {
-            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Visual Studio Code");
-            if (tool != null)
-                AddEditorTool(tool.Name, tool.Icon, platformFinder);
-        }
-
-        [Obsolete("Use AddEditorTool instead.")]
-        public void VSCodeInsiders(Func<string> platformFinder)
-        {
-            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Visual Studio Code - Insiders");
-            if (tool != null)
-                AddEditorTool(tool.Name, tool.Icon, platformFinder);
-        }
-
-        [Obsolete("Use AddEditorTool instead.")]
-        public void VSCodium(Func<string> platformFinder)
-        {
-            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "VSCodium");
-            if (tool != null)
-                AddEditorTool(tool.Name, tool.Icon, platformFinder);
-        }
-
-        [Obsolete("Use AddEditorTool instead.")]
-        public void Fleet(Func<string> platformFinder)
-        {
-            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Fleet");
-            if (tool != null)
-                AddEditorTool(tool.Name, tool.Icon, platformFinder);
-        }
-
-        [Obsolete("Use AddEditorTool instead.")]
-        public void SublimeText(Func<string> platformFinder)
-        {
-            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Sublime Text");
-            if (tool != null)
-                AddEditorTool(tool.Name, tool.Icon, platformFinder);
-        }
-
-        [Obsolete("Use AddEditorTool instead.")]
-        public void Zed(Func<string> platformFinder)
-        {
-            var tool = DefaultEditors.FirstOrDefault(e => e.Name == "Zed");
-            if (tool != null)
-                AddEditorTool(tool.Name, tool.Icon, platformFinder);
-        }
 
         public void FindJetBrainsFromToolbox(Func<string> platformFinder)
         {

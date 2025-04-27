@@ -32,13 +32,52 @@ namespace SourceGit.Native
         public List<Models.ExternalTool> FindExternalTools()
         {
             var finder = new Models.ExternalToolsFinder();
-            finder.VSCode(() => FindExecutable("code"));
-            finder.VSCodeInsiders(() => FindExecutable("code-insiders"));
-            finder.VSCodium(() => FindExecutable("codium"));
-            finder.Fleet(FindJetBrainsFleet);
+            
+            // Add standard editor tools using EditorToolInfo objects
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Visual Studio Code", 
+                Icon = "vscode", 
+                Finder = () => FindExecutable("code") 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Visual Studio Code - Insiders", 
+                Icon = "vscode_insiders", 
+                Finder = () => FindExecutable("code-insiders") 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "VSCodium", 
+                Icon = "codium", 
+                Finder = () => FindExecutable("codium") 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Fleet", 
+                Icon = "fleet", 
+                Finder = FindJetBrainsFleet 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Sublime Text", 
+                Icon = "sublime_text", 
+                Finder = () => FindExecutable("subl") 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Zed", 
+                Icon = "zed", 
+                Finder = () => FindExecutable("zeditor") 
+            });
+            
             finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/JetBrains/Toolbox");
-            finder.SublimeText(() => FindExecutable("subl"));
-            finder.Zed(() => FindExecutable("zeditor"));
+            
             return finder.Founded;
         }
 

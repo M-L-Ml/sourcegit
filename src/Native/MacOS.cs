@@ -67,13 +67,52 @@ namespace SourceGit.Native
         public List<Models.ExternalTool> FindExternalTools()
         {
             var finder = new Models.ExternalToolsFinder();
-            finder.VSCode(() => "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code");
-            finder.VSCodeInsiders(() => "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code");
-            finder.VSCodium(() => "/Applications/VSCodium.app/Contents/Resources/app/bin/codium");
-            finder.Fleet(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Applications/Fleet.app/Contents/MacOS/Fleet");
+            
+            // Add standard editor tools using EditorToolInfo objects
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Visual Studio Code", 
+                Icon = "vscode", 
+                Finder = () => "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Visual Studio Code - Insiders", 
+                Icon = "vscode_insiders", 
+                Finder = () => "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code" 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "VSCodium", 
+                Icon = "codium", 
+                Finder = () => "/Applications/VSCodium.app/Contents/Resources/app/bin/codium" 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Fleet", 
+                Icon = "fleet", 
+                Finder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Applications/Fleet.app/Contents/MacOS/Fleet" 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Sublime Text", 
+                Icon = "sublime_text", 
+                Finder = () => "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Zed", 
+                Icon = "zed", 
+                Finder = () => File.Exists("/usr/local/bin/zed") ? "/usr/local/bin/zed" : "/Applications/Zed.app/Contents/MacOS/cli" 
+            });
+            
             finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Library/Application Support/JetBrains/Toolbox");
-            finder.SublimeText(() => "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl");
-            finder.Zed(() => File.Exists("/usr/local/bin/zed") ? "/usr/local/bin/zed" : "/Applications/Zed.app/Contents/MacOS/cli");
+            
             return finder.Founded;
         }
 

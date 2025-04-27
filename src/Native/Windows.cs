@@ -141,13 +141,53 @@ namespace SourceGit.Native
         public List<Models.ExternalTool> FindExternalTools()
         {
             var finder = new Models.ExternalToolsFinder();
-            finder.VSCode(FindVSCode);
-            finder.VSCodeInsiders(FindVSCodeInsiders);
-            finder.VSCodium(FindVSCodium);
-            finder.Fleet(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\Fleet\\Fleet.exe");
+            
+            // Add standard editor tools using EditorToolInfo objects
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Visual Studio Code", 
+                Icon = "vscode", 
+                Finder = FindVSCode 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Visual Studio Code - Insiders", 
+                Icon = "vscode_insiders", 
+                Finder = FindVSCodeInsiders 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "VSCodium", 
+                Icon = "codium", 
+                Finder = FindVSCodium 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Fleet", 
+                Icon = "fleet", 
+                Finder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\Fleet\\Fleet.exe" 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Sublime Text", 
+                Icon = "sublime_text", 
+                Finder = FindSublimeText 
+            });
+            
+            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            { 
+                Name = "Visual Studio", 
+                Icon = "vs", 
+                Finder = FindVisualStudio,
+                ExecArgsGenerator = GenerateCommandlineArgsForVisualStudio
+            });
+            
             finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\JetBrains\\Toolbox");
-            finder.SublimeText(FindSublimeText);
-            finder.TryAdd("Visual Studio", "vs", FindVisualStudio, GenerateCommandlineArgsForVisualStudio);
+            
             return finder.Founded;
         }
 
