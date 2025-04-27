@@ -119,7 +119,10 @@ namespace SourceGit
                 return current;
             }
         }
-
+        public static void SShowWindow(object data, bool showAsDialog)
+        {
+            ((App)Application.Current).ShowWindow(data, showAsDialog);
+        }
         public void ShowWindow(object data, bool showAsDialog)
         {
             /// <summary>   
@@ -305,17 +308,8 @@ namespace SourceGit
             return default;
         }
 
-        public static string Text(string key, params object[] args)
-        {
-            var fmt = Current?.FindResource($"Text.{key}") as string;
-            if (string.IsNullOrWhiteSpace(fmt))
-                return $"Text.{key}";
+     //   public static string Text(string key, params object[] args)
 
-            if (args == null || args.Length == 0)
-                return fmt;
-
-            return string.Format(fmt, args);
-        }
 
         public static Avalonia.Controls.Shapes.Path CreateMenuIcon(string key)
         {
@@ -344,9 +338,9 @@ namespace SourceGit
             return Current is App app ? app._launcher : null;
         }
 
-        public static void Quit(int exitCode)
+        public void Quit(int exitCode)
         {
-            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (this is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow?.Close();
                 desktop.Shutdown(exitCode);

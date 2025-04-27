@@ -53,7 +53,7 @@ namespace SourceGit.Converters
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 var key = parameter as string;
-                return App.Text(key, value);
+                return ViewModels.App.Text(key, value);
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -48,6 +48,8 @@ namespace SourceGit.ViewModels
         {
             AppDyn.SetFonts(defaultFont, monospaceFont, onlyUseMonospaceFontInEditor);
         }
+
+
         public static void RaiseException(string context, string message)
         {
             if (_launcher != null)
@@ -121,6 +123,10 @@ namespace SourceGit.ViewModels
             return _launcher;// Application.Current is SourceGit.App app ? app._launcher : null;
         }
 
+        //public static void Quit(int exitCode)
+        //{
+        //    AppDyn.Quit(exitCode);
+        //}
         public static void Quit(int exitCode)
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
