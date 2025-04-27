@@ -33,38 +33,38 @@ namespace SourceGit.Native
         {
             var finder = new Models.ExternalToolsFinder();
             
-            // Add standard editor tools using ExternalToolInfo objects
-            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            // Add standard editor tools using ExternalToolInfo2 objects
+            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code", 
                 LocationFinder = () => FindExecutable("code") 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code - Insiders", 
                 LocationFinder = () => FindExecutable("code-insiders") 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "VSCodium", 
                 LocationFinder = () => FindExecutable("codium") 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Fleet", 
                 LocationFinder = FindJetBrainsFleet 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Sublime Text", 
                 LocationFinder = () => FindExecutable("subl") 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolsFinder.EditorToolInfo 
+            finder.AddEditorTool(new Models.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Zed", 
                 LocationFinder = () => FindExecutable("zeditor") 

@@ -100,24 +100,21 @@ namespace SourceGit.Models
         /// <summary>
         /// Tries to add an external tool to the list of founded tools.
         /// </summary>
-        /// <param name="name">The name of the tool</param>
-        /// <param name="icon">The icon identifier for the tool</param>
-        /// <param name="finder">Function that returns the path to the tool</param>
-        /// <param name="execArgsGenerator">Optional function to generate command line arguments</param>
+        /// <param name="toolInfo">Information about the tool to add</param>
         /// <returns>True if the tool was added, false otherwise</returns>
-        public bool TryAdd(string name, string icon, Func<string> finder, Func<string, string>? execArgsGenerator = null)
+        public bool TryAdd(ExternalToolInfo2 toolInfo)
         {
             string toolPath;
             
             // First check for custom path in settings
-            if (_customPaths.Tools.TryGetValue(name, out var customPath) && File.Exists(customPath))
+            if (_customPaths.Tools.TryGetValue(toolInfo.Name, out var customPath) && File.Exists(customPath))
             {
                 toolPath = customPath;
             }
             else
             {
                 // Then try to find the tool using the provided finder
-                toolPath = finder();
+                toolPath = toolInfo.LocationFinder();
                 if (string.IsNullOrEmpty(toolPath) || !File.Exists(toolPath))
                 {
                     return false;
@@ -125,8 +122,28 @@ namespace SourceGit.Models
             }
             
             // Add the tool with the found path
-            Founded_Add(new ExternalTool(name, icon, toolPath, execArgsGenerator));
+            Founded_Add(new ExternalTool(toolInfo.Name, toolInfo.IconName ?? toolInfo.Name.ToLowerInvariant(), toolPath, toolInfo.ExecArgsGenerator));
             return true;
+        }
+
+        /// <summary>
+        /// Tries to add an external tool to the list of founded tools.
+        /// </summary>
+        /// <param name="name">The name of the tool</param>
+        /// <param name="icon">The icon identifier for the tool</param>
+        /// <param name="finder">Function that returns the path to the tool</param>
+        /// <param name="execArgsGenerator">Optional function to generate command line arguments</param>
+        /// <returns>True if the tool was added, false otherwise</returns>
+        public bool TryAdd(string name, string icon, Func<string> finder, Func<string, string>? execArgsGenerator = null)
+        {
+            var toolInfo = new ExternalToolInfo2 
+            { 
+                Name = name, 
+                IconName = icon, 
+                LocationFinder = finder, 
+                ExecArgsGenerator = execArgsGenerator 
+            };
+            return TryAdd(toolInfo);
         }
 
         private void Founded_Add(ExternalTool externalTool)
@@ -140,7 +157,7 @@ namespace SourceGit.Models
         /// </summary>
         /// <param name="toolInfo">Information about the editor tool to add</param>
         /// <returns>True if the tool was added, false otherwise</returns>
-        public bool AddEditorTool(EditorToolInfo toolInfo)
+        public bool AddEditorTool(ExternalToolInfo2 toolInfo)
         {
             // Set the IconName based on the editor name if not already set
             if (string.IsNullOrEmpty(toolInfo.IconName) && EditorIconMap.TryGetValue(toolInfo.Name, out var iconName))
@@ -148,7 +165,7 @@ namespace SourceGit.Models
                 toolInfo.IconName = iconName;
             }
             
-            return TryAdd(toolInfo.Name, toolInfo.IconName ?? toolInfo.Name.ToLowerInvariant(), toolInfo.LocationFinder, toolInfo.ExecArgsGenerator);
+            return TryAdd(toolInfo);
         }
 
         // Dictionary mapping editor names to their icon names
@@ -177,7 +194,7 @@ namespace SourceGit.Models
         /// <summary>
         /// Information for parameterizing editor tools (inherits from ExternalToolInfo for backward compatibility).
         /// </summary>
-        public class EditorToolInfo : ExternalToolInfo
+        public class ExternalToolInfo2 : ExternalToolInfo
         {
             public required Func<string> LocationFinder { get; set; }
         }
@@ -185,7 +202,7 @@ namespace SourceGit.Models
         /// <summary>
         /// Adds a predefined set of common editor tools.
         /// </summary>
-        public void AddDefaultEditorTools(IEnumerable<EditorToolInfo> tools)
+        public void AddDefaultEditorTools(IEnumerable<ExternalToolInfo2> tools)
         {
             foreach (var tool in tools)
             {
@@ -193,7 +210,7 @@ namespace SourceGit.Models
             }
         }
 
-        public static readonly EditorToolInfo[] DefaultEditors = new EditorToolInfo[]
+        public static readonly ExternalToolInfo2[] DefaultEditors = new ExternalToolInfo2[]
         {
             new() { Name = "Visual Studio Code", IconName = "vscode", LocationFinder = () => VSCodeFinder() },
             new() { Name = "Visual Studio Code - Insiders", IconName = "vscode_insiders", LocationFinder = () => VSCodeInsidersFinder() },
