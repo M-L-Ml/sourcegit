@@ -1,5 +1,4 @@
 using System;
-using Avalonia.Controls;
 using Avalonia.Interactivity;
 
 namespace SourceGit.Views
@@ -16,8 +15,6 @@ namespace SourceGit.Views
             Console.Out.WriteLine("No passphrase entered.");
             ViewModels.App.Quit(-1);
         }
-
-        public TextBlock TxtDescription => this.FindControl<TextBlock>("TxtDescription");
 
         private void EnterPassword(object _1, RoutedEventArgs _2)
         {
