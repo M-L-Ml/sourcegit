@@ -209,25 +209,18 @@ namespace SourceGit.Models
                 AddEditorTool(tool);
             }
         }
-
-        public static readonly ExternalToolInfo2[] DefaultEditors = new ExternalToolInfo2[]
+[Obsolete]
+        [Obsolete("Use the AddEditorTool method with ExternalToolInfo2 instead")]
+        public static readonly ExternalToolInfo[] DefaultEditors = 
         {
-            new() { Name = "Visual Studio Code", IconName = "vscode", LocationFinder = () => VSCodeFinder() },
-            new() { Name = "Visual Studio Code - Insiders", IconName = "vscode_insiders", LocationFinder = () => VSCodeInsidersFinder() },
-            new() { Name = "VSCodium", IconName = "codium", LocationFinder = () => VSCodiumFinder() },
-            new() { Name = "Fleet", IconName = "fleet", LocationFinder = () => FleetFinder() },
-            new() { Name = "Sublime Text", IconName = "sublime_text", LocationFinder = () => SublimeTextFinder() },
-            new() { Name = "Zed", IconName = "zed", LocationFinder = () => ZedFinder() },
+            new() { Name = "Visual Studio Code", IconName = "vscode" },
+            new() { Name = "Visual Studio Code - Insiders", IconName = "vscode_insiders" },
+            new() { Name = "VSCodium", IconName = "codium" },
+            new() { Name = "Fleet", IconName = "fleet" },
+            new() { Name = "Sublime Text", IconName = "sublime_text" },
+            new() { Name = "Zed", IconName = "zed" },
         };
 
-        // These static finder methods must be implemented elsewhere in the codebase or here as stubs.
-        // For illustration, here are stubs (replace with actual logic as needed):
-        private static string VSCodeFinder() => "";
-        private static string VSCodeInsidersFinder() => "";
-        private static string VSCodiumFinder() => "";
-        private static string FleetFinder() => "";
-        private static string SublimeTextFinder() => "";
-        private static string ZedFinder() => "";
 
         public void FindJetBrainsFromToolbox(Func<string> platformFinder)
         {
