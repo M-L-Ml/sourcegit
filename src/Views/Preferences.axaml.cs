@@ -8,8 +8,14 @@ using Avalonia.Platform.Storage;
 
 namespace SourceGit.Views
 {
+    // MVVM Violation: This View class contains properties and business logic that should be in the ViewModel.
+    // The View should only be responsible for UI-specific logic and binding to the ViewModel,
+    // while this class is handling data manipulation, config management, and business rules.
     public partial class Preferences : ChromelessWindow
     {
+        // MVVM Violation: These properties represent data that should be defined in the ViewModel
+        // Data properties should be defined in the ViewModel and bound to in the View,
+        // not directly implemented in the View class.
         public string DefaultUser
         {
             get;
@@ -34,6 +40,9 @@ namespace SourceGit.Views
             set;
         }
 
+        // MVVM Violation: AvaloniaProperty registrations should not be in the View
+        // These should be standard properties in the ViewModel that the View binds to.
+        // Using AvaloniaProperty in the View class mixes UI framework specifics with data management.
         public static readonly StyledProperty<string> GitVersionProperty =
             AvaloniaProperty.Register<Preferences, string>(nameof(GitVersion));
 
@@ -112,6 +121,9 @@ namespace SourceGit.Views
             set => SetValue(SelectedCustomActionProperty, value);
         }
 
+        // MVVM Violation: Constructor contains business logic that belongs in the ViewModel
+        // The constructor is directly interacting with Commands.Config and reading Git configuration,
+        // which is business logic that should be in the ViewModel.
         public Preferences()
         {
             var pref = ViewModels.Preferences.Instance;
@@ -153,6 +165,8 @@ namespace SourceGit.Views
             InitializeComponent();
         }
 
+        // MVVM Violation: Property change handler contains business logic that should be in the ViewModel
+        // This method is reading from Commands.Config and updating properties, which should be handled in the ViewModel.
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             base.OnPropertyChanged(change);
@@ -167,6 +181,8 @@ namespace SourceGit.Views
             }
         }
 
+        // MVVM Violation: Window closing event contains business logic that should be in the ViewModel
+        // This method is reading and writing Git configuration, which is business logic that belongs in the ViewModel.
         protected override void OnClosing(WindowClosingEventArgs e)
         {
             base.OnClosing(e);
@@ -206,6 +222,8 @@ namespace SourceGit.Views
             ViewModels.Preferences.Instance.Save();
         }
 
+        // MVVM Violation: Event handlers should be minimized in the View, with logic moved to ViewModel commands
+        // These file selection methods contain business logic that should be in commands defined in the ViewModel.
         private async void SelectThemeOverrideFile(object _, RoutedEventArgs e)
         {
             var options = new FilePickerOpenOptions()
@@ -413,6 +431,8 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
+        // MVVM Violation: Business logic method that should be in the ViewModel
+        // This method interacts with Native.OS and sets properties, which should be handled by the ViewModel.
         private void UpdateGitVersion()
         {
             GitVersion = Native.OS.GitVersionString;
