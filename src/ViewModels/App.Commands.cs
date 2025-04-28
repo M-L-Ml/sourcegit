@@ -2,7 +2,7 @@ using System;
 using System.Windows.Input;
 using Avalonia.Controls;
 
-namespace SourceGit
+namespace SourceGit.ViewModels
 {
     public partial class App
     {
