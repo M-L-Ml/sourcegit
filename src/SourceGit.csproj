@@ -9,6 +9,7 @@
     <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <Product>SourceGit</Product>
     <Description>OpenSource GIT client</Description>
@@ -40,6 +41,73 @@
     <AvaloniaResource Include="Resources/Images/ShellIcons/*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AvaloniaResource Remove="Commands\obj\**" />
+    <AvaloniaResource Remove="Common\bin\**" />
+    <AvaloniaResource Remove="Common\obj\**" />
+    <AvaloniaResource Remove="Models_And_Native\**" />
+    <AvaloniaResource Remove="Services\**" />
+    <AvaloniaResource Remove="Tests\**" />
+    <AvaloniaResource Remove="ViewModels\obj\**" />
+    <AvaloniaResource Remove="Views\obj\**" />
+    <AvaloniaXaml Remove="Commands\obj\**" />
+    <AvaloniaXaml Remove="Common\bin\**" />
+    <AvaloniaXaml Remove="Common\obj\**" />
+    <AvaloniaXaml Remove="Models_And_Native\**" />
+    <AvaloniaXaml Remove="Services\**" />
+    <AvaloniaXaml Remove="Tests\**" />
+    <AvaloniaXaml Remove="ViewModels\obj\**" />
+    <AvaloniaXaml Remove="Views\obj\**" />
+    <Compile Remove="Commands\obj\**" />
+    <Compile Remove="Common\bin\**" />
+    <Compile Remove="Common\obj\**" />
+    <Compile Remove="Models_And_Native\**" />
+    <Compile Remove="Services\**" />
+    <Compile Remove="Tests\**" />
+    <Compile Remove="ViewModels\obj\**" />
+    <Compile Remove="Views\obj\**" />
+    <EmbeddedResource Remove="Commands\obj\**" />
+    <EmbeddedResource Remove="Common\bin\**" />
+    <EmbeddedResource Remove="Common\obj\**" />
+    <EmbeddedResource Remove="Models_And_Native\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <EmbeddedResource Remove="ViewModels\obj\**" />
+    <EmbeddedResource Remove="Views\obj\**" />
+    <None Remove="Commands\obj\**" />
+    <None Remove="Common\bin\**" />
+    <None Remove="Common\obj\**" />
+    <None Remove="Models_And_Native\**" />
+    <None Remove="Services\**" />
+    <None Remove="Tests\**" />
+    <None Remove="ViewModels\obj\**" />
+    <None Remove="Views\obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Remove="obj\**\*.cs" />
+    <AvaloniaResource Remove="obj\**" />
+    <AvaloniaResource Remove="obj\Debug\**" />
+    <AvaloniaResource Remove="obj\Debug\net9.0\SourceGit.AssemblyInfo.cs" />
+    <AvaloniaXaml Remove="obj\**\*.cs" />
+    <AvaloniaXaml Remove="obj\**" />
+    <AvaloniaXaml Remove="obj\Debug\**" />
+    <AvaloniaXaml Remove="obj\Debug\net9.0\SourceGit.AssemblyInfo.cs" />
+    <Compile Remove="obj\**\*.cs" />
+    <Compile Remove="obj\**" />
+    <Compile Remove="obj\Debug\**" />
+    <Compile Remove="obj\Debug\net9.0\SourceGit.AssemblyInfo.cs" />
+    <EmbeddedResource Remove="obj\**\*.cs" />
+    <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="obj\Debug\**" />
+    <EmbeddedResource Remove="obj\Debug\net9.0\SourceGit.AssemblyInfo.cs" />
+    <None Remove="obj\**\*.cs" />
+    <None Remove="obj\**" />
+    <None Remove="obj\Debug\**" />
+    <None Remove="obj\Debug\net9.0\SourceGit.AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="SourceGit.AssemblyInfo.cs" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.8" />
     <PackageReference Include="Avalonia.Desktop" Version="11.2.8" />
