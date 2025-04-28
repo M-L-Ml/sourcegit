@@ -8,174 +8,17 @@ using Avalonia.Platform.Storage;
 
 namespace SourceGit.Views
 {
-    // MVVM Violation: Handles responsibilities of both View and ViewModel.
-    // Coupled with Commands.Config, Models.CRLFMode, Models.GPGFormat, and Native.OS.
     public partial class Preferences : ChromelessWindow
     {
-        // MVVM Violation: View directly manages data that should be in ViewModels.Preferences
-        public string DefaultUser
-        {
-            get;
-            set;
-        }
-
-        public string DefaultEmail
-        {
-            get;
-            set;
-        }
-
-        public Models.CRLFMode CRLFMode
-        {
-            get;
-            set;
-        } = null;
-
-        public bool EnablePruneOnFetch
-        {
-            get;
-            set;
-        }
-
-        // MVVM Violation: AvaloniaProperty registrations couple UI framework with data management
-        public static readonly StyledProperty<string> GitVersionProperty =
-            AvaloniaProperty.Register<Preferences, string>(nameof(GitVersion));
-
-        public string GitVersion
-        {
-            get => GetValue(GitVersionProperty);
-            set => SetValue(GitVersionProperty, value);
-        }
-
-        public static readonly StyledProperty<bool> ShowGitVersionWarningProperty =
-            AvaloniaProperty.Register<Preferences, bool>(nameof(ShowGitVersionWarning));
-
-        public bool ShowGitVersionWarning
-        {
-            get => GetValue(ShowGitVersionWarningProperty);
-            set => SetValue(ShowGitVersionWarningProperty, value);
-        }
-
-        public bool EnableGPGCommitSigning
-        {
-            get;
-            set;
-        }
-
-        public bool EnableGPGTagSigning
-        {
-            get;
-            set;
-        }
-
-        public static readonly StyledProperty<Models.GPGFormat> GPGFormatProperty =
-            AvaloniaProperty.Register<Preferences, Models.GPGFormat>(nameof(GPGFormat), Models.GPGFormat.Supported[0]);
-
-        public Models.GPGFormat GPGFormat
-        {
-            get => GetValue(GPGFormatProperty);
-            set => SetValue(GPGFormatProperty, value);
-        }
-
-        public static readonly StyledProperty<string> GPGExecutableFileProperty =
-            AvaloniaProperty.Register<Preferences, string>(nameof(GPGExecutableFile));
-
-        public string GPGExecutableFile
-        {
-            get => GetValue(GPGExecutableFileProperty);
-            set => SetValue(GPGExecutableFileProperty, value);
-        }
-
-        public string GPGUserKey
-        {
-            get;
-            set;
-        }
-
-        public bool EnableHTTPSSLVerify
-        {
-            get;
-            set;
-        } = false;
-
-        public static readonly StyledProperty<Models.OpenAIService> SelectedOpenAIServiceProperty =
-            AvaloniaProperty.Register<Preferences, Models.OpenAIService>(nameof(SelectedOpenAIService));
-
-        public Models.OpenAIService SelectedOpenAIService
-        {
-            get => GetValue(SelectedOpenAIServiceProperty);
-            set => SetValue(SelectedOpenAIServiceProperty, value);
-        }
-
-        public static readonly StyledProperty<Models.CustomAction> SelectedCustomActionProperty =
-            AvaloniaProperty.Register<Preferences, Models.CustomAction>(nameof(SelectedCustomAction));
-
-        public Models.CustomAction SelectedCustomAction
-        {
-            get => GetValue(SelectedCustomActionProperty);
-            set => SetValue(SelectedCustomActionProperty, value);
-        }
-
-        // MVVM Violation: Tightly coupled with Commands.Config for business logic
-        // Creates direct dependency on git configuration implementation
         public Preferences()
         {
-            var pref = ViewModels.Preferences.Instance;
-            DataContext = pref;
-
-            if (pref.IsGitConfigured())
-            {
-                var config = new Commands.Config(null).ListAll();
-
-                if (config.TryGetValue("user.name", out var name))
-                    DefaultUser = name;
-                if (config.TryGetValue("user.email", out var email))
-                    DefaultEmail = email;
-                if (config.TryGetValue("user.signingkey", out var signingKey))
-                    GPGUserKey = signingKey;
-                if (config.TryGetValue("core.autocrlf", out var crlf))
-                    CRLFMode = Models.CRLFMode.Supported.Find(x => x.Value == crlf);
-                if (config.TryGetValue("fetch.prune", out var pruneOnFetch))
-                    EnablePruneOnFetch = (pruneOnFetch == "true");
-                if (config.TryGetValue("commit.gpgsign", out var gpgCommitSign))
-                    EnableGPGCommitSigning = (gpgCommitSign == "true");
-                if (config.TryGetValue("tag.gpgsign", out var gpgTagSign))
-                    EnableGPGTagSigning = (gpgTagSign == "true");
-                if (config.TryGetValue("gpg.format", out var gpgFormat))
-                    GPGFormat = Models.GPGFormat.Supported.Find(x => x.Value == gpgFormat) ?? Models.GPGFormat.Supported[0];
-
-                if (GPGFormat.Value == "openpgp" && config.TryGetValue("gpg.program", out var openpgp))
-                    GPGExecutableFile = openpgp;
-                else if (config.TryGetValue($"gpg.{GPGFormat.Value}.program", out var gpgProgram))
-                    GPGExecutableFile = gpgProgram;
-
-                if (config.TryGetValue("http.sslverify", out var sslVerify))
-                    EnableHTTPSSLVerify = sslVerify == "true";
-                else
-                    EnableHTTPSSLVerify = true;
-            }
-
-            UpdateGitVersion();
+            DataContext = ViewModels.Preferences.Instance;
             InitializeComponent();
+            
+            // Load git configuration after initialization
+            ViewModels.Preferences.Instance.LoadGitConfig();
         }
-
-        // MVVM Violation: Property change handler depends directly on Commands.Config
-        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-        {
-            base.OnPropertyChanged(change);
-
-            if (change.Property == GPGFormatProperty)
-            {
-                var config = new Commands.Config(null).ListAll();
-                if (GPGFormat.Value == "openpgp" && config.TryGetValue("gpg.program", out var openpgp))
-                    GPGExecutableFile = openpgp;
-                else if (config.TryGetValue($"gpg.{GPGFormat.Value}.program", out var gpgProgram))
-                    GPGExecutableFile = gpgProgram;
-            }
-        }
-
-        // MVVM Violation: OnClosing directly manipulates git config outside ViewModel
-        // Creates implicit dependency between window closing and git configuration
+        
         protected override void OnClosing(WindowClosingEventArgs e)
         {
             base.OnClosing(e);
@@ -183,40 +26,10 @@ namespace SourceGit.Views
             if (Design.IsDesignMode)
                 return;
 
-            var config = new Commands.Config(null).ListAll();
-            SetIfChanged(config, "user.name", DefaultUser, "");
-            SetIfChanged(config, "user.email", DefaultEmail, "");
-            SetIfChanged(config, "user.signingkey", GPGUserKey, "");
-            SetIfChanged(config, "core.autocrlf", CRLFMode != null ? CRLFMode.Value : null, null);
-            SetIfChanged(config, "fetch.prune", EnablePruneOnFetch ? "true" : "false", "false");
-            SetIfChanged(config, "commit.gpgsign", EnableGPGCommitSigning ? "true" : "false", "false");
-            SetIfChanged(config, "tag.gpgsign", EnableGPGTagSigning ? "true" : "false", "false");
-            SetIfChanged(config, "http.sslverify", EnableHTTPSSLVerify ? "" : "false", "");
-            SetIfChanged(config, "gpg.format", GPGFormat.Value, "openpgp");
-
-            if (!GPGFormat.Value.Equals("ssh", StringComparison.Ordinal))
-            {
-                var oldGPG = string.Empty;
-                if (GPGFormat.Value == "openpgp" && config.TryGetValue("gpg.program", out var openpgp))
-                    oldGPG = openpgp;
-                else if (config.TryGetValue($"gpg.{GPGFormat.Value}.program", out var gpgProgram))
-                    oldGPG = gpgProgram;
-
-                bool changed = false;
-                if (!string.IsNullOrEmpty(oldGPG))
-                    changed = oldGPG != GPGExecutableFile;
-                else if (!string.IsNullOrEmpty(GPGExecutableFile))
-                    changed = true;
-
-                if (changed)
-                    new Commands.Config(null).Set($"gpg.{GPGFormat.Value}.program", GPGExecutableFile);
-            }
-
-            ViewModels.Preferences.Instance.Save();
+            // Save git configuration on window closing
+            ViewModels.Preferences.Instance.SaveGitConfig();
         }
 
-        // MVVM Violation: File selection logic should be in ViewModel commands
-        // Creates direct dependency on Avalonia.Platform.Storage
         private async void SelectThemeOverrideFile(object _, RoutedEventArgs e)
         {
             var options = new FilePickerOpenOptions()
@@ -247,7 +60,7 @@ namespace SourceGit.Views
             if (selected.Count == 1)
             {
                 ViewModels.Preferences.Instance.GitInstallPath = selected[0].Path.LocalPath;
-                UpdateGitVersion();
+                ViewModels.Preferences.Instance.UpdateGitVersion();
             }
 
             e.Handled = true;
@@ -274,11 +87,15 @@ namespace SourceGit.Views
 
         private async void SelectGPGExecutable(object _, RoutedEventArgs e)
         {
+            var pref = ViewModels.Preferences.Instance;
+            if (pref.GPGFormat == null)
+                return;
+                
             var patterns = new List<string>();
             if (OperatingSystem.IsWindows())
-                patterns.Add($"{GPGFormat.Program}.exe");
+                patterns.Add($"{pref.GPGFormat.Program}.exe");
             else
-                patterns.Add(GPGFormat.Program);
+                patterns.Add(pref.GPGFormat.Program);
 
             var options = new FilePickerOpenOptions()
             {
@@ -289,7 +106,7 @@ namespace SourceGit.Views
             var selected = await StorageProvider.OpenFilePickerAsync(options);
             if (selected.Count == 1)
             {
-                GPGExecutableFile = selected[0].Path.LocalPath;
+                pref.GPGExecutableFile = selected[0].Path.LocalPath;
             }
 
             e.Handled = true;
@@ -343,18 +160,6 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
-        private void SetIfChanged(Dictionary<string, string> cached, string key, string value, string defValue)
-        {
-            bool changed = false;
-            if (cached.TryGetValue(key, out var old))
-                changed = old != value;
-            else if (!string.IsNullOrEmpty(value) && value != defValue)
-                changed = true;
-
-            if (changed)
-                new Commands.Config(null).Set(key, value);
-        }
-
         private void OnUseNativeWindowFrameChanged(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox box)
@@ -368,25 +173,25 @@ namespace SourceGit.Views
 
         private void OnGitInstallPathChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateGitVersion();
+            ViewModels.Preferences.Instance.UpdateGitVersion();
         }
 
         private void OnAddOpenAIService(object sender, RoutedEventArgs e)
         {
             var service = new Models.OpenAIService() { Name = "Unnamed Service" };
             ViewModels.Preferences.Instance.OpenAIServices.Add(service);
-            SelectedOpenAIService = service;
+            ViewModels.Preferences.Instance.SelectedOpenAIService = service;
 
             e.Handled = true;
         }
 
         private void OnRemoveSelectedOpenAIService(object sender, RoutedEventArgs e)
         {
-            if (SelectedOpenAIService == null)
+            if (ViewModels.Preferences.Instance.SelectedOpenAIService == null)
                 return;
 
-            ViewModels.Preferences.Instance.OpenAIServices.Remove(SelectedOpenAIService);
-            SelectedOpenAIService = null;
+            ViewModels.Preferences.Instance.OpenAIServices.Remove(ViewModels.Preferences.Instance.SelectedOpenAIService);
+            ViewModels.Preferences.Instance.SelectedOpenAIService = null;
             e.Handled = true;
         }
 
@@ -394,7 +199,7 @@ namespace SourceGit.Views
         {
             var action = new Models.CustomAction() { Name = "Unnamed Action (Global)" };
             ViewModels.Preferences.Instance.CustomActions.Add(action);
-            SelectedCustomAction = action;
+            ViewModels.Preferences.Instance.SelectedCustomAction = action;
 
             e.Handled = true;
         }
@@ -416,19 +221,12 @@ namespace SourceGit.Views
 
         private void OnRemoveSelectedCustomAction(object sender, RoutedEventArgs e)
         {
-            if (SelectedCustomAction == null)
+            if (ViewModels.Preferences.Instance.SelectedCustomAction == null)
                 return;
 
-            ViewModels.Preferences.Instance.CustomActions.Remove(SelectedCustomAction);
-            SelectedCustomAction = null;
+            ViewModels.Preferences.Instance.CustomActions.Remove(ViewModels.Preferences.Instance.SelectedCustomAction);
+            ViewModels.Preferences.Instance.SelectedCustomAction = null;
             e.Handled = true;
-        }
-
-        // MVVM Violation: View directly depends on Native.OS, coupling UI with system operations
-        private void UpdateGitVersion()
-        {
-            GitVersion = Native.OS.GitVersionString;
-            ShowGitVersionWarning = !string.IsNullOrEmpty(GitVersion) && Native.OS.GitVersion < Models.GitVersions.MINIMAL;
         }
     }
 }
