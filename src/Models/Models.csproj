@@ -4,14 +4,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-   <PackageReference Include="Avalonia"/>  
-   <PackageReference Include="AvaloniaEdit.TextMate"/>  
-   <PackageReference Include="Azure.AI.OpenAI"/>  
-   <PackageReference Include="CommunityToolkit.Mvvm"/>  
-   <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia"/>  
-   <PackageReference Include="OpenAI"/>  
-   <PackageReference Include="TextMateSharp"/>  
-   <PackageReference Include="TextMateSharp.Grammars"/>  
+   <PackageReference Include="Avalonia">
+     <TreatAsUsed>true</TreatAsUsed>
+   </PackageReference>  
+   <PackageReference Include="AvaloniaEdit.TextMate" />  
+   <PackageReference Include="Azure.AI.OpenAI" />  
+   <PackageReference Include="CommunityToolkit.Mvvm" />  
+   <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" />  
+   <PackageReference Include="OpenAI">
+     <TreatAsUsed>true</TreatAsUsed>
+   </PackageReference>  
+   <PackageReference Include="TextMateSharp" />  
+   <PackageReference Include="TextMateSharp.Grammars">
+     <TreatAsUsed>true</TreatAsUsed>
+   </PackageReference>  
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="App.cs" />
