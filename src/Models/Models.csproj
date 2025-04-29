@@ -26,6 +26,6 @@
     <Compile Remove="InteractiveRebase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Models.Native.csproj" />
+    <ProjectReference Include="..\Models.Native\Models.Native.csproj" />
   </ItemGroup>
 </Project>

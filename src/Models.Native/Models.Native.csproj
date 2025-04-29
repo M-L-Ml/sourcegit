@@ -10,21 +10,20 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
   </ItemGroup>
-  
-  <ItemGroup>
-    <AvaloniaXaml Remove="obj\**" />
-    <Compile Remove="**/*" />
-    <Compile Remove="obj\**" />
-    <Compile Include="..\Native\**\*.cs" />
 
-    <EmbeddedResource Remove="obj\**" />
-    <None Remove="obj\**" />
-    <Compile Remove="..\Native\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
-    <Compile Remove="..\Native\obj\Debug\net8.0\Native.AssemblyInfo.cs" />
+  <ItemGroup>
+    <Compile Include="..\Native\**\*.cs" />
     <Compile Include="App.cs" />
     <Compile Include="ExternalTool.cs" />
     <Compile Include="ShellOrTerminal.cs" />
     <Compile Include="InteractiveRebase.cs" />
+    <AvaloniaXaml Remove="obj\**" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+    <Compile Remove="..\Native\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
+    <Compile Remove="..\Native\obj\Debug\net8.0\Native.AssemblyInfo.cs" />
+
   </ItemGroup>
 
 </Project>
