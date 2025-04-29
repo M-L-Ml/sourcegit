@@ -5,17 +5,15 @@
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\Models\Models.Native.csproj" />
-    <PackageReference Include="CommunityToolkit.Mvvm"/>
-    <PackageReference Include="Avalonia"/>
-    <PackageReference Include="TextMateSharp"/>
-    <PackageReference Include="Avalonia.Desktop"/>
-    <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
-    <PackageReference Include="Avalonia.AvaloniaEdit"/>
-    <PackageReference Include="AvaloniaEdit.TextMate"/>
-    <PackageReference Include="Azure.AI.OpenAI"/>
-    <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia"/>
-    <PackageReference Include="OpenAI"/>
-    <PackageReference Include="TextMateSharp.Grammars"/>
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Include="Avalonia">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
 
   </ItemGroup>
 
