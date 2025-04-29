@@ -6,7 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="../Models/Models.csproj" />
     <ProjectReference Include="..\Commands\Commands.csproj" />
-    <ProjectReference Include="..\Models\Models.Native.csproj" />
+    <ProjectReference Include="..\Models.Native\Models.Native.csproj" />
     <PackageReference Include="CommunityToolkit.Mvvm">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>

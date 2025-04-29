@@ -13,10 +13,6 @@
 
   <ItemGroup>
     <Compile Include="..\Native\**\*.cs" />
-    <Compile Include="App.cs" />
-    <Compile Include="ExternalTool.cs" />
-    <Compile Include="ShellOrTerminal.cs" />
-    <Compile Include="InteractiveRebase.cs" />
     <AvaloniaXaml Remove="obj\**" />
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
