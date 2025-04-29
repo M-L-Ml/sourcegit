@@ -141,9 +141,49 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _selectedCustomAction, value);
         }
 
+        // OpenAI Services management
+        [JsonIgnore]
+        public AvaloniaList<Models.OpenAIService> OpenAIServices { get; private set; } = new AvaloniaList<Models.OpenAIService>();
+
+        // Custom Actions management
+        [JsonIgnore]
+        public AvaloniaList<Models.CustomAction> CustomActions { get; private set; } = new AvaloniaList<Models.CustomAction>();
+
         // Workspace management
         [JsonIgnore]
         public Avalonia.Collections.AvaloniaList<Workspace> Workspaces { get; private set; } = new Avalonia.Collections.AvaloniaList<Workspace>();
+
+        // Git install path
+        [JsonIgnore]
+        public string GitInstallPath
+        {
+            get => _gitInstallPath;
+            set => SetProperty(ref _gitInstallPath, value);
+        }
+
+        // Shell or Terminal path
+        [JsonIgnore]
+        public string ShellOrTerminalPath
+        {
+            get => _shellOrTerminalPath;
+            set => SetProperty(ref _shellOrTerminalPath, value);
+        }
+
+        // External merge tool path
+        [JsonIgnore]
+        public string ExternalMergeToolPath
+        {
+            get => _externalMergeToolPath;
+            set => SetProperty(ref _externalMergeToolPath, value);
+        }
+
+        // Default clone directory
+        [JsonIgnore]
+        public string GitDefaultCloneDir
+        {
+            get => _gitDefaultCloneDir;
+            set => SetProperty(ref _gitDefaultCloneDir, value);
+        }
 
         // Commands
         public IAsyncRelayCommand SelectThemeOverrideFileCommand { get; }
@@ -648,6 +688,8 @@ namespace SourceGit.ViewModels
         private bool _enableHTTPSSLVerify = true;
         private Models.OpenAIService _selectedOpenAIService = null;
         private Models.CustomAction _selectedCustomAction = null;
+        private string _gitInstallPath = string.Empty;
+        private string _shellOrTerminalPath = string.Empty;
         #endregion
     }
 }
