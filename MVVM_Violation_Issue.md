@@ -109,3 +109,142 @@ Several View classes in the codebase contain properties, logic, and responsibili
 - [CommunityToolkit.Mvvm Library](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/) (already used in the project)
 
 **This refactoring will significantly improve the maintainability, testability, and adherence to MVVM principles in the codebase.**
+
+## Proper ViewModel Access through DataContext
+
+### Issue Description
+
+Some View classes directly access static ViewModel instances instead of using proper DataContext binding. This creates tight coupling between the View and a specific ViewModel instance, violating proper MVVM principles.
+
+### Specific Examples
+
+From `src/Views/Preferences.axaml.cs`:
+
+```csharp
+// Direct access to static ViewModel instance
+public partial class Preferences : ChromelessWindow
+{
+    private void OnAddOpenAIService(object sender, RoutedEventArgs e)
+    {
+        var service = new Models.OpenAIService() { Name = "Unnamed Service" };
+        ViewModels.Preferences.Instance.OpenAIServices.Add(service);
+        ViewModels.Preferences.Instance.SelectedOpenAIService = service;
+    }
+}
+```
+
+### Why This Matters
+
+1. **Tight Coupling**: The View is tightly coupled to a specific ViewModel implementation
+2. **Testability**: Makes it difficult to test Views with mock ViewModels
+3. **Flexibility**: Prevents reusing Views with different ViewModels
+4. **Dependency Injection**: Blocks proper dependency injection patterns
+
+### Current Status
+
+In progress. Refactoring these views to use DataContext properly.
+
+### Suggested Approach
+
+1. Access the ViewModel through DataContext:
+
+```csharp
+// Use a property to access the ViewModel through DataContext
+public partial class Preferences : ChromelessWindow
+{
+    // Properly access ViewModel through DataContext
+    public ViewModels.Preferences ViewModel => (ViewModels.Preferences)DataContext;
+    
+    private void OnAddOpenAIService(object sender, RoutedEventArgs e)
+    {
+        // Use the ViewModel property instead of static instance
+        var service = new Models.OpenAIService() { Name = "Unnamed Service" };
+        ViewModel.OpenAIServices.Add(service);
+        ViewModel.SelectedOpenAIService = service;
+    }
+}
+```
+
+2. Use commands in the ViewModel for event handling
+3. Set up bindings in XAML to use the DataContext directly
+
+## Official MVVM Guidelines
+
+1. Views should only handle UI concerns
+2. ViewModels should handle business logic and data preparation
+3. Views should communicate with ViewModels through data binding and commands
+4. Views should access ViewModels only through DataContext, not through static instances
+5. ViewModel properties should be used for binding, not direct property access on Views
+
+## References
+
+- [Microsoft Docs: MVVM Pattern](https://docs.microsoft.com/en-us/windows/uwp/data-binding/data-binding-and-mvvm)
+- [MVVM Light Toolkit](http://www.mvvmlight.net/)
+- [Prism Library](https://github.com/PrismLibrary/Prism)
+
+## Type 3: Direct Static ViewModel Instance Access
+
+### Problem Detail
+
+Some View classes directly access static ViewModel instances instead of using proper DataContext binding. This creates tight coupling between the View and a specific ViewModel instance, violating proper MVVM principles.
+
+### Specific Examples
+
+From `src/Views/Preferences.axaml.cs`:
+
+```csharp
+// Direct access to static ViewModel instance
+public partial class Preferences : ChromelessWindow
+{
+    private void OnAddOpenAIService(object sender, RoutedEventArgs e)
+    {
+        var service = new Models.OpenAIService() { Name = "Unnamed Service" };
+        ViewModels.Preferences.Instance.OpenAIServices.Add(service);
+        ViewModels.Preferences.Instance.SelectedOpenAIService = service;
+    }
+}
+```
+
+### Why This Matters
+
+1. **Tight Coupling**: The View is tightly coupled to a specific ViewModel implementation
+2. **Testability**: Makes it difficult to test Views with mock ViewModels
+3. **Flexibility**: Prevents reusing Views with different ViewModels
+4. **Dependency Injection**: Blocks proper dependency injection patterns
+
+### Current Status
+
+In progress. Refactoring these views to use DataContext properly.
+
+### Suggested Approach
+
+Access the ViewModel through DataContext and use commands:
+
+```csharp
+// Use a property to access the ViewModel through DataContext
+public partial class Preferences : ChromelessWindow
+{
+    // Properly access ViewModel through DataContext
+    public ViewModels.Preferences ViewModel => (ViewModels.Preferences)DataContext;
+    
+    private void OnAddOpenAIService(object sender, RoutedEventArgs e)
+    {
+        // Use the ViewModel property instead of static instance
+        ViewModel.AddOpenAIServiceCommand.Execute(null);
+    }
+}
+```
+
+## Official MVVM Guidelines
+
+1. Views should only handle UI concerns
+2. ViewModels should handle business logic and data preparation
+3. Views should communicate with ViewModels through data binding and commands
+4. Views should access ViewModels only through DataContext, not through static instances
+5. ViewModel properties should be used for binding, not direct property access on Views
+
+## References
+
+- [Microsoft Docs: MVVM Pattern](https://docs.microsoft.com/en-us/windows/uwp/data-binding/data-binding-and-mvvm)
+- [MVVM Light Toolkit](http://www.mvvmlight.net/)
+- [Prism Library](https://github.com/PrismLibrary/Prism)
