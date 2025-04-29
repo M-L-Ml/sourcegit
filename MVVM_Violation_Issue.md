@@ -110,6 +110,118 @@ Several View classes in the codebase contain properties, logic, and responsibili
 
 **This refactoring will significantly improve the maintainability, testability, and adherence to MVVM principles in the codebase.**
 
+## 3rd Issue: Static Singleton Pattern in ViewModels Violates MVVM and DI Principles
+
+### Problem: Singleton ViewModels with Static Instance Properties
+
+In the codebase, several ViewModels (most notably `Preferences`) use a static singleton pattern:
+
+```csharp
+[JsonIgnore]
+public static Preferences Instance
+{
+    get
+    {
+        if (_instance != null)
+            return _instance;
+
+        _instance = Load();
+        _instance._isLoading = false;
+
+        _instance.PrepareGit();
+        _instance.PrepareShellOrTerminal();
+        _instance.PrepareWorkspaces();
+
+        return _instance;
+    }
+}
+```
+
+This pattern, while convenient for global access, violates MVVM principles and modern dependency injection practices.
+
+### Why This is Problematic
+
+1. **Violates Single Responsibility Principle**: ViewModels should focus on providing data and commands to Views, not managing their own lifecycle.
+
+2. **Tight Coupling**: Other components directly reference `Preferences.Instance`, creating tight coupling throughout the codebase.
+
+3. **Difficult Testing**: Singletons are notoriously difficult to mock or replace in unit tests.
+
+4. **Hidden Dependencies**: Dependencies are hidden rather than explicitly declared, making code harder to understand and maintain.
+
+5. **Initialization Order Issues**: Singletons can cause subtle bugs related to initialization order, especially in complex applications.
+
+### Best Practice Solution: Dependency Injection
+
+The CommunityToolkit.MVVM package works well with Microsoft's dependency injection framework. The recommended approach is:
+
+1. **Register ViewModels in a DI Container**:
+   ```csharp
+   // In App.xaml.cs
+   private static IServiceProvider ConfigureServices()
+   {
+       var services = new ServiceCollection();
+       
+       // Register services
+       services.AddSingleton<IFilesService, FilesService>();
+       
+       // Register ViewModels
+       services.AddSingleton<ViewModels.Preferences>();
+       services.AddTransient<ViewModels.WorkingCopy>();
+       
+       return services.BuildServiceProvider();
+   }
+   ```
+
+2. **Inject Dependencies into ViewModels**:
+   ```csharp
+   public class Preferences : ObservableObject
+   {
+       private readonly IFilesService _filesService;
+       
+       public Preferences(IFilesService filesService)
+       {
+           _filesService = filesService;
+           // Initialize properties and commands
+       }
+       
+       // Rest of the class...
+   }
+   ```
+
+3. **Resolve ViewModels in Views**:
+   ```csharp
+   public partial class PreferencesView : UserControl
+   {
+       public PreferencesView()
+       {
+           InitializeComponent();
+           DataContext = App.Current.Services.GetService<ViewModels.Preferences>();
+       }
+   }
+   ```
+
+### Migration Strategy
+
+This is a significant architectural change that should be approached carefully:
+
+1. **Start with New Components**: Apply DI to new ViewModels and Views first.
+
+2. **Gradual Refactoring**: Refactor existing components one at a time, starting with those that have fewer dependencies.
+
+3. **Hybrid Approach During Transition**: Temporarily maintain both patterns if needed, gradually phasing out the singleton pattern.
+
+4. **Update References**: Replace all direct references to `Preferences.Instance` with injected instances.
+
+### References
+
+- [Microsoft Docs: Dependency Injection](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)
+- [CommunityToolkit.MVVM IoC Documentation](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/ioc)
+
+---
+
+**Note**: This refactoring is not urgent but should be considered for future architectural improvements to enhance maintainability, testability, and adherence to MVVM principles.
+
 ## Proper ViewModel Access through DataContext
 
 ### Issue Description
