@@ -141,6 +141,10 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _selectedCustomAction, value);
         }
 
+        // Workspace management
+        [JsonIgnore]
+        public Avalonia.Collections.AvaloniaList<Workspace> Workspaces { get; private set; } = new Avalonia.Collections.AvaloniaList<Workspace>();
+
         // Commands
         public IAsyncRelayCommand SelectThemeOverrideFileCommand { get; }
         public IAsyncRelayCommand SelectGitExecutableCommand { get; }
@@ -260,6 +264,14 @@ namespace SourceGit.ViewModels
                 EnableHTTPSSLVerify = true;
 
             UpdateGitVersion();
+        }
+
+        // Helper to check if Git is configured
+        public bool IsGitConfigured()
+        {
+            // Example logic: check if Git executable is set and exists
+            var gitPath = Native.OS.GitExecutable;
+            return !string.IsNullOrEmpty(gitPath) && File.Exists(gitPath);
         }
 
         public Preferences()
