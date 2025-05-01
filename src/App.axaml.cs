@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
@@ -308,7 +309,7 @@ namespace SourceGit
             return default;
         }
 
-     //   public static string Text(string key, params object[] args)
+        //   public static string Text(string key, params object[] args)
 
 
         public static Avalonia.Controls.Shapes.Path CreateMenuIcon(string key)
@@ -333,14 +334,16 @@ namespace SourceGit
             return null;
         }
 
+        [return:NotNull]
         public static ViewModels.Launcher GetLauncer()
         {
-            return Current is App app ? app._launcher : null;
+            return ((App)Current)._launcher;
         }
 
+        [return:NotNull]
         public static Views.Services.WindowService GetWindowService()
         {
-            return Current is App app ? app._windowService : null;
+            return ((App)Current)._windowService;
         }
 
         public void Quit(int exitCode)
