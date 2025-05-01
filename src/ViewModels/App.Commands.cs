@@ -38,12 +38,12 @@ namespace SourceGit.ViewModels
         }
         
         public static readonly Command OpenPreferencesCommand = new Command(_ => 
-            SourceGit.App.GetWindowService()?.ShowWindow("Preferences", false));
+            App.AppDyn.GetWindowService().ShowWindow("Preferences", false));
         public static readonly Command OpenHotkeysCommand = new Command(_ => 
-            SourceGit.App.GetWindowService()?.ShowWindow("Hotkeys", false));
+            App.AppDyn.GetWindowService().ShowWindow("Hotkeys", false));
         public static readonly Command OpenAppDataDirCommand = new Command(_ => Native.OS.OpenInFileManager(Native.OS.DataDir));
         public static readonly Command OpenAboutCommand = new Command(_ => 
-            SourceGit.App.GetWindowService()?.ShowWindow("About", false));
+            App.AppDyn.GetWindowService().ShowWindow("About", false));
         public static readonly Command CheckForUpdateCommand = new Command(_ => AppDyn.Check4Update(true));
         public static readonly Command QuitCommand = new Command(_ => App.Quit(0));
         public static readonly Command CopyTextBlockCommand = new Command(p =>
