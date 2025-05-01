@@ -10,8 +10,8 @@ namespace SourceGit.ViewModels
         {
             public event EventHandler CanExecuteChanged
             {
-                add { }
-                remove { }
+                add { CommandManager.RequerySuggested += value; }
+                remove { CommandManager.RequerySuggested -= value; }
             }
 
             public Command(Action<object> action)
@@ -22,7 +22,7 @@ namespace SourceGit.ViewModels
             public bool CanExecute(object parameter) => _action != null;
             public void Execute(object parameter) => _action?.Invoke(parameter);
 
-            private Action<object> _action = null;
+            private readonly Action<object> _action;
         }
 
         public static bool IsCheckForUpdateCommandVisible
@@ -36,13 +36,14 @@ namespace SourceGit.ViewModels
 #endif
             }
         }
-//public static App Current => Avalonia.Application.Current as App;
-        public static readonly Command OpenPreferencesCommand = new Command(_ => SShowWindow(
-            new Views.Preferences(), false));
-        public static readonly Command OpenHotkeysCommand = new Command(_ => SShowWindow(
-            new Views.Hotkeys(), false));
+        
+        public static readonly Command OpenPreferencesCommand = new Command(_ => 
+            SourceGit.App.GetWindowService()?.ShowWindow("Preferences", false));
+        public static readonly Command OpenHotkeysCommand = new Command(_ => 
+            SourceGit.App.GetWindowService()?.ShowWindow("Hotkeys", false));
         public static readonly Command OpenAppDataDirCommand = new Command(_ => Native.OS.OpenInFileManager(Native.OS.DataDir));
-        public static readonly Command OpenAboutCommand = new Command(_ => SShowWindow(new Views.About(), false));
+        public static readonly Command OpenAboutCommand = new Command(_ => 
+            SourceGit.App.GetWindowService()?.ShowWindow("About", false));
         public static readonly Command CheckForUpdateCommand = new Command(_ => AppDyn.Check4Update(true));
         public static readonly Command QuitCommand = new Command(_ => App.Quit(0));
         public static readonly Command CopyTextBlockCommand = new Command(p =>

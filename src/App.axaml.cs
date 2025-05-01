@@ -338,6 +338,11 @@ namespace SourceGit
             return Current is App app ? app._launcher : null;
         }
 
+        public static Services.WindowService GetWindowService()
+        {
+            return Current is App app ? app._windowService : null;
+        }
+
         public void Quit(int exitCode)
         {
             if (this is IClassicDesktopStyleApplicationLifetime desktop)
@@ -359,6 +364,9 @@ namespace SourceGit
 
             var pref = ViewModels.Preferences.Instance;
             pref.PropertyChanged += (_, _) => pref.Save();
+
+            // Initialize the WindowService
+            _windowService = new Services.WindowService();
 
             SetLocale(pref.Locale);
             SetTheme(pref.Theme, pref.ThemeOverrides);
@@ -683,5 +691,6 @@ namespace SourceGit
         private ResourceDictionary _activeLocale = null;
         private ResourceDictionary _themeOverrides = null;
         private ResourceDictionary _fontsOverrides = null;
+        private Services.WindowService _windowService = null;
     }
 }
