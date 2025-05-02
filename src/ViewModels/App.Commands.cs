@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Input;
 using Avalonia.Controls;
 
@@ -6,8 +7,16 @@ namespace SourceGit.ViewModels
 {
     public partial class App
     {
+        //TODO : DelegateCommand  ? , RelayCommand?
+//         ReactiveCommand (ReactiveUI)
+// Avalonia works well with ReactiveUI, which provides ReactiveCommand:
         public class Command : ICommand
         {
+            //TODO: is it used ? cannot find usage in the code.
+            // maybe make something like <code> add { CommandManager.RequerySuggested += value; } </code> ?
+            //    add { Debug.Assert(false, "Used?"); }
+       //         remove {Debug.Assert(false, "Used?");  }
+       
             public event EventHandler CanExecuteChanged
             {
                 add { CommandManager.RequerySuggested += value; }
