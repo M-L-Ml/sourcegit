@@ -19,6 +19,7 @@ Prism is licensed under the Microsoft Public License (Ms-PL), not MIT. There is 
 - Do not use the authors’ names to promote your project.
 
 ## References
+- [Prism License discussion](https://github.com/CommunityToolkit/dotnet/discussions/780#discussioncomment-8145713)
 - [Prism LICENSE file](https://github.com/PrismLibrary/Prism/blob/master/LICENSE)
 - [Microsoft Public License (Ms-PL) OSI Page](https://opensource.org/license/ms-pl-html/)
 - [ChooseALicense summary for Ms-PL](https://choosealicense.com/licenses/ms-pl/)
