@@ -2,25 +2,25 @@ using System;
 using System.Diagnostics;
 using System.Windows.Input;
 using Avalonia.Controls;
+using Avalonia.Utilities;
 
 namespace SourceGit.ViewModels
 {
     public partial class App
     {
-        //TODO : DelegateCommand  ? , RelayCommand?
+        //TODO : maybe use CommunityToolkit.Mvvm.Input; RelayCommand?
 //         ReactiveCommand (ReactiveUI)
 // Avalonia works well with ReactiveUI, which provides ReactiveCommand:
         public class Command : ICommand
         {
-            //TODO: is it used ? cannot find usage in the code.
+            //TODO: is it used ? cannot find usage in the code.//?CommunityToolkit.Mvvm.Input.WeakEventHandlerManager
             // maybe make something like <code> add { CommandManager.RequerySuggested += value; } </code> ?
             //    add { Debug.Assert(false, "Used?"); }
        //         remove {Debug.Assert(false, "Used?");  }
-       
             public event EventHandler CanExecuteChanged
             {
-                add { CommandManager.RequerySuggested += value; }
-                remove { CommandManager.RequerySuggested -= value; }
+                add { }
+                remove { }
             }
 
             public Command(Action<object> action)
