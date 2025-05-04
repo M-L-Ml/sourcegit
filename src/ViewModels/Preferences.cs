@@ -42,7 +42,6 @@ namespace SourceGit.ViewModels
                     App.SetLocale(value);
             }
         }
-      private string _locale = "en-US";
 
         public string Theme
         {
@@ -387,6 +386,69 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _lastCheckUpdateTime, value);
         }
 
+
+        public void SetCanModify()
+        {
+            _isReadonly = false;
+        }
+
+        public bool IsGitConfigured()
+        {
+            var path = GitInstallPath;
+            return !string.IsNullOrEmpty(path) && File.Exists(path);
+        }
+        // Helper to check if Git is configured
+        //public bool IsGitConfigured()
+        //{
+        //    // Example logic: check if Git executable is set and exists
+        //    var gitPath = Native.OS.GitExecutable;
+        //    return !string.IsNullOrEmpty(gitPath) && File.Exists(gitPath);
+        //}
+        public bool ShouldCheck4UpdateOnStartup()
+        {
+            if (!_check4UpdatesOnStartup)
+                return false;
+
+            var lastCheck = DateTime.UnixEpoch.AddSeconds(LastCheckUpdateTime).ToLocalTime();
+            var now = DateTime.Now;
+
+            if (lastCheck.Year == now.Year && lastCheck.Month == now.Month && lastCheck.Day == now.Day)
+                return false;
+
+            LastCheckUpdateTime = now.Subtract(DateTime.UnixEpoch.ToLocalTime()).TotalSeconds;
+            return true;
+        }
+
+        public Workspace GetActiveWorkspace()
+        {
+            foreach (var w in Workspaces)
+            {
+                if (w.IsActive)
+                    return w;
+            }
+
+            var first = Workspaces[0];
+            first.IsActive = true;
+            return first;
+        }
+
+        public void AddNode(RepositoryNode node, RepositoryNode to, bool save)
+        {
+            var collection = to == null ? RepositoryNodes : to.SubNodes;
+            collection.Add(node);
+            collection.Sort((l, r) =>
+            {
+                if (l.IsRepository != r.IsRepository)
+                    return l.IsRepository ? 1 : -1;
+
+                return string.Compare(l.Name, r.Name, StringComparison.Ordinal);
+            });
+
+            if (save)
+                Save();
+        }
+
+
         // Git user configuration properties (moved from View)
         [JsonIgnore]
         public string DefaultUser 
@@ -515,33 +577,7 @@ namespace SourceGit.ViewModels
         {
             return FindNodeRecursive(id, RepositoryNodes);
         }
-        private RepositoryNode FindNodeRecursive(string id, List<RepositoryNode> collection)
-        {
-            foreach (var node in collection)
-            {
-                if (node.Id == id)
-                    return node;
-
-                var sub = FindNodeRecursive(id, node.SubNodes);
-                if (sub != null)
-                    return sub;
-            }
-
-            return null;
-        }
-
-        [Obsolete("check this AI implemention")]
-        private RepositoryNode FindNodeRecursive2(IEnumerable<RepositoryNode> nodes, string id)
-        {
-            foreach (var node in nodes)
-            {
-                if (node.Id == id) return node;
-                var found = FindNodeRecursive2(node.SubNodes, id);
-                if (found != null) return found;
-            }
-            return null;
-        }
-
+   
         // === SonarQube: Make FindOrAddNodeByRepositoryPath static ===
 
         public RepositoryNode FindOrAddNodeByRepositoryPath(string repo, RepositoryNode parent, bool shouldMoveNode)
@@ -582,35 +618,7 @@ namespace SourceGit.ViewModels
         //    return node;
         //}
 
-        public void AddNode(RepositoryNode node, RepositoryNode to, bool save)
-        {
-            var collection = to == null ? RepositoryNodes : to.SubNodes;
-            collection.Add(node);
-            collection.Sort((l, r) =>
-            {
-                if (l.IsRepository != r.IsRepository)
-                    return l.IsRepository ? 1 : -1;
-
-                return string.Compare(l.Name, r.Name, StringComparison.Ordinal);
-            });
-
-            if (save)
-                Save();
-        }
-        public void RemoveNode(RepositoryNode node, bool save)
-        
-        { 
-            RemoveNodeRecursive(node, RepositoryNodes);
-
-            if (save)
-                Save();
-        
-            //RepositoryNode parent = null){
-            // if (parent == null)
-            //     RepositoryNodes.Remove(node);
-            // else
-            //     parent.SubNodes.Remove(node);
-        }
+ 
 
         //public void MoveNode(RepositoryNode from, RepositoryNode to, bool asChild)
         //{
@@ -633,19 +641,42 @@ namespace SourceGit.ViewModels
             if (save)
                 Save();
         }
-        public void SortByRenamedNode(RepositoryNode node)
-        {
-            // Dummy implementation (should be replaced with real logic)
+
+        public void RemoveNode(RepositoryNode node, bool save)
+        
+        { 
+            RemoveNodeRecursive(node, RepositoryNodes);
+
+            if (save)
+                Save();
+        
+            //RepositoryNode parent = null){
+            // if (parent == null)
+            //     RepositoryNodes.Remove(node);
+            // else
+            //     parent.SubNodes.Remove(node);
         }
 
-        public void SetCanModify()
+
+
+        public void SortByRenamedNode(RepositoryNode node)
         {
-            _isReadonly = false;
+            var container = FindNodeContainer(node, RepositoryNodes);
+            container?.Sort((l, r) =>
+            {
+                if (l.IsRepository != r.IsRepository)
+                    return l.IsRepository ? 1 : -1;
+
+                return string.Compare(l.Name, r.Name, StringComparison.Ordinal);
+            });
+
+            Save();
         }
+
 
         // Update Git version information
         public void UpdateGitVersion()
-        {
+        { // see also OS.UpdateGitVersion
             GitVersion = Native.OS.GitVersionString;
             ShowGitVersionWarning = !string.IsNullOrEmpty(GitVersion) && Native.OS.GitVersion < Models.GitVersions.MINIMAL;
         }
@@ -738,13 +769,7 @@ namespace SourceGit.ViewModels
             UpdateGitVersion();
         }
 
-        // Helper to check if Git is configured
-        public bool IsGitConfigured()
-        {
-            // Example logic: check if Git executable is set and exists
-            var gitPath = Native.OS.GitExecutable;
-            return !string.IsNullOrEmpty(gitPath) && File.Exists(gitPath);
-        }
+
 
         // === FIX: Remove invalid method group usage for Count ===
         public int CountNodes()
@@ -1099,6 +1124,50 @@ namespace SourceGit.ViewModels
                 }
             }
         }
+
+        private RepositoryNode FindNodeRecursive(string id, List<RepositoryNode> collection)
+        {
+            foreach (var node in collection)
+            {
+                if (node.Id == id)
+                    return node;
+
+                var sub = FindNodeRecursive(id, node.SubNodes);
+                if (sub != null)
+                    return sub;
+            }
+
+            return null;
+        }
+
+
+        [Obsolete("check this AI implemention")]
+        private RepositoryNode FindNodeRecursive2(IEnumerable<RepositoryNode> nodes, string id)
+        {
+            foreach (var node in nodes)
+            {
+                if (node.Id == id) return node;
+                var found = FindNodeRecursive2(node.SubNodes, id);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        private List<RepositoryNode> FindNodeContainer(RepositoryNode node, List<RepositoryNode> collection)
+        {
+            foreach (var sub in collection)
+            {
+                if (node == sub)
+                    return collection;
+
+                var subCollection = FindNodeContainer(node, sub.SubNodes);
+                if (subCollection != null)
+                    return subCollection;
+            }
+
+            return null;
+        }
+
         private bool RemoveNodeRecursive(RepositoryNode node, List<RepositoryNode> collection)
         {
             if (collection.Contains(node))
