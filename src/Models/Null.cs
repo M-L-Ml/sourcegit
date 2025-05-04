@@ -25,6 +25,7 @@ namespace SourceGit
         // [JsonSerializable(typeof(Models.JetBrainsState))]
         [JsonSerializable(typeof(Models.RepositorySettings))]
 
-        public partial class JsonCodeGen : JsonSerializerContext { }
+        public partial class JsonCodeGen : ModelsN.JsonCodeGen//JsonSerializerContext 
+        { }
     }
 }

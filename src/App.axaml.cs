@@ -203,7 +203,7 @@ namespace SourceGit
                 try
                 {
                     var resDic = new ResourceDictionary();
-                    var overrides = JsonSerializer.Deserialize(File.ReadAllText(themeOverridesFile), JsonCodeGen.Default.ThemeOverrides);
+                    var overrides = JsonSerializer.Deserialize(File.ReadAllText(themeOverridesFile), SourceGit.ViewModels.JsonCodeGen.Default.ThemeOverrides);
                     foreach (var kv in overrides.BasicColors)
                     {
                         if (kv.Key.Equals("SystemAccentColor", StringComparison.Ordinal))
