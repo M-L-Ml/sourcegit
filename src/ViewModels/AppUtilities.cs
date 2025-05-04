@@ -189,7 +189,7 @@ namespace SourceGit.ViewModels
         {
             throw new NotImplementedException();
         }
+        public static readonly FormatByResourceKeyConverter FormatByResourceKey = new FormatByResourceKeyConverter();
     }
 
-    //public static readonly FormatByResourceKeyConverter FormatByResourceKey = new FormatByResourceKeyConverter();
 }

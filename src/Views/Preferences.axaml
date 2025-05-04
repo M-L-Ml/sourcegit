@@ -144,7 +144,7 @@
             <CheckBox Grid.Row="8" Grid.Column="1"
                       Height="32"
                       Content="{DynamicResource Text.Preferences.General.Check4UpdatesOnStartup}"
-                      IsVisible="{x:Static s:App.IsCheckForUpdateCommandVisible}"
+                      IsVisible="{x:Static vm:App.IsCheckForUpdateCommandVisible}"
                       IsChecked="{Binding Check4UpdatesOnStartup, Mode=TwoWay}"/>
           </Grid>
         </TabItem>

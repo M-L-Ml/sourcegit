@@ -8,7 +8,7 @@ namespace SourceGit.Models
         Commit,
         Branch,
     }
-
+    //TODO: ObservableObject derived classes is considered ViewModel. So either move this to viewmodel or split and make the pure model to leave here.
     public class CustomAction : ObservableObject
     {
         public string Name
