@@ -33,74 +33,62 @@ namespace SourceGit.ViewModels
             }
         }
 
+        [JsonIgnore]
         public string Locale
         {
             get => _locale;
             set
             {
                 if (SetProperty(ref _locale, value) && !_isLoading)
-                    App.SetLocale(value);
+                {
+                    // You may want to call App.SetLocale(value) here if needed
+                }
             }
         }
         private string _locale = "en-US";
 
+        [JsonIgnore]
         public string Theme
         {
             get => _theme;
-            set
-            {
-                if (SetProperty(ref _theme, value) && !_isLoading)
-                    App.SetTheme(_theme, _themeOverrides);
-            }
+            set => SetProperty(ref _theme, value);
         }
 
+        [JsonIgnore]
         public string ThemeOverrides
         {
             get => _themeOverrides;
-            set
-            {
-                if (SetProperty(ref _themeOverrides, value) && !_isLoading)
-                    App.SetTheme(_theme, value);
-            }
+            set => SetProperty(ref _themeOverrides, value);
         }
 
+        [JsonIgnore]
         public string DefaultFontFamily
         {
             get => _defaultFontFamily;
-            set
-            {
-                if (SetProperty(ref _defaultFontFamily, value) && !_isLoading)
-                    App.SetFonts(value, _monospaceFontFamily, _onlyUseMonoFontInEditor);
-            }
+            set => SetProperty(ref _defaultFontFamily, value);
         }
 
+        [JsonIgnore]
         public string MonospaceFontFamily
         {
             get => _monospaceFontFamily;
-            set
-            {
-                if (SetProperty(ref _monospaceFontFamily, value) && !_isLoading)
-                    App.SetFonts(_defaultFontFamily, value, _onlyUseMonoFontInEditor);
-            }
+            set => SetProperty(ref _monospaceFontFamily, value);
         }
 
+        [JsonIgnore]
         public bool OnlyUseMonoFontInEditor
         {
             get => _onlyUseMonoFontInEditor;
-            set
-            {
-                if (SetProperty(ref _onlyUseMonoFontInEditor, value) && !_isLoading)
-                    App.SetFonts(_defaultFontFamily, _monospaceFontFamily, _onlyUseMonoFontInEditor);
-            }
+            set => SetProperty(ref _onlyUseMonoFontInEditor, value);
         }
 
+        [JsonIgnore]
         public bool UseSystemWindowFrame
         {
             get => _useSystemWindowFrame;
             set => SetProperty(ref _useSystemWindowFrame, value);
         }
 
-        // === FONT SIZE PROPERTIES ===
         [JsonIgnore]
         public double DefaultFontSize
         {
@@ -122,7 +110,6 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _editorTabWidth, value);
         }
 
-        // === LAYOUT PROPERTY ===
         [JsonIgnore]
         public LayoutInfo Layout
         {
@@ -130,7 +117,6 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _layout, value);
         }
 
-        // === MAX HISTORY COMMITS ===
         [JsonIgnore]
         public int MaxHistoryCommits
         {
@@ -138,7 +124,6 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _maxHistoryCommits, value);
         }
 
-        // === SUBJECT GUIDE LENGTH ===
         [JsonIgnore]
         public int SubjectGuideLength
         {
@@ -146,7 +131,6 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _subjectGuideLength, value);
         }
 
-        // === DATE TIME FORMAT ===
         [JsonIgnore]
         public int DateTimeFormat
         {
@@ -163,66 +147,84 @@ namespace SourceGit.ViewModels
             }
         }
 
+        [JsonIgnore]
         public bool UseFixedTabWidth
         {
             get => _useFixedTabWidth;
             set => SetProperty(ref _useFixedTabWidth, value);
         }
 
+        [JsonIgnore]
         public bool Check4UpdatesOnStartup
         {
             get => _check4UpdatesOnStartup;
             set => SetProperty(ref _check4UpdatesOnStartup, value);
         }
 
+        [JsonIgnore]
+        public bool ShowAuthorTimeInGraph
+        {
+            get => _showAuthorTimeInGraph;
+            set => SetProperty(ref _showAuthorTimeInGraph, value);
+        }
+
+        [JsonIgnore]
         public bool ShowChildren
         {
             get => _showChildren;
             set => SetProperty(ref _showChildren, value);
         }
 
+        [JsonIgnore]
         public string IgnoreUpdateTag
         {
             get => _ignoreUpdateTag;
             set => SetProperty(ref _ignoreUpdateTag, value);
         }
 
+        [JsonIgnore]
         public bool ShowTagsAsTree
         {
             get => _showTagsAsTree;
             set => SetProperty(ref _showTagsAsTree, value);
         }
 
+        [JsonIgnore]
         public bool ShowTagsInGraph
         {
             get => _showTagsInGraph;
             set => SetProperty(ref _showTagsInGraph, value);
         }
 
+        [JsonIgnore]
         public bool UseTwoColumnsLayoutInHistories
         {
             get => _useTwoColumnsLayoutInHistories;
             set => SetProperty(ref _useTwoColumnsLayoutInHistories, value);
         }
 
+        [JsonIgnore]
         public bool DisplayTimeAsPeriodInHistories
         {
             get => _displayTimeAsPeriodInHistories;
             set => SetProperty(ref _displayTimeAsPeriodInHistories, value);
         }
 
+        [JsonIgnore]
         public bool UseSideBySideDiff
         {
             get => _useSideBySideDiff;
             set => SetProperty(ref _useSideBySideDiff, value);
         }
 
+        [JsonIgnore]
         public bool UseSyntaxHighlighting
         {
             get => _useSyntaxHighlighting;
             set => SetProperty(ref _useSyntaxHighlighting, value);
         }
 
+        [JsonIgnore]
         public bool IgnoreCRAtEOLInDiff
         {
             get => Models.DiffOption.IgnoreCRAtEOL;
@@ -236,54 +238,63 @@ namespace SourceGit.ViewModels
             }
         }
 
+        [JsonIgnore]
         public bool IgnoreWhitespaceChangesInDiff
         {
             get => _ignoreWhitespaceChangesInDiff;
             set => SetProperty(ref _ignoreWhitespaceChangesInDiff, value);
         }
 
+        [JsonIgnore]
         public bool EnableDiffViewWordWrap
         {
             get => _enableDiffViewWordWrap;
             set => SetProperty(ref _enableDiffViewWordWrap, value);
         }
 
+        [JsonIgnore]
         public bool ShowHiddenSymbolsInDiffView
         {
             get => _showHiddenSymbolsInDiffView;
             set => SetProperty(ref _showHiddenSymbolsInDiffView, value);
         }
 
+        [JsonIgnore]
         public bool UseFullTextDiff
         {
             get => _useFullTextDiff;
             set => SetProperty(ref _useFullTextDiff, value);
         }
 
+        [JsonIgnore]
         public bool UseBlockNavigationInDiffView
         {
             get => _useBlockNavigationInDiffView;
             set => SetProperty(ref _useBlockNavigationInDiffView, value);
         }
 
+        [JsonIgnore]
         public Models.ChangeViewMode UnstagedChangeViewMode
         {
             get => _unstagedChangeViewMode;
             set => SetProperty(ref _unstagedChangeViewMode, value);
         }
 
+        [JsonIgnore]
         public Models.ChangeViewMode StagedChangeViewMode
         {
             get => _stagedChangeViewMode;
             set => SetProperty(ref _stagedChangeViewMode, value);
         }
 
+        [JsonIgnore]
         public Models.ChangeViewMode CommitChangeViewMode
         {
             get => _commitChangeViewMode;
             set => SetProperty(ref _commitChangeViewMode, value);
         }
 
+        [JsonIgnore]
         public string GitInstallPath
         {
             get => Native.OS.GitExecutable;
@@ -297,6 +308,7 @@ namespace SourceGit.ViewModels
             }
         }
 
+        [JsonIgnore]
         public string GitDefaultCloneDir
         {
             get => _gitDefaultCloneDir;
