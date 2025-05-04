@@ -39,14 +39,11 @@ namespace SourceGit.ViewModels
             set
             {
                 if (SetProperty(ref _locale, value) && !_isLoading)
-                {
-                    // You may want to call App.SetLocale(value) here if needed
-                }
+                    App.SetLocale(value);
             }
         }
-        private string _locale = "en-US";
+      private string _locale = "en-US";
 
-        [JsonIgnore]
         public string Theme
         {
             get => _theme;
