@@ -48,6 +48,10 @@ namespace SourceGit.Converters
 
         public static readonly ToThemeConverter ToTheme = new ToThemeConverter();
 
+
+        /// <summary>
+        /// TODO: FormatByResourceKeyConverter describe , refactor.
+        /// </summary>
         public class FormatByResourceKeyConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
