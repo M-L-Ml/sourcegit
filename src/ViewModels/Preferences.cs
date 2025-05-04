@@ -33,7 +33,6 @@ namespace SourceGit.ViewModels
             }
         }
 
-        [JsonIgnore]
         public string Locale
         {
             get => _locale;
@@ -51,45 +50,59 @@ namespace SourceGit.ViewModels
         public string Theme
         {
             get => _theme;
-            set => SetProperty(ref _theme, value);
+            set
+            {
+                if (SetProperty(ref _theme, value) && !_isLoading)
+                    App.SetTheme(_theme, _themeOverrides);
+            }
         }
 
-        [JsonIgnore]
         public string ThemeOverrides
         {
             get => _themeOverrides;
-            set => SetProperty(ref _themeOverrides, value);
+            set
+            {
+                if (SetProperty(ref _themeOverrides, value) && !_isLoading)
+                    App.SetTheme(_theme, value);
+            }
         }
 
-        [JsonIgnore]
         public string DefaultFontFamily
         {
             get => _defaultFontFamily;
-            set => SetProperty(ref _defaultFontFamily, value);
+            set
+            {
+                if (SetProperty(ref _defaultFontFamily, value) && !_isLoading)
+                    App.SetFonts(value, _monospaceFontFamily, _onlyUseMonoFontInEditor);
+            }
         }
 
-        [JsonIgnore]
         public string MonospaceFontFamily
         {
             get => _monospaceFontFamily;
-            set => SetProperty(ref _monospaceFontFamily, value);
+            set
+            {
+                if (SetProperty(ref _monospaceFontFamily, value) && !_isLoading)
+                    App.SetFonts(_defaultFontFamily, value, _onlyUseMonoFontInEditor);
+            }
         }
 
-        [JsonIgnore]
         public bool OnlyUseMonoFontInEditor
         {
             get => _onlyUseMonoFontInEditor;
-            set => SetProperty(ref _onlyUseMonoFontInEditor, value);
+            set
+            {
+                if (SetProperty(ref _onlyUseMonoFontInEditor, value) && !_isLoading)
+                    App.SetFonts(_defaultFontFamily, _monospaceFontFamily, _onlyUseMonoFontInEditor);
+            }
         }
 
-        [JsonIgnore]
         public bool UseSystemWindowFrame
         {
             get => _useSystemWindowFrame;
             set => SetProperty(ref _useSystemWindowFrame, value);
         }
 
-        [JsonIgnore]
         public double DefaultFontSize
         {
             get => _defaultFontSize;
@@ -103,35 +116,30 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _editorFontSize, value);
         }
 
-        [JsonIgnore]
         public int EditorTabWidth
         {
             get => _editorTabWidth;
             set => SetProperty(ref _editorTabWidth, value);
         }
 
-        [JsonIgnore]
         public LayoutInfo Layout
         {
             get => _layout;
             set => SetProperty(ref _layout, value);
         }
 
-        [JsonIgnore]
         public int MaxHistoryCommits
         {
             get => _maxHistoryCommits;
             set => SetProperty(ref _maxHistoryCommits, value);
         }
 
-        [JsonIgnore]
         public int SubjectGuideLength
         {
             get => _subjectGuideLength;
             set => SetProperty(ref _subjectGuideLength, value);
         }
 
-        [JsonIgnore]
         public int DateTimeFormat
         {
             get => Models.DateTimeFormat.ActiveIndex;
@@ -147,84 +155,72 @@ namespace SourceGit.ViewModels
             }
         }
 
-        [JsonIgnore]
         public bool UseFixedTabWidth
         {
             get => _useFixedTabWidth;
             set => SetProperty(ref _useFixedTabWidth, value);
         }
 
-        [JsonIgnore]
         public bool Check4UpdatesOnStartup
         {
             get => _check4UpdatesOnStartup;
             set => SetProperty(ref _check4UpdatesOnStartup, value);
         }
 
-        [JsonIgnore]
         public bool ShowAuthorTimeInGraph
         {
             get => _showAuthorTimeInGraph;
             set => SetProperty(ref _showAuthorTimeInGraph, value);
         }
 
-        [JsonIgnore]
         public bool ShowChildren
         {
             get => _showChildren;
             set => SetProperty(ref _showChildren, value);
         }
 
-        [JsonIgnore]
         public string IgnoreUpdateTag
         {
             get => _ignoreUpdateTag;
             set => SetProperty(ref _ignoreUpdateTag, value);
         }
 
-        [JsonIgnore]
         public bool ShowTagsAsTree
         {
             get => _showTagsAsTree;
             set => SetProperty(ref _showTagsAsTree, value);
         }
 
-        [JsonIgnore]
         public bool ShowTagsInGraph
         {
             get => _showTagsInGraph;
             set => SetProperty(ref _showTagsInGraph, value);
         }
 
-        [JsonIgnore]
         public bool UseTwoColumnsLayoutInHistories
         {
             get => _useTwoColumnsLayoutInHistories;
             set => SetProperty(ref _useTwoColumnsLayoutInHistories, value);
         }
 
-        [JsonIgnore]
         public bool DisplayTimeAsPeriodInHistories
         {
             get => _displayTimeAsPeriodInHistories;
             set => SetProperty(ref _displayTimeAsPeriodInHistories, value);
         }
 
-        [JsonIgnore]
         public bool UseSideBySideDiff
         {
             get => _useSideBySideDiff;
             set => SetProperty(ref _useSideBySideDiff, value);
         }
 
-        [JsonIgnore]
         public bool UseSyntaxHighlighting
         {
             get => _useSyntaxHighlighting;
             set => SetProperty(ref _useSyntaxHighlighting, value);
         }
 
-        [JsonIgnore]
         public bool IgnoreCRAtEOLInDiff
         {
             get => Models.DiffOption.IgnoreCRAtEOL;
@@ -238,63 +234,54 @@ namespace SourceGit.ViewModels
             }
         }
 
-        [JsonIgnore]
         public bool IgnoreWhitespaceChangesInDiff
         {
             get => _ignoreWhitespaceChangesInDiff;
             set => SetProperty(ref _ignoreWhitespaceChangesInDiff, value);
         }
 
-        [JsonIgnore]
         public bool EnableDiffViewWordWrap
         {
             get => _enableDiffViewWordWrap;
             set => SetProperty(ref _enableDiffViewWordWrap, value);
         }
 
-        [JsonIgnore]
         public bool ShowHiddenSymbolsInDiffView
         {
             get => _showHiddenSymbolsInDiffView;
             set => SetProperty(ref _showHiddenSymbolsInDiffView, value);
         }
 
-        [JsonIgnore]
         public bool UseFullTextDiff
         {
             get => _useFullTextDiff;
             set => SetProperty(ref _useFullTextDiff, value);
         }
 
-        [JsonIgnore]
         public bool UseBlockNavigationInDiffView
         {
             get => _useBlockNavigationInDiffView;
             set => SetProperty(ref _useBlockNavigationInDiffView, value);
         }
 
-        [JsonIgnore]
         public Models.ChangeViewMode UnstagedChangeViewMode
         {
             get => _unstagedChangeViewMode;
             set => SetProperty(ref _unstagedChangeViewMode, value);
         }
 
-        [JsonIgnore]
         public Models.ChangeViewMode StagedChangeViewMode
         {
             get => _stagedChangeViewMode;
             set => SetProperty(ref _stagedChangeViewMode, value);
         }
 
-        [JsonIgnore]
         public Models.ChangeViewMode CommitChangeViewMode
         {
             get => _commitChangeViewMode;
             set => SetProperty(ref _commitChangeViewMode, value);
         }
 
-        [JsonIgnore]
         public string GitInstallPath
         {
             get => Native.OS.GitExecutable;
@@ -308,14 +295,12 @@ namespace SourceGit.ViewModels
             }
         }
 
-        [JsonIgnore]
         public string GitDefaultCloneDir
         {
             get => _gitDefaultCloneDir;
             set => SetProperty(ref _gitDefaultCloneDir, value);
         }
 
-        [JsonIgnore]
         public int ShellOrTerminal
         {
             get => _shellOrTerminal;
@@ -333,7 +318,6 @@ namespace SourceGit.ViewModels
             }
         }
 
-        [JsonIgnore]
         public string ShellOrTerminalPath
         {
             get => Native.OS.ShellOrTerminal;
@@ -347,7 +331,6 @@ namespace SourceGit.ViewModels
             }
         }
 
-        [JsonIgnore]
         public int ExternalMergeToolType
         {
             get => _externalMergeToolType;
@@ -365,14 +348,12 @@ namespace SourceGit.ViewModels
             }
         }
 
-        [JsonIgnore]
         public string ExternalMergeToolPath
         {
             get => _externalMergeToolPath;
             set => SetProperty(ref _externalMergeToolPath, value);
         }
 
-        [JsonIgnore]
         public uint StatisticsSampleColor
         {
             get => _statisticsSampleColor;
@@ -1163,85 +1144,52 @@ namespace SourceGit.ViewModels
         private static Preferences _instance = null;
         private bool _isLoading = true;
         private bool _isReadonly = true;
-
-        // === THEME & FONT PROPERTIES ===
+        private string _locale = "en_US";
         private string _theme = "Default";
         private string _themeOverrides = string.Empty;
         private string _defaultFontFamily = string.Empty;
         private string _monospaceFontFamily = string.Empty;
         private bool _onlyUseMonoFontInEditor = false;
-
-        // === FONT SIZE PROPERTIES ===
-        private double _defaultFontSize = 14;
-        private double _editorFontSize = 14;
+        private bool _useSystemWindowFrame = false;
+        private double _defaultFontSize = 13;
+        private double _editorFontSize = 13;
         private int _editorTabWidth = 4;
-
-        // === LAYOUT PROPERTY ===
         private LayoutInfo _layout = new LayoutInfo();
 
-        // === MAX HISTORY COMMITS ===
-        private int _maxHistoryCommits = 1000;
+        private int _maxHistoryCommits = 20000;
+        private int _subjectGuideLength = 50;
+        private bool _useFixedTabWidth = true;
+        private bool _showAuthorTimeInGraph = false;
+        private bool _showChildren = false;
 
-        // === SUBJECT GUIDE LENGTH ===
-        private int _subjectGuideLength = 72;
-
-        // === DATE TIME FORMAT ===
-        //private int _dateTimeFormat = 0;
-
-        // === UPDATE & IGNORE TAG ===
         private bool _check4UpdatesOnStartup = true;
+        private double _lastCheckUpdateTime = 0;
         private string _ignoreUpdateTag = string.Empty;
 
-        // === SHOW CHILDREN ===
-        private bool _showChildren = true;
-
-        // === TAGS ===
         private bool _showTagsAsTree = false;
-        private bool _showTagsInGraph = false;
-
-        // === HISTORIES ===
+        private bool _showTagsInGraph = true;
         private bool _useTwoColumnsLayoutInHistories = false;
         private bool _displayTimeAsPeriodInHistories = false;
-
-        // === DIFF ===
         private bool _useSideBySideDiff = false;
-        private bool _useSyntaxHighlighting = false;
-        private bool _ignoreCRAtEOLInDiff = false;
         private bool _ignoreWhitespaceChangesInDiff = false;
+        private bool _useSyntaxHighlighting = false;
         private bool _enableDiffViewWordWrap = false;
         private bool _showHiddenSymbolsInDiffView = false;
         private bool _useFullTextDiff = false;
         private bool _useBlockNavigationInDiffView = false;
 
-        // === CHANGE VIEW MODE ===
         private Models.ChangeViewMode _unstagedChangeViewMode = Models.ChangeViewMode.List;
         private Models.ChangeViewMode _stagedChangeViewMode = Models.ChangeViewMode.List;
         private Models.ChangeViewMode _commitChangeViewMode = Models.ChangeViewMode.List;
 
-        // === GIT ===
         private string _gitDefaultCloneDir = string.Empty;
+
         private int _shellOrTerminal = -1;
-        private string _shellOrTerminalPath = string.Empty;
         private int _externalMergeToolType = 0;
         private string _externalMergeToolPath = string.Empty;
-        private uint _statisticsSampleColor = 0;
 
-        // === REPOSITORY NODES ===
-        //private List<RepositoryNode> _repositoryNodes = new List<RepositoryNode>();
+        private uint _statisticsSampleColor = 0xFF00FF00;
 
-        // === WORKSPACE MANAGEMENT ===
-        //private List<Workspace> _workspaces = new List<Workspace>();
-
-        // === CUSTOM ACTIONS MANAGEMENT ===
-        //private AvaloniaList<Models.CustomAction> _customActions = new AvaloniaList<Models.CustomAction>();
-
-        // === OPENAI SERVICES MANAGEMENT ===
-        //private AvaloniaList<Models.OpenAIService> _openAIServices = new AvaloniaList<Models.OpenAIService>();
-
-        // === LAST CHECK UPDATE TIME ===
-        private double _lastCheckUpdateTime = 0;
-
-        // Git user configuration properties (moved from View)
         private string _defaultUser = string.Empty;
         private string _defaultEmail = string.Empty;
         private Models.CRLFMode _crlfMode = null;
