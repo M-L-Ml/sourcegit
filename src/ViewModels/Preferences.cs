@@ -8,6 +8,7 @@ using Avalonia.Collections;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Avalonia.Data.Converters;
 
 namespace SourceGit.ViewModels
 {
@@ -691,5 +692,14 @@ namespace SourceGit.ViewModels
         private string _gitInstallPath = string.Empty;
         private string _shellOrTerminalPath = string.Empty;
         #endregion
+    }
+
+    public static class VMIntConverters
+    {
+        public static readonly FuncValueConverter<int, bool> IsSubjectLengthBad =
+    new FuncValueConverter<int, bool>(v => v > ViewModels.Preferences.Instance.SubjectGuideLength);
+
+        public static readonly FuncValueConverter<int, bool> IsSubjectLengthGood =
+            new FuncValueConverter<int, bool>(v => v <= ViewModels.Preferences.Instance.SubjectGuideLength);
     }
 }

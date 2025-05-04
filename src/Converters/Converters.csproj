@@ -5,9 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Models/Models.csproj" />
-    <ProjectReference Include="..\ViewModels\ViewModels.csproj" />
-    <PackageReference Include="CommunityToolkit.Mvvm"/>
-    <PackageReference Include="Avalonia"/>
-    <PackageReference Include="TextMateSharp"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="TextMateSharp" />
   </ItemGroup>
 </Project>
