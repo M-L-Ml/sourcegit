@@ -7,3 +7,4 @@
   1. The file or any of its dependencies contains errors (not just warnings).
   2. Addressing the warnings would complicate the code or require extensive reasoning.
   3. There is no explicit request to resolve the linter warnings.
+- Do not reorder code elements (such as methods, properties, fields, classes, etc.) unless it is necessary.
