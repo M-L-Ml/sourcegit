@@ -268,7 +268,7 @@
                          Margin="0,16"
                          FontSize="24" FontWeight="Bold"
                          Foreground="{DynamicResource Brush.FG2}"
-                         Text="{Binding Converter={x:Static c:StringConverters.FormatByResourceKey}, ConverterParameter='Histories.Selected'}"/>
+                         Text="{Binding Converter={x:Static vm:FormatByResourceKeyConverter.FormatByResourceKey}, ConverterParameter='Histories.Selected'}"/>
             </StackPanel>
           </DataTemplate>
         </ContentControl.DataTemplates>

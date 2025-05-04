@@ -49,25 +49,6 @@ namespace SourceGit.Converters
         public static readonly ToThemeConverter ToTheme = new ToThemeConverter();
 
 
-        /// <summary>
-        /// TODO: FormatByResourceKeyConverter describe , refactor.
-        /// </summary>
-        public class FormatByResourceKeyConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                var key = parameter as string;
-                return ViewModels.App.Text(key, value);
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public static readonly FormatByResourceKeyConverter FormatByResourceKey = new FormatByResourceKeyConverter();
-
         public static readonly FuncValueConverter<string, string> ToShortSHA =
             new FuncValueConverter<string, string>(v => v == null ? string.Empty : (v.Length > 10 ? v.Substring(0, 10) : v));
 

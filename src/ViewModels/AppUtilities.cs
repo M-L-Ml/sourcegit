@@ -14,10 +14,12 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Fonts;
 using SourceGit.ViewModels;
 using Native = SourceGit.Native;
+using Avalonia.Data.Converters;
+using System.Globalization;
 
 namespace SourceGit.ViewModels
 {
-    public partial class App: Models.App
+    public partial class App : Models.App
     {
         //public static void ShowWindow(object data, bool showAsDialog)
         //=>
@@ -169,4 +171,25 @@ namespace SourceGit.ViewModels
                 _launcher.OpenRepositoryInTab(node, arg);
         }
     }
+
+//namespace SourceGit.Converters
+
+    /// <summary>
+    /// TODO: FormatByResourceKeyConverter describe , refactor.
+    /// </summary>
+    public class FormatByResourceKeyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var key = parameter as string;
+            return ViewModels.App.Text(key, value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    //public static readonly FormatByResourceKeyConverter FormatByResourceKey = new FormatByResourceKeyConverter();
 }
