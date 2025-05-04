@@ -33,6 +33,370 @@ namespace SourceGit.ViewModels
             }
         }
 
+        public string Locale
+        {
+            get => _locale;
+            set
+            {
+                if (SetProperty(ref _locale, value) && !_isLoading)
+                    App.SetLocale(value);
+            }
+        }
+        private string _locale = "en-US";
+
+        public string Theme
+        {
+            get => _theme;
+            set
+            {
+                if (SetProperty(ref _theme, value) && !_isLoading)
+                    App.SetTheme(_theme, _themeOverrides);
+            }
+        }
+
+        public string ThemeOverrides
+        {
+            get => _themeOverrides;
+            set
+            {
+                if (SetProperty(ref _themeOverrides, value) && !_isLoading)
+                    App.SetTheme(_theme, value);
+            }
+        }
+
+        public string DefaultFontFamily
+        {
+            get => _defaultFontFamily;
+            set
+            {
+                if (SetProperty(ref _defaultFontFamily, value) && !_isLoading)
+                    App.SetFonts(value, _monospaceFontFamily, _onlyUseMonoFontInEditor);
+            }
+        }
+
+        public string MonospaceFontFamily
+        {
+            get => _monospaceFontFamily;
+            set
+            {
+                if (SetProperty(ref _monospaceFontFamily, value) && !_isLoading)
+                    App.SetFonts(_defaultFontFamily, value, _onlyUseMonoFontInEditor);
+            }
+        }
+
+        public bool OnlyUseMonoFontInEditor
+        {
+            get => _onlyUseMonoFontInEditor;
+            set
+            {
+                if (SetProperty(ref _onlyUseMonoFontInEditor, value) && !_isLoading)
+                    App.SetFonts(_defaultFontFamily, _monospaceFontFamily, _onlyUseMonoFontInEditor);
+            }
+        }
+
+        public bool UseSystemWindowFrame
+        {
+            get => _useSystemWindowFrame;
+            set => SetProperty(ref _useSystemWindowFrame, value);
+        }
+
+        // === FONT SIZE PROPERTIES ===
+        [JsonIgnore]
+        public double DefaultFontSize
+        {
+            get => _defaultFontSize;
+            set => SetProperty(ref _defaultFontSize, value);
+        }
+
+        [JsonIgnore]
+        public double EditorFontSize
+        {
+            get => _editorFontSize;
+            set => SetProperty(ref _editorFontSize, value);
+        }
+
+        [JsonIgnore]
+        public int EditorTabWidth
+        {
+            get => _editorTabWidth;
+            set => SetProperty(ref _editorTabWidth, value);
+        }
+
+        // === LAYOUT PROPERTY ===
+        [JsonIgnore]
+        public LayoutInfo Layout
+        {
+            get => _layout;
+            set => SetProperty(ref _layout, value);
+        }
+
+        // === MAX HISTORY COMMITS ===
+        [JsonIgnore]
+        public int MaxHistoryCommits
+        {
+            get => _maxHistoryCommits;
+            set => SetProperty(ref _maxHistoryCommits, value);
+        }
+
+        // === SUBJECT GUIDE LENGTH ===
+        [JsonIgnore]
+        public int SubjectGuideLength
+        {
+            get => _subjectGuideLength;
+            set => SetProperty(ref _subjectGuideLength, value);
+        }
+
+        // === DATE TIME FORMAT ===
+        [JsonIgnore]
+        public int DateTimeFormat
+        {
+            get => Models.DateTimeFormat.ActiveIndex;
+            set
+            {
+                if (value != Models.DateTimeFormat.ActiveIndex &&
+                    value >= 0 &&
+                    value < Models.DateTimeFormat.Supported.Count)
+                {
+                    Models.DateTimeFormat.ActiveIndex = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool UseFixedTabWidth
+        {
+            get => _useFixedTabWidth;
+            set => SetProperty(ref _useFixedTabWidth, value);
+        }
+
+        public bool Check4UpdatesOnStartup
+        {
+            get => _check4UpdatesOnStartup;
+            set => SetProperty(ref _check4UpdatesOnStartup, value);
+        }
+
+        public bool ShowChildren
+        {
+            get => _showChildren;
+            set => SetProperty(ref _showChildren, value);
+        }
+
+        public string IgnoreUpdateTag
+        {
+            get => _ignoreUpdateTag;
+            set => SetProperty(ref _ignoreUpdateTag, value);
+        }
+
+        public bool ShowTagsAsTree
+        {
+            get => _showTagsAsTree;
+            set => SetProperty(ref _showTagsAsTree, value);
+        }
+
+        public bool ShowTagsInGraph
+        {
+            get => _showTagsInGraph;
+            set => SetProperty(ref _showTagsInGraph, value);
+        }
+
+        public bool UseTwoColumnsLayoutInHistories
+        {
+            get => _useTwoColumnsLayoutInHistories;
+            set => SetProperty(ref _useTwoColumnsLayoutInHistories, value);
+        }
+
+        public bool DisplayTimeAsPeriodInHistories
+        {
+            get => _displayTimeAsPeriodInHistories;
+            set => SetProperty(ref _displayTimeAsPeriodInHistories, value);
+        }
+
+        public bool UseSideBySideDiff
+        {
+            get => _useSideBySideDiff;
+            set => SetProperty(ref _useSideBySideDiff, value);
+        }
+
+        public bool UseSyntaxHighlighting
+        {
+            get => _useSyntaxHighlighting;
+            set => SetProperty(ref _useSyntaxHighlighting, value);
+        }
+
+        public bool IgnoreCRAtEOLInDiff
+        {
+            get => Models.DiffOption.IgnoreCRAtEOL;
+            set
+            {
+                if (Models.DiffOption.IgnoreCRAtEOL != value)
+                {
+                    Models.DiffOption.IgnoreCRAtEOL = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool IgnoreWhitespaceChangesInDiff
+        {
+            get => _ignoreWhitespaceChangesInDiff;
+            set => SetProperty(ref _ignoreWhitespaceChangesInDiff, value);
+        }
+
+        public bool EnableDiffViewWordWrap
+        {
+            get => _enableDiffViewWordWrap;
+            set => SetProperty(ref _enableDiffViewWordWrap, value);
+        }
+
+        public bool ShowHiddenSymbolsInDiffView
+        {
+            get => _showHiddenSymbolsInDiffView;
+            set => SetProperty(ref _showHiddenSymbolsInDiffView, value);
+        }
+
+        public bool UseFullTextDiff
+        {
+            get => _useFullTextDiff;
+            set => SetProperty(ref _useFullTextDiff, value);
+        }
+
+        public bool UseBlockNavigationInDiffView
+        {
+            get => _useBlockNavigationInDiffView;
+            set => SetProperty(ref _useBlockNavigationInDiffView, value);
+        }
+
+        public Models.ChangeViewMode UnstagedChangeViewMode
+        {
+            get => _unstagedChangeViewMode;
+            set => SetProperty(ref _unstagedChangeViewMode, value);
+        }
+
+        public Models.ChangeViewMode StagedChangeViewMode
+        {
+            get => _stagedChangeViewMode;
+            set => SetProperty(ref _stagedChangeViewMode, value);
+        }
+
+        public Models.ChangeViewMode CommitChangeViewMode
+        {
+            get => _commitChangeViewMode;
+            set => SetProperty(ref _commitChangeViewMode, value);
+        }
+
+        public string GitInstallPath
+        {
+            get => Native.OS.GitExecutable;
+            set
+            {
+                if (Native.OS.GitExecutable != value)
+                {
+                    Native.OS.GitExecutable = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string GitDefaultCloneDir
+        {
+            get => _gitDefaultCloneDir;
+            set => SetProperty(ref _gitDefaultCloneDir, value);
+        }
+
+        [JsonIgnore]
+        public int ShellOrTerminal
+        {
+            get => _shellOrTerminal;
+            set
+            {
+                if (SetProperty(ref _shellOrTerminal, value))
+                {
+                    if (value >= 0 && value < Models.ShellOrTerminal.Supported.Count)
+                        Native.OS.SetShellOrTerminal(Models.ShellOrTerminal.Supported[value]);
+                    else
+                        Native.OS.SetShellOrTerminal(null);
+
+                    OnPropertyChanged(nameof(ShellOrTerminalPath));
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public string ShellOrTerminalPath
+        {
+            get => Native.OS.ShellOrTerminal;
+            set
+            {
+                if (value != Native.OS.ShellOrTerminal)
+                {
+                    Native.OS.ShellOrTerminal = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public int ExternalMergeToolType
+        {
+            get => _externalMergeToolType;
+            set
+            {
+                var changed = SetProperty(ref _externalMergeToolType, value);
+                if (changed && !OperatingSystem.IsWindows() && value > 0 && value < Models.ExternalMerger.Supported.Count)
+                {
+                    var tool = Models.ExternalMerger.Supported[value];
+                    if (File.Exists(tool.Exec))
+                        ExternalMergeToolPath = tool.Exec;
+                    else
+                        ExternalMergeToolPath = string.Empty;
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public string ExternalMergeToolPath
+        {
+            get => _externalMergeToolPath;
+            set => SetProperty(ref _externalMergeToolPath, value);
+        }
+
+        [JsonIgnore]
+        public uint StatisticsSampleColor
+        {
+            get => _statisticsSampleColor;
+            set => SetProperty(ref _statisticsSampleColor, value);
+        }
+
+        public List<RepositoryNode> RepositoryNodes
+        {
+            get;
+            set;
+        } = [];
+
+        public List<Workspace> Workspaces
+        {
+            get;
+            set;
+        } = [];
+
+        public AvaloniaList<Models.CustomAction> CustomActions
+        {
+            get;
+            set;
+        } = [];
+
+        public AvaloniaList<Models.OpenAIService> OpenAIServices
+        {
+            get;
+            set;
+        } = [];
+
+        public double LastCheckUpdateTime
+        {
+            get => _lastCheckUpdateTime;
+            set => SetProperty(ref _lastCheckUpdateTime, value);
+        }
+
         // Git user configuration properties (moved from View)
         [JsonIgnore]
         public string DefaultUser 
@@ -142,50 +506,6 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _selectedCustomAction, value);
         }
 
-        // OpenAI Services management
-        [JsonIgnore]
-        public AvaloniaList<Models.OpenAIService> OpenAIServices { get; private set; } = new AvaloniaList<Models.OpenAIService>();
-
-        // Custom Actions management
-        [JsonIgnore]
-        public AvaloniaList<Models.CustomAction> CustomActions { get; private set; } = new AvaloniaList<Models.CustomAction>();
-
-        // Workspace management
-        [JsonIgnore]
-        public Avalonia.Collections.AvaloniaList<Workspace> Workspaces { get; private set; } = new Avalonia.Collections.AvaloniaList<Workspace>();
-
-        // Git install path
-        [JsonIgnore]
-        public string GitInstallPath
-        {
-            get => _gitInstallPath;
-            set => SetProperty(ref _gitInstallPath, value);
-        }
-
-        // Shell or Terminal path
-        [JsonIgnore]
-        public string ShellOrTerminalPath
-        {
-            get => _shellOrTerminalPath;
-            set => SetProperty(ref _shellOrTerminalPath, value);
-        }
-
-        // External merge tool path
-        [JsonIgnore]
-        public string ExternalMergeToolPath
-        {
-            get => _externalMergeToolPath;
-            set => SetProperty(ref _externalMergeToolPath, value);
-        }
-
-        // Default clone directory
-        [JsonIgnore]
-        public string GitDefaultCloneDir
-        {
-            get => _gitDefaultCloneDir;
-            set => SetProperty(ref _gitDefaultCloneDir, value);
-        }
-
         // Commands
         public IAsyncRelayCommand SelectThemeOverrideFileCommand { get; }
         public IAsyncRelayCommand SelectGitExecutableCommand { get; }
@@ -200,176 +520,77 @@ namespace SourceGit.ViewModels
         public IAsyncRelayCommand<object> SelectExecutableForCustomActionCommand { get; }
         public IRelayCommand RemoveSelectedCustomActionCommand { get; }
 
-        // === THEME & FONT PROPERTIES ===
-        [JsonIgnore]
-        public string Theme
-        {
-            get => _theme;
-            set => SetProperty(ref _theme, value);
-        }
-
-        [JsonIgnore]
-        public string ThemeOverrides
-        {
-            get => _themeOverrides;
-            set => SetProperty(ref _themeOverrides, value);
-        }
-
-        [JsonIgnore]
-        public string DefaultFontFamily
-        {
-            get => _defaultFontFamily;
-            set => SetProperty(ref _defaultFontFamily, value);
-        }
-
-        [JsonIgnore]
-        public string MonospaceFontFamily
-        {
-            get => _monospaceFontFamily;
-            set => SetProperty(ref _monospaceFontFamily, value);
-        }
-
-        [JsonIgnore]
-        public bool OnlyUseMonoFontInEditor
-        {
-            get => _onlyUseMonoFontInEditor;
-            set => SetProperty(ref _onlyUseMonoFontInEditor, value);
-        }
-
-        // === LOCALE PROPERTY (for App.axaml.cs compatibility) ===
-        [JsonIgnore]
-        public string Locale
-        {
-            get => _locale;
-            set
-            {
-                if (SetProperty(ref _locale, value) && !_isLoading)
-                {
-                    // You may want to call App.SetLocale(value) here if needed
-                }
-            }
-        }
-        private string _locale = "en-US";
-
-        // === LAYOUT PROPERTY ===
-        [JsonIgnore]
-        public LayoutInfo Layout
-        {
-            get => _layout;
-            set => SetProperty(ref _layout, value);
-        }
-
-        // === SUBJECT GUIDE LENGTH ===
-        [JsonIgnore]
-        public int SubjectGuideLength
-        {
-            get => _subjectGuideLength;
-            set => SetProperty(ref _subjectGuideLength, value);
-        }
-
-        // === UPDATE & IGNORE TAG ===
-        [JsonIgnore]
-        public bool ShouldCheck4UpdateOnStartup
-        {
-            get => _check4UpdatesOnStartup;
-            set => SetProperty(ref _check4UpdatesOnStartup, value);
-        }
-
-        [JsonIgnore]
-        public string IgnoreUpdateTag
-        {
-            get => _ignoreUpdateTag;
-            set => SetProperty(ref _ignoreUpdateTag, value);
-        }
-
-        // === EXTERNAL MERGE TOOL TYPE ===
-        [JsonIgnore]
-        public int ExternalMergeToolType
-        {
-            get => _externalMergeToolType;
-            set => SetProperty(ref _externalMergeToolType, value);
-        }
-
-        // === SHOW CHILDREN ===
-        [JsonIgnore]
-        public bool ShowChildren
-        {
-            get => _showChildren;
-            set => SetProperty(ref _showChildren, value);
-        }
-
-        // === MAX HISTORY COMMITS ===
-        [JsonIgnore]
-        public int MaxHistoryCommits
-        {
-            get => _maxHistoryCommits;
-            set => SetProperty(ref _maxHistoryCommits, value);
-        }
-
-        // === DIFF PROPERTIES ===
-        [JsonIgnore]
-        public bool UseFullTextDiff
-        {
-            get => _useFullTextDiff;
-            set => SetProperty(ref _useFullTextDiff, value);
-        }
-
-        [JsonIgnore]
-        public bool IgnoreWhitespaceChangesInDiff
-        {
-            get => _ignoreWhitespaceChangesInDiff;
-            set => SetProperty(ref _ignoreWhitespaceChangesInDiff, value);
-        }
-
-        // === SYSTEM WINDOW FRAME PROPERTY ===
-        [JsonIgnore]
-        public bool UseSystemWindowFrame
-        {
-            get => _useSystemWindowFrame;
-            set => SetProperty(ref _useSystemWindowFrame, value);
-        }
-        private bool _useSystemWindowFrame = false;
-
-        // === REPOSITORY NODES ===
-        [JsonIgnore]
-        public List<RepositoryNode> RepositoryNodes { get; private set; } = new List<RepositoryNode>();
-
-        // === WORKSPACE METHODS ===
-        public Workspace? GetActiveWorkspace()
-        {
-            if (Workspaces != null && Workspaces.Count > 0)
-                return Workspaces[0];
-            return null;
-        }
-
         // === NODE MANAGEMENT ===
         public RepositoryNode FindNode(string id)
         {
-            return FindNodeRecursive(RepositoryNodes, id);
+            return FindNodeRecursive(id, RepositoryNodes);
+        }
+        private RepositoryNode FindNodeRecursive(string id, List<RepositoryNode> collection)
+        {
+            foreach (var node in collection)
+            {
+                if (node.Id == id)
+                    return node;
+
+                var sub = FindNodeRecursive(id, node.SubNodes);
+                if (sub != null)
+                    return sub;
+            }
+
+            return null;
         }
 
-        private RepositoryNode FindNodeRecursive(IEnumerable<RepositoryNode> nodes, string id)
+        [Obsolete("check this AI implemention")]
+        private RepositoryNode FindNodeRecursive2(IEnumerable<RepositoryNode> nodes, string id)
         {
             foreach (var node in nodes)
             {
                 if (node.Id == id) return node;
-                var found = FindNodeRecursive(node.SubNodes, id);
+                var found = FindNodeRecursive2(node.SubNodes, id);
                 if (found != null) return found;
             }
             return null;
         }
 
         // === SonarQube: Make FindOrAddNodeByRepositoryPath static ===
-        public static RepositoryNode FindOrAddNodeByRepositoryPath(List<RepositoryNode> nodes, string repositoryPath)
+
+        public RepositoryNode FindOrAddNodeByRepositoryPath(string repo, RepositoryNode parent, bool shouldMoveNode)
         {
-            var node = nodes.FirstOrDefault(n => n.RepositoryPath == repositoryPath);
+            var normalized = repo.Replace('\\', '/');
+            if (normalized.EndsWith("/"))
+                normalized = normalized.TrimEnd('/');
+
+            var node = FindNodeRecursive(normalized, RepositoryNodes);
             if (node == null)
             {
-                node = new RepositoryNode { RepositoryPath = repositoryPath };
-                nodes.Add(node);
+                node = new RepositoryNode()
+                {
+                    Id = normalized,
+                    Name = Path.GetFileName(normalized),
+                    Bookmark = 0,
+                    IsRepository = true,
+                };
+
+                AddNode(node, parent, true);
             }
+            else if (shouldMoveNode)
+            {
+                MoveNode(node, parent, true);
+            }
+
             return node;
         }
+
+        //public static RepositoryNode FindOrAddNodeByRepositoryPath(List<RepositoryNode> nodes, string repositoryPath)
+        //{
+        //    var node = nodes.FirstOrDefault(n => n.RepositoryPath == repositoryPath);
+        //    if (node == null)
+        //    {
+        //        node = new RepositoryNode { RepositoryPath = repositoryPath };
+        //        nodes.Add(node);
+        //    }
+        //    return node;
+        //}
 
         public void AddNode(RepositoryNode node, RepositoryNode to, bool save)
         {
@@ -386,24 +607,42 @@ namespace SourceGit.ViewModels
             if (save)
                 Save();
         }
+        public void RemoveNode(RepositoryNode node, bool save)
+        
+        { 
+            RemoveNodeRecursive(node, RepositoryNodes);
 
-        public void RemoveNode(RepositoryNode node, RepositoryNode parent = null)
-        {
-            if (parent == null)
-                RepositoryNodes.Remove(node);
-            else
-                parent.SubNodes.Remove(node);
+            if (save)
+                Save();
+        
+            //RepositoryNode parent = null){
+            // if (parent == null)
+            //     RepositoryNodes.Remove(node);
+            // else
+            //     parent.SubNodes.Remove(node);
         }
 
-        public void MoveNode(RepositoryNode from, RepositoryNode to, bool asChild)
+        //public void MoveNode(RepositoryNode from, RepositoryNode to, bool asChild)
+        //{
+        //    RemoveNode(from);
+        //    if (asChild)
+        //        AddNode(from, to);
+        //    else
+        //        RepositoryNodes.Add(from);
+        //}
+        public void MoveNode(RepositoryNode node, RepositoryNode to, bool save)
         {
-            RemoveNode(from);
-            if (asChild)
-                AddNode(from, to);
-            else
-                RepositoryNodes.Add(from);
-        }
+            if (to == null && RepositoryNodes.Contains(node))
+                return;
+            if (to != null && to.SubNodes.Contains(node))
+                return;
 
+            RemoveNode(node, false);
+            AddNode(node, to, false);
+
+            if (save)
+                Save();
+        }
         public void SortByRenamedNode(RepositoryNode node)
         {
             // Dummy implementation (should be replaced with real logic)
@@ -788,7 +1027,7 @@ namespace SourceGit.ViewModels
 
                 if (file != null && file.Count > 0)
                 {
-                    SelectedCustomAction.Executor = file[0].Path.LocalPath;
+                    SelectedCustomAction.Executable = file[0].Path.LocalPath;
                     Save();
                 }
             }
@@ -798,7 +1037,12 @@ namespace SourceGit.ViewModels
                 // App.RaiseException(string.Empty, $"Failed to select executable");
             }
         }
-
+         public void AutoRemoveInvalidNode()
+        {
+            var changed = RemoveInvalidRepositoriesRecursive(RepositoryNodes);
+            if (changed)
+                Save();
+        }
         public void Save()
         {
             if (_isLoading || _isReadonly)
@@ -865,42 +1109,127 @@ namespace SourceGit.ViewModels
                 }
             }
         }
+        private bool RemoveNodeRecursive(RepositoryNode node, List<RepositoryNode> collection)
+        {
+            if (collection.Contains(node))
+            {
+                collection.Remove(node);
+                return true;
+            }
+
+            foreach (var one in collection)
+            {
+                if (RemoveNodeRecursive(node, one.SubNodes))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool RemoveInvalidRepositoriesRecursive(List<RepositoryNode> collection)
+        {
+            bool changed = false;
+
+            for (int i = collection.Count - 1; i >= 0; i--)
+            {
+                var node = collection[i];
+                if (node.IsInvalid)
+                {
+                    collection.RemoveAt(i);
+                    changed = true;
+                }
+                else if (!node.IsRepository)
+                {
+                    changed |= RemoveInvalidRepositoriesRecursive(node.SubNodes);
+                }
+            }
+
+            return changed;
+        }
 
         #region Private Fields
         private static Preferences _instance = null;
         private bool _isLoading = true;
         private bool _isReadonly = true;
-        // === REMOVE UNUSED FIELDS FOR LINT COMPLIANCE ===
-        // private double _defaultFontSize = 14;
-        // private double _editorFontSize = 14;
-        // private int _editorTabWidth = 4;
-        // private bool _useFixedTabWidth = true;
-        // private bool _showAuthorTimeInGraph = false;
-        // private bool _showTagsAsTree = false;
-        // private bool _showTagsInGraph = false;
-        // private bool _useTwoColumnsLayoutInHistories = false;
-        // private bool _displayTimeAsPeriodInHistories = false;
-        // private bool _useSideBySideDiff = false;
-        // private bool _useSyntaxHighlighting = false;
-        // private bool _enableDiffViewWordWrap = false;
-        // private bool _showHiddenSymbolsInDiffView = false;
-        // private bool _useBlockNavigationInDiffView = false;
-        // private uint _statisticsSampleColor = 0;
-        // private double _lastCheckUpdateTime = 0;
+
+        // === THEME & FONT PROPERTIES ===
         private string _theme = "Default";
         private string _themeOverrides = string.Empty;
         private string _defaultFontFamily = string.Empty;
         private string _monospaceFontFamily = string.Empty;
         private bool _onlyUseMonoFontInEditor = false;
+
+        // === FONT SIZE PROPERTIES ===
+        private double _defaultFontSize = 14;
+        private double _editorFontSize = 14;
+        private int _editorTabWidth = 4;
+
+        // === LAYOUT PROPERTY ===
         private LayoutInfo _layout = new LayoutInfo();
+
+        // === MAX HISTORY COMMITS ===
+        private int _maxHistoryCommits = 1000;
+
+        // === SUBJECT GUIDE LENGTH ===
         private int _subjectGuideLength = 72;
+
+        // === DATE TIME FORMAT ===
+        //private int _dateTimeFormat = 0;
+
+        // === UPDATE & IGNORE TAG ===
         private bool _check4UpdatesOnStartup = true;
         private string _ignoreUpdateTag = string.Empty;
-        private int _externalMergeToolType = 0;
+
+        // === SHOW CHILDREN ===
         private bool _showChildren = true;
-        private int _maxHistoryCommits = 1000;
-        private bool _useFullTextDiff = false;
+
+        // === TAGS ===
+        private bool _showTagsAsTree = false;
+        private bool _showTagsInGraph = false;
+
+        // === HISTORIES ===
+        private bool _useTwoColumnsLayoutInHistories = false;
+        private bool _displayTimeAsPeriodInHistories = false;
+
+        // === DIFF ===
+        private bool _useSideBySideDiff = false;
+        private bool _useSyntaxHighlighting = false;
+        private bool _ignoreCRAtEOLInDiff = false;
         private bool _ignoreWhitespaceChangesInDiff = false;
+        private bool _enableDiffViewWordWrap = false;
+        private bool _showHiddenSymbolsInDiffView = false;
+        private bool _useFullTextDiff = false;
+        private bool _useBlockNavigationInDiffView = false;
+
+        // === CHANGE VIEW MODE ===
+        private Models.ChangeViewMode _unstagedChangeViewMode = Models.ChangeViewMode.List;
+        private Models.ChangeViewMode _stagedChangeViewMode = Models.ChangeViewMode.List;
+        private Models.ChangeViewMode _commitChangeViewMode = Models.ChangeViewMode.List;
+
+        // === GIT ===
+        private string _gitDefaultCloneDir = string.Empty;
+        private int _shellOrTerminal = -1;
+        private string _shellOrTerminalPath = string.Empty;
+        private int _externalMergeToolType = 0;
+        private string _externalMergeToolPath = string.Empty;
+        private uint _statisticsSampleColor = 0;
+
+        // === REPOSITORY NODES ===
+        //private List<RepositoryNode> _repositoryNodes = new List<RepositoryNode>();
+
+        // === WORKSPACE MANAGEMENT ===
+        //private List<Workspace> _workspaces = new List<Workspace>();
+
+        // === CUSTOM ACTIONS MANAGEMENT ===
+        //private AvaloniaList<Models.CustomAction> _customActions = new AvaloniaList<Models.CustomAction>();
+
+        // === OPENAI SERVICES MANAGEMENT ===
+        //private AvaloniaList<Models.OpenAIService> _openAIServices = new AvaloniaList<Models.OpenAIService>();
+
+        // === LAST CHECK UPDATE TIME ===
+        private double _lastCheckUpdateTime = 0;
+
+        // Git user configuration properties (moved from View)
         private string _defaultUser = string.Empty;
         private string _defaultEmail = string.Empty;
         private Models.CRLFMode _crlfMode = null;
@@ -915,10 +1244,6 @@ namespace SourceGit.ViewModels
         private bool _enableHTTPSSLVerify = true;
         private Models.OpenAIService _selectedOpenAIService = null;
         private Models.CustomAction _selectedCustomAction = null;
-        private string _gitInstallPath = string.Empty;
-        private string _shellOrTerminalPath = string.Empty;
-        private string _externalMergeToolPath = string.Empty;
-        private string _gitDefaultCloneDir = string.Empty;
         #endregion
     }
 
