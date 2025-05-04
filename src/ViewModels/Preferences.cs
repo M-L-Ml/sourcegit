@@ -371,12 +371,20 @@ namespace SourceGit.ViewModels
             return node;
         }
 
-        public void AddNode(RepositoryNode node, RepositoryNode parent = null)
+        public void AddNode(RepositoryNode node, RepositoryNode to, bool save)
         {
-            if (parent == null)
-                RepositoryNodes.Add(node);
-            else
-                parent.SubNodes.Add(node);
+            var collection = to == null ? RepositoryNodes : to.SubNodes;
+            collection.Add(node);
+            collection.Sort((l, r) =>
+            {
+                if (l.IsRepository != r.IsRepository)
+                    return l.IsRepository ? 1 : -1;
+
+                return string.Compare(l.Name, r.Name, StringComparison.Ordinal);
+            });
+
+            if (save)
+                Save();
         }
 
         public void RemoveNode(RepositoryNode node, RepositoryNode parent = null)
