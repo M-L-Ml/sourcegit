@@ -172,7 +172,7 @@ namespace SourceGit.ViewModels
         }
     }
 
-//namespace SourceGit.Converters
+    //namespace SourceGit.Converters
 
     /// <summary>
     /// TODO: FormatByResourceKeyConverter describe , refactor.
@@ -192,4 +192,12 @@ namespace SourceGit.ViewModels
         public static readonly FormatByResourceKeyConverter FormatByResourceKey = new FormatByResourceKeyConverter();
     }
 
+    public static class ObsSExtensions
+    {
+
+        public static IStorageProvider GetStorageProvider(this CommunityToolkit.Mvvm.ComponentModel.ObservableObject _)
+        {
+            return ViewModels.App.GetStorageProvider();
+        }
+    }
 }

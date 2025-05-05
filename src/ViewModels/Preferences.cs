@@ -451,65 +451,65 @@ namespace SourceGit.ViewModels
 
         // Git user configuration properties (moved from View)
         [JsonIgnore]
-        public string DefaultUser 
-        { 
-            get => _defaultUser; 
-            set => SetProperty(ref _defaultUser, value); 
+        public string DefaultUser
+        {
+            get => _defaultUser;
+            set => SetProperty(ref _defaultUser, value);
         }
 
         [JsonIgnore]
-        public string DefaultEmail 
-        { 
-            get => _defaultEmail; 
-            set => SetProperty(ref _defaultEmail, value); 
+        public string DefaultEmail
+        {
+            get => _defaultEmail;
+            set => SetProperty(ref _defaultEmail, value);
         }
 
         [JsonIgnore]
-        public Models.CRLFMode CRLFMode 
-        { 
-            get => _crlfMode; 
-            set => SetProperty(ref _crlfMode, value); 
+        public Models.CRLFMode CRLFMode
+        {
+            get => _crlfMode;
+            set => SetProperty(ref _crlfMode, value);
         }
 
         [JsonIgnore]
-        public bool EnablePruneOnFetch 
-        { 
-            get => _enablePruneOnFetch; 
-            set => SetProperty(ref _enablePruneOnFetch, value); 
+        public bool EnablePruneOnFetch
+        {
+            get => _enablePruneOnFetch;
+            set => SetProperty(ref _enablePruneOnFetch, value);
         }
 
         [JsonIgnore]
-        public string GitVersion 
-        { 
-            get => _gitVersion; 
-            set => SetProperty(ref _gitVersion, value); 
+        public string GitVersion
+        {
+            get => _gitVersion;
+            set => SetProperty(ref _gitVersion, value);
         }
 
         [JsonIgnore]
-        public bool ShowGitVersionWarning 
-        { 
-            get => _showGitVersionWarning; 
-            set => SetProperty(ref _showGitVersionWarning, value); 
+        public bool ShowGitVersionWarning
+        {
+            get => _showGitVersionWarning;
+            set => SetProperty(ref _showGitVersionWarning, value);
         }
 
         [JsonIgnore]
-        public bool EnableGPGCommitSigning 
-        { 
-            get => _enableGPGCommitSigning; 
-            set => SetProperty(ref _enableGPGCommitSigning, value); 
+        public bool EnableGPGCommitSigning
+        {
+            get => _enableGPGCommitSigning;
+            set => SetProperty(ref _enableGPGCommitSigning, value);
         }
 
         [JsonIgnore]
-        public bool EnableGPGTagSigning 
-        { 
-            get => _enableGPGTagSigning; 
-            set => SetProperty(ref _enableGPGTagSigning, value); 
+        public bool EnableGPGTagSigning
+        {
+            get => _enableGPGTagSigning;
+            set => SetProperty(ref _enableGPGTagSigning, value);
         }
 
         [JsonIgnore]
-        public Models.GPGFormat GPGFormat 
-        { 
-            get => _gpgFormat; 
+        public Models.GPGFormat GPGFormat
+        {
+            get => _gpgFormat;
             set
             {
                 if (SetProperty(ref _gpgFormat, value))
@@ -524,24 +524,24 @@ namespace SourceGit.ViewModels
         }
 
         [JsonIgnore]
-        public string GPGExecutableFile 
-        { 
-            get => _gpgExecutableFile; 
-            set => SetProperty(ref _gpgExecutableFile, value); 
+        public string GPGExecutableFile
+        {
+            get => _gpgExecutableFile;
+            set => SetProperty(ref _gpgExecutableFile, value);
         }
 
         [JsonIgnore]
-        public string GPGUserKey 
-        { 
-            get => _gpgUserKey; 
-            set => SetProperty(ref _gpgUserKey, value); 
+        public string GPGUserKey
+        {
+            get => _gpgUserKey;
+            set => SetProperty(ref _gpgUserKey, value);
         }
 
         [JsonIgnore]
-        public bool EnableHTTPSSLVerify 
-        { 
-            get => _enableHTTPSSLVerify; 
-            set => SetProperty(ref _enableHTTPSSLVerify, value); 
+        public bool EnableHTTPSSLVerify
+        {
+            get => _enableHTTPSSLVerify;
+            set => SetProperty(ref _enableHTTPSSLVerify, value);
         }
 
         [JsonIgnore]
@@ -577,7 +577,7 @@ namespace SourceGit.ViewModels
         {
             return FindNodeRecursive(id, RepositoryNodes);
         }
-   
+
         // === SonarQube: Make FindOrAddNodeByRepositoryPath static ===
 
         public RepositoryNode FindOrAddNodeByRepositoryPath(string repo, RepositoryNode parent, bool shouldMoveNode)
@@ -618,7 +618,7 @@ namespace SourceGit.ViewModels
         //    return node;
         //}
 
- 
+
 
         //public void MoveNode(RepositoryNode from, RepositoryNode to, bool asChild)
         //{
@@ -643,13 +643,13 @@ namespace SourceGit.ViewModels
         }
 
         public void RemoveNode(RepositoryNode node, bool save)
-        
-        { 
+
+        {
             RemoveNodeRecursive(node, RepositoryNodes);
 
             if (save)
                 Save();
-        
+
             //RepositoryNode parent = null){
             // if (parent == null)
             //     RepositoryNodes.Remove(node);
@@ -803,66 +803,66 @@ namespace SourceGit.ViewModels
             _gpgFormat = Models.GPGFormat.Supported[0];
         }
 
+        // TODO: Use DI/service locator to get IStorageProvider
+        // var storageProvider = App.GetService<IStorageProvider>();
+        //IStorageProvider storageProvider = null; // Replace with actual implementation
+        //if (storageProvider == null)
+        //    return;
+        private IStorageProvider StorageProvider => this.GetStorageProvider();
         public async Task SelectThemeOverrideFileAsync()
         {
-            try
-            {
-                // TODO: Use DI/service locator to get IStorageProvider
-                // var storageProvider = App.GetService<IStorageProvider>();
-                IStorageProvider storageProvider = null; // Replace with actual implementation
-                if (storageProvider == null)
-                    return;
-                    
-                var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                    Title = "Select Theme Override File",
-                    AllowMultiple = false,
-                    FileTypeFilter = new List<FilePickerFileType>
-                    {
-                        new("JSON Files") { Patterns = new[] { "*.json" } },
-                        new("All Files") { Patterns = new[] { "*" } },
-                    }
-                });
 
-                if (file != null && file.Count > 0)
-                {
-                    ThemeOverrides = file[0].Path.LocalPath;
-                }
-            }
-            catch (Exception)
+
+            //var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            //{
+            //    Title = "Select Theme Override File",
+            //    AllowMultiple = false,
+            //    FileTypeFilter = new List<FilePickerFileType>
+            //    {
+            //        new("JSON Files") { Patterns = new[] { "*.json" } },
+            //        new("All Files") { Patterns = new[] { "*" } },
+            //    }
+            //});
+            var options = new FilePickerOpenOptions()
             {
-                // TODO: Implement App.RaiseException or replace with appropriate notification logic
-                // App.RaiseException(string.Empty, $"Failed to select theme override file");
+                FileTypeFilter = [new FilePickerFileType("Theme Overrides File") { Patterns = ["*.json"] }],
+                AllowMultiple = false,
+            };
+
+            var selected = await StorageProvider.OpenFilePickerAsync(options);
+            if (selected.Count == 1)
+            {
+                ThemeOverrides = selected[0].Path.LocalPath;
             }
+
+
+            //if (file != null && file.Count > 0)
+            //{
+            //    ThemeOverrides = file[0].Path.LocalPath;
+            //}
+
+            // todo: Implement App.RaiseException or replace with appropriate notification logic
+            // App.RaiseException(string.Empty, $"Failed to select theme override file");
+
         }
 
-        public async Task SelectGitExecutableAsync()
+        private async Task SelectGitExecutableAsync()
         {
-            try
+            var pattern = OperatingSystem.IsWindows() ? "git.exe" : "git";
+            var options = new FilePickerOpenOptions()
             {
-                // TODO: Use DI/service locator to get IStorageProvider
-                // var storageProvider = App.GetService<IStorageProvider>();
-                IStorageProvider storageProvider = null; // Replace with actual implementation
-                if (storageProvider == null)
-                    return;
-                    
-                var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                    Title = "Select Git Executable",
-                    AllowMultiple = false,
-                });
+                FileTypeFilter = [new FilePickerFileType("Git Executable") { Patterns = [pattern] }],
+                AllowMultiple = false,
+            };
 
-                if (file != null && file.Count > 0)
-                {
-                    GitInstallPath = file[0].Path.LocalPath;
-                    UpdateGitVersion();
-                }
-            }
-            catch (Exception)
+            var selected = await StorageProvider.OpenFilePickerAsync(options);
+            if (selected.Count == 1)
             {
-                // TODO: Implement App.RaiseException or replace with appropriate notification logic
-                // App.RaiseException(string.Empty, $"Failed to select Git executable");
+                GitInstallPath = selected[0].Path.LocalPath;
+                UpdateGitVersion();
             }
+
+                // App.RaiseException(string.Empty, $"Failed to select Git executable");
         }
 
         public async Task SelectDefaultCloneDirAsync()
@@ -874,7 +874,7 @@ namespace SourceGit.ViewModels
                 IStorageProvider storageProvider = null; // Replace with actual implementation
                 if (storageProvider == null)
                     return;
-                    
+
                 var folder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                 {
                     Title = "Select Default Clone Directory",
@@ -902,7 +902,7 @@ namespace SourceGit.ViewModels
                 IStorageProvider storageProvider = null; // Replace with actual implementation
                 if (storageProvider == null)
                     return;
-                    
+
                 var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
                     Title = "Select GPG Executable",
@@ -930,7 +930,7 @@ namespace SourceGit.ViewModels
                 IStorageProvider storageProvider = null; // Replace with actual implementation
                 if (storageProvider == null)
                     return;
-                    
+
                 var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
                     Title = "Select Shell Or Terminal",
@@ -958,7 +958,7 @@ namespace SourceGit.ViewModels
                 IStorageProvider storageProvider = null; // Replace with actual implementation
                 if (storageProvider == null)
                     return;
-                    
+
                 var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
                     Title = "Select External Merge Tool",
@@ -1024,7 +1024,8 @@ namespace SourceGit.ViewModels
 
         public async Task SelectExecutableForCustomActionAsync(object? parameter)
         {
-            if (SelectedCustomAction == null) return;
+            if (SelectedCustomAction == null)
+                return;
 
             try
             {
@@ -1033,7 +1034,7 @@ namespace SourceGit.ViewModels
                 IStorageProvider storageProvider = null; // Replace with actual implementation
                 if (storageProvider == null)
                     return;
-                    
+
                 var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
                     Title = "Select Executable",
@@ -1052,7 +1053,7 @@ namespace SourceGit.ViewModels
                 // App.RaiseException(string.Empty, $"Failed to select executable");
             }
         }
-         public void AutoRemoveInvalidNode()
+        public void AutoRemoveInvalidNode()
         {
             var changed = RemoveInvalidRepositoriesRecursive(RepositoryNodes);
             if (changed)
@@ -1146,9 +1147,11 @@ namespace SourceGit.ViewModels
         {
             foreach (var node in nodes)
             {
-                if (node.Id == id) return node;
+                if (node.Id == id)
+                    return node;
                 var found = FindNodeRecursive2(node.SubNodes, id);
-                if (found != null) return found;
+                if (found != null)
+                    return found;
             }
             return null;
         }

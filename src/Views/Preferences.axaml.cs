@@ -28,21 +28,21 @@ namespace SourceGit.Views
             ViewModel.SaveGitConfig();
         }
 
-        private void SelectThemeOverrideFile(object _, RoutedEventArgs e)
+        private async void SelectThemeOverrideFile(object _, RoutedEventArgs e)
         {
-            ViewModel.SelectThemeOverrideFileCommand.ExecuteAsync(null);
+            await ViewModel.SelectThemeOverrideFileCommand.ExecuteAsync(null);
             e.Handled = true;
         }
 
-        private void SelectGitExecutable(object _, RoutedEventArgs e)
+        private async void SelectGitExecutable(object _, RoutedEventArgs e)
         {
-            ViewModel.SelectGitExecutableCommand.ExecuteAsync(null);
+            await ViewModel.SelectGitExecutableCommand.ExecuteAsync(null);
             e.Handled = true;
         }
 
-        private void SelectDefaultCloneDir(object _, RoutedEventArgs e)
+        private async void SelectDefaultCloneDir(object _, RoutedEventArgs e)
         {
-            ViewModel.SelectDefaultCloneDirCommand.ExecuteAsync(null);
+            await ViewModel.SelectDefaultCloneDirCommand.ExecuteAsync(null);
             e.Handled = true;
         }
 
