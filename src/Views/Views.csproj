@@ -4,6 +4,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <AvaloniaResource Include="App.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="../Models/Models.csproj" />
     <ProjectReference Include="..\Converters\Converters.csproj" />
     <ProjectReference Include="..\ViewModels\ViewModels.csproj" />

@@ -4,7 +4,6 @@
     <TargetFramework>net9.0</TargetFramework>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>App.manifest</ApplicationManifest>
-    <ApplicationIcon>App.ico</ApplicationIcon>
     <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)\\..\\VERSION"))</Version>
     <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -18,6 +17,7 @@
     <PackageProjectUrl>https://github.com/sourcegit-scm/sourcegit.git</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sourcegit-scm/sourcegit.git</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
+    <ApplicationIcon>Views\App.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(DisableAOT)' != 'true'">
@@ -40,9 +40,6 @@
     <ProjectReference Include="Views\Views.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AvaloniaResource Include="App.ico" />
-  </ItemGroup>
   <ItemGroup>
     <AvaloniaXaml Remove="Commands\**" />
     <AvaloniaXaml Remove="Converters\**" />
@@ -85,6 +82,10 @@
 
   <ItemGroup>
     <Compile Remove="App.Utils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Views\App.ico" />
   </ItemGroup>
 
 

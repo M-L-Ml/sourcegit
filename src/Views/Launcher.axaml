@@ -10,7 +10,7 @@
                     x:Class="SourceGit.Views.Launcher"
                     x:DataType="vm:Launcher"
                     x:Name="ThisControl"
-                    Icon="/App.ico"
+                    Icon="avares://Views/App.ico"
                     Title="{Binding Title}"
                     MinWidth="1024" MinHeight="600"
                     WindowStartupLocation="CenterScreen">
