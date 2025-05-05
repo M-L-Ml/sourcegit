@@ -823,6 +823,7 @@ namespace SourceGit.ViewModels
             //});
             var options = new FilePickerOpenOptions()
             {
+                Title = "Select Theme Override File",
                 FileTypeFilter = [new FilePickerFileType("Theme Overrides File") { Patterns = ["*.json"] }],
                 AllowMultiple = false,
             };
@@ -844,11 +845,12 @@ namespace SourceGit.ViewModels
 
         }
 
-        private async Task SelectGitExecutableAsync()
+        public async Task SelectGitExecutableAsync()
         {
             var pattern = OperatingSystem.IsWindows() ? "git.exe" : "git";
             var options = new FilePickerOpenOptions()
             {
+                Title = "Select Git Executable",
                 FileTypeFilter = [new FilePickerFileType("Git Executable") { Patterns = [pattern] }],
                 AllowMultiple = false,
             };
@@ -893,86 +895,78 @@ namespace SourceGit.ViewModels
 
         public async Task SelectGPGExecutableAsync()
         {
-            try
-            {
-                // TODO: Use DI/service locator to get IStorageProvider
-                // var storageProvider = App.GetService<IStorageProvider>();
-                IStorageProvider storageProvider = null; // Replace with actual implementation
-                if (storageProvider == null)
-                    return;
+     
+       var patterns = new List<string>();
+            if (OperatingSystem.IsWindows())
+                patterns.Add($"{GPGFormat.Program}.exe");
+            else
+                patterns.Add(GPGFormat.Program);
 
-                var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                    Title = "Select GPG Executable",
-                    AllowMultiple = false,
-                });
-
-                if (file != null && file.Count > 0)
-                {
-                    GPGExecutableFile = file[0].Path.LocalPath;
-                }
-            }
-            catch (Exception)
+            var options = new FilePickerOpenOptions()
             {
-                // TODO: Implement App.RaiseException or replace with appropriate notification logic
-                // App.RaiseException(string.Empty, $"Failed to select GPG executable");
+                         Title = "Select GPG Executable",
+     FileTypeFilter = [new FilePickerFileType("GPG Program") { Patterns = patterns }],
+                AllowMultiple = false,
+            };
+
+            var selected = await StorageProvider.OpenFilePickerAsync(options);
+            if (selected.Count == 1)
+            {
+                GPGExecutableFile = selected[0].Path.LocalPath;
             }
+
+
+
         }
 
         public async Task SelectShellOrTerminalAsync()
         {
-            try
-            {
-                // TODO: Use DI/service locator to get IStorageProvider
-                // var storageProvider = App.GetService<IStorageProvider>();
-                IStorageProvider storageProvider = null; // Replace with actual implementation
-                if (storageProvider == null)
-                    return;
+        
+            var type = ViewModels.Preferences.Instance.ShellOrTerminal;
+            if (type == -1)
+                return;
 
-                var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                    Title = "Select Shell Or Terminal",
-                    AllowMultiple = false,
-                });
-
-                if (file != null && file.Count > 0)
-                {
-                    ShellOrTerminalPath = file[0].Path.LocalPath;
-                }
-            }
-            catch (Exception)
+            var shell = Models.ShellOrTerminal.Supported[type];
+            var options = new FilePickerOpenOptions()
             {
-                // TODO: Implement App.RaiseException or replace with appropriate notification logic
-                // App.RaiseException(string.Empty, $"Failed to select shell or terminal");
+                Title = "Select Shell Or Terminal",
+                FileTypeFilter = [new FilePickerFileType(shell.Name) { Patterns = [shell.Exec] }],
+                AllowMultiple = false,
+            };
+
+            var selected = await StorageProvider.OpenFilePickerAsync(options);
+            if (selected.Count == 1)
+            {
+                ShellOrTerminalPath = selected[0].Path.LocalPath;
             }
+
+
         }
 
         public async Task SelectExternalMergeToolAsync()
         {
-            try
+            var type = ViewModels.Preferences.Instance.ExternalMergeToolType;
+            if (type < 0 || type >= Models.ExternalMerger.Supported.Count)
             {
-                // TODO: Use DI/service locator to get IStorageProvider
-                // var storageProvider = App.GetService<IStorageProvider>();
-                IStorageProvider storageProvider = null; // Replace with actual implementation
-                if (storageProvider == null)
-                    return;
+                ViewModels.Preferences.Instance.ExternalMergeToolType = 0;
 
-                var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                    Title = "Select External Merge Tool",
-                    AllowMultiple = false,
-                });
-
-                if (file != null && file.Count > 0)
-                {
-                    ExternalMergeToolPath = file[0].Path.LocalPath;
-                }
+                return;
             }
-            catch (Exception)
+
+            var tool = Models.ExternalMerger.Supported[type];
+            var options = new FilePickerOpenOptions()
             {
-                // TODO: Implement App.RaiseException or replace with appropriate notification logic
-                // App.RaiseException(string.Empty, $"Failed to select external merge tool");
+                Title = "Select External Merge Tool",
+                FileTypeFilter = [new FilePickerFileType(tool.Name) { Patterns = tool.GetPatterns() }],
+                AllowMultiple = false,
+            };
+
+            var selected = await StorageProvider.OpenFilePickerAsync(options);
+            if (selected.Count == 1)
+            {
+                ViewModels.Preferences.Instance.ExternalMergeToolPath = selected[0].Path.LocalPath;
             }
+
         }
 
         public void OnUseNativeWindowFrameChanged(object? parameter)
