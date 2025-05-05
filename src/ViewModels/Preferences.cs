@@ -105,7 +105,6 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _defaultFontSize, value);
         }
 
-        [JsonIgnore]
         public double EditorFontSize
         {
             get => _editorFontSize;
@@ -386,7 +385,6 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _lastCheckUpdateTime, value);
         }
 
-
         public void SetCanModify()
         {
             _isReadonly = false;
@@ -643,7 +641,6 @@ namespace SourceGit.ViewModels
         }
 
         public void RemoveNode(RepositoryNode node, bool save)
-
         {
             RemoveNodeRecursive(node, RepositoryNodes);
 
@@ -681,7 +678,7 @@ namespace SourceGit.ViewModels
             ShowGitVersionWarning = !string.IsNullOrEmpty(GitVersion) && Native.OS.GitVersion < Models.GitVersions.MINIMAL;
         }
 
-        // Save changes to Git configuration
+        //TODO: rename . This is on closing , seems resets .  Save changes to Git configuration
         public void SaveGitConfig()
         {
             if (!IsGitConfigured())
@@ -695,9 +692,10 @@ namespace SourceGit.ViewModels
             SetIfChanged(config, "fetch.prune", EnablePruneOnFetch ? "true" : "false", "false");
             SetIfChanged(config, "commit.gpgsign", EnableGPGCommitSigning ? "true" : "false", "false");
             SetIfChanged(config, "tag.gpgsign", EnableGPGTagSigning ? "true" : "false", "false");
-            SetIfChanged(config, "gpg.format", GPGFormat?.Value, "openpgp");
+            SetIfChanged(config, "http.sslverify", EnableHTTPSSLVerify ? "" : "false", "");
+            SetIfChanged(config, "gpg.format", GPGFormat.Value, "openpgp");
 
-            if (GPGFormat != null && !GPGFormat.Value.Equals("ssh", StringComparison.Ordinal))
+            if (!GPGFormat.Value.Equals("ssh", StringComparison.Ordinal))
             {
                 var oldGPG = string.Empty;
                 if (GPGFormat.Value == "openpgp" && config.TryGetValue("gpg.program", out var openpgp))
@@ -756,9 +754,9 @@ namespace SourceGit.ViewModels
             if (config.TryGetValue("gpg.format", out var gpgFormat))
                 GPGFormat = Models.GPGFormat.Supported.Find(x => x.Value == gpgFormat) ?? Models.GPGFormat.Supported[0];
 
-            if (GPGFormat?.Value == "openpgp" && config.TryGetValue("gpg.program", out var openpgp))
+            if (GPGFormat.Value == "openpgp" && config.TryGetValue("gpg.program", out var openpgp))
                 GPGExecutableFile = openpgp;
-            else if (GPGFormat != null && config.TryGetValue($"gpg.{GPGFormat.Value}.program", out var gpgProgram))
+            else if (config.TryGetValue($"gpg.{GPGFormat.Value}.program", out var gpgProgram))
                 GPGExecutableFile = gpgProgram;
 
             if (config.TryGetValue("http.sslverify", out var sslVerify))
