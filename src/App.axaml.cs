@@ -70,8 +70,8 @@ namespace SourceGit
             builder.ConfigureFonts(manager =>
             {
                 var monospace = new EmbeddedFontCollection(
-                    new Uri("fonts:SourceGit", UriKind.Absolute),
-                    new Uri("avares://SourceGit/Resources/Fonts", UriKind.Absolute));
+                    key: new Uri("fonts:SourceGit", UriKind.Absolute),
+                    new Uri("avares://Resources/Fonts", UriKind.Absolute));
                 manager.AddFontCollection(monospace);
             });
 

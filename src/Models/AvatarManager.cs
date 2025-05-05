@@ -188,7 +188,7 @@ namespace SourceGit.Models
 
         private void LoadDefaultAvatar(string key, string img)
         {
-            var icon = AssetLoader.Open(new Uri($"avares://SourceGit/Resources/Images/{img}", UriKind.RelativeOrAbsolute));
+            var icon = AssetLoader.Open(new Uri($"avares://Resources/Images/{img}", UriKind.RelativeOrAbsolute));
             _resources.Add(key, new Bitmap(icon));
             _defaultAvatars.Add(key);
         }

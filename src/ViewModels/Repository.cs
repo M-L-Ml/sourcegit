@@ -614,7 +614,7 @@ namespace SourceGit.ViewModels
                 item.Header = App.Text("Repository.OpenIn", dupTool.Name);
                 try
                 {
-                    var asset = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://SourceGit/Resources/Images/ExternalToolIcons/{dupTool.IconName}.png", UriKind.RelativeOrAbsolute));
+                    var asset = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://Resources/Images/ExternalToolIcons/{dupTool.IconName}.png", UriKind.RelativeOrAbsolute));
                     item.Icon = new Image { Width = 16, Height = 16, Source = new Bitmap(asset) };
                 }
                 catch

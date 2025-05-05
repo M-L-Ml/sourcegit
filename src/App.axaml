@@ -9,28 +9,28 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="avares://Resources/Icons.axaml"/>
-        <ResourceInclude Source="/Resources/Themes.axaml"/>
+        <ResourceInclude Source="avares://Resources/Themes.axaml"/>
       </ResourceDictionary.MergedDictionaries>
 
-      <ResourceInclude x:Key="de_DE" Source="/Resources/Locales/de_DE.axaml"/>
-      <ResourceInclude x:Key="en_US" Source="/Resources/Locales/en_US.axaml"/>
-      <ResourceInclude x:Key="fr_FR" Source="/Resources/Locales/fr_FR.axaml"/>
-      <ResourceInclude x:Key="it_IT" Source="/Resources/Locales/it_IT.axaml"/>
-      <ResourceInclude x:Key="pt_BR" Source="/Resources/Locales/pt_BR.axaml"/>
-      <ResourceInclude x:Key="uk_UA" Source="/Resources/Locales/uk_UA.axaml"/>
-      <ResourceInclude x:Key="ru_RU" Source="/Resources/Locales/ru_RU.axaml"/>
-      <ResourceInclude x:Key="zh_CN" Source="/Resources/Locales/zh_CN.axaml"/>
-      <ResourceInclude x:Key="zh_TW" Source="/Resources/Locales/zh_TW.axaml"/>
-      <ResourceInclude x:Key="es_ES" Source="/Resources/Locales/es_ES.axaml"/>
-      <ResourceInclude x:Key="ja_JP" Source="/Resources/Locales/ja_JP.axaml"/>
-      <ResourceInclude x:Key="ta_IN" Source="/Resources/Locales/ta_IN.axaml"/>
+      <ResourceInclude x:Key="de_DE" Source="avares://Resources/Locales/de_DE.axaml"/>
+      <ResourceInclude x:Key="en_US" Source="avares://Resources/Locales/en_US.axaml"/>
+      <ResourceInclude x:Key="fr_FR" Source="avares://Resources/Locales/fr_FR.axaml"/>
+      <ResourceInclude x:Key="it_IT" Source="avares://Resources/Locales/it_IT.axaml"/>
+      <ResourceInclude x:Key="pt_BR" Source="avares://Resources/Locales/pt_BR.axaml"/>
+      <ResourceInclude x:Key="uk_UA" Source="avares://Resources/Locales/uk_UA.axaml"/>
+      <ResourceInclude x:Key="ru_RU" Source="avares://Resources/Locales/ru_RU.axaml"/>
+      <ResourceInclude x:Key="zh_CN" Source="avares://Resources/Locales/zh_CN.axaml"/>
+      <ResourceInclude x:Key="zh_TW" Source="avares://Resources/Locales/zh_TW.axaml"/>
+      <ResourceInclude x:Key="es_ES" Source="avares://Resources/Locales/es_ES.axaml"/>
+      <ResourceInclude x:Key="ja_JP" Source="avares://Resources/Locales/ja_JP.axaml"/>
+      <ResourceInclude x:Key="ta_IN" Source="avares://Resources/Locales/ta_IN.axaml"/>
     </ResourceDictionary>
   </Application.Resources>
 
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
-    <StyleInclude Source="/Resources/Styles.axaml"/>
+    <StyleInclude Source="avares://Views/Styles.axaml"/>
   </Application.Styles>
 
   <NativeMenu.Menu>
