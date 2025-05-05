@@ -9,6 +9,7 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Avalonia.Data.Converters;
+using System.Diagnostics;
 
 namespace SourceGit.ViewModels
 {
@@ -867,36 +868,29 @@ namespace SourceGit.ViewModels
 
         public async Task SelectDefaultCloneDirAsync()
         {
-            try
-            {
-                // TODO: Use DI/service locator to get IStorageProvider
-                // var storageProvider = App.GetService<IStorageProvider>();
-                IStorageProvider storageProvider = null; // Replace with actual implementation
-                if (storageProvider == null)
-                    return;
-
+             GitDefaultCloneDir = await GetSelectDefaultCloneDirAsync(StorageProvider);
+                
+        }
+        public static async Task<string?> GetSelectDefaultCloneDirAsync(IStorageProvider storageProvider)
+        {
                 var folder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
                 {
                     Title = "Select Default Clone Directory",
                     AllowMultiple = false,
                 });
 
-                if (folder != null && folder.Count > 0)
+                if (folder.Count == 1)
                 {
-                    GitDefaultCloneDir = folder[0].Path.LocalPath;
+                    return folder[0].Path.LocalPath;
                 }
-            }
-            catch (Exception)
-            {
-                // TODO: Implement App.RaiseException or replace with appropriate notification logic
-                // App.RaiseException(string.Empty, $"Failed to select default clone directory");
-            }
+                return null;
+           
         }
 
         public async Task SelectGPGExecutableAsync()
         {
      
-       var patterns = new List<string>();
+            var patterns = new List<string>();
             if (OperatingSystem.IsWindows())
                 patterns.Add($"{GPGFormat.Program}.exe");
             else
@@ -1016,33 +1010,22 @@ namespace SourceGit.ViewModels
 
         public async Task SelectExecutableForCustomActionAsync(object? parameter)
         {
-            if (SelectedCustomAction == null)
-                return;
 
-            try
+                var options = new FilePickerOpenOptions()
             {
-                // TODO: Use DI/service locator to get IStorageProvider
-                // var storageProvider = App.GetService<IStorageProvider>();
-                IStorageProvider storageProvider = null; // Replace with actual implementation
-                if (storageProvider == null)
-                    return;
+                Title = "Select Executable",
+                FileTypeFilter = [new FilePickerFileType("Executable file(script)") { Patterns = ["*.*"] }],
+                AllowMultiple = false,
+            };
 
-                var file = await storageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                    Title = "Select Executable",
-                    AllowMultiple = false,
-                });
-
-                if (file != null && file.Count > 0)
-                {
-                    SelectedCustomAction.Executable = file[0].Path.LocalPath;
-                    Save();
-                }
-            }
-            catch (Exception)
+            var selected = await StorageProvider.OpenFilePickerAsync(options);
+            if (selected.Count == 1)
             {
-                // TODO: Implement App.RaiseException or replace with appropriate notification logic
-                // App.RaiseException(string.Empty, $"Failed to select executable");
+                // TODO: refactor : why check for sender is Button - maybe just whether it has DataContext of type Models.CustomAction ?? Better ways to do this?
+                if (sender is Button { DataContext: Models.CustomAction action })
+                    action.Executable = selected[0].Path.LocalPath;
+                else
+                    Debug.Assert(false, "sender is not a Button with DataContext of Models.CustomAction");
             }
         }
         public void AutoRemoveInvalidNode()
