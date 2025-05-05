@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Avalonia.Data.Converters;
 using System.Diagnostics;
+using Avalonia.Controls;
 
 namespace SourceGit.ViewModels
 {
@@ -564,7 +565,6 @@ namespace SourceGit.ViewModels
         public IAsyncRelayCommand SelectGPGExecutableCommand { get; }
         public IAsyncRelayCommand SelectShellOrTerminalCommand { get; }
         public IAsyncRelayCommand SelectExternalMergeToolCommand { get; }
-        public IRelayCommand<object?> UseNativeWindowFrameChangedCommand { get; }
         public IRelayCommand AddOpenAIServiceCommand { get; }
         public IRelayCommand RemoveSelectedOpenAIServiceCommand { get; }
         public IRelayCommand AddCustomActionCommand { get; }
@@ -791,7 +791,6 @@ namespace SourceGit.ViewModels
             SelectGPGExecutableCommand = new AsyncRelayCommand(SelectGPGExecutableAsync);
             SelectShellOrTerminalCommand = new AsyncRelayCommand(SelectShellOrTerminalAsync);
             SelectExternalMergeToolCommand = new AsyncRelayCommand(SelectExternalMergeToolAsync);
-            UseNativeWindowFrameChangedCommand = new RelayCommand<object?>(OnUseNativeWindowFrameChanged);
             AddOpenAIServiceCommand = new RelayCommand(AddOpenAIService);
             RemoveSelectedOpenAIServiceCommand = new RelayCommand(RemoveOpenAIService);
             AddCustomActionCommand = new RelayCommand(AddCustomAction);
@@ -863,33 +862,33 @@ namespace SourceGit.ViewModels
                 UpdateGitVersion();
             }
 
-                // App.RaiseException(string.Empty, $"Failed to select Git executable");
+            // App.RaiseException(string.Empty, $"Failed to select Git executable");
         }
 
         public async Task SelectDefaultCloneDirAsync()
         {
-             GitDefaultCloneDir = await GetSelectDefaultCloneDirAsync(StorageProvider);
-                
+            GitDefaultCloneDir = await GetSelectDefaultCloneDirAsync(StorageProvider);
+
         }
         public static async Task<string?> GetSelectDefaultCloneDirAsync(IStorageProvider storageProvider)
         {
-                var folder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-                {
-                    Title = "Select Default Clone Directory",
-                    AllowMultiple = false,
-                });
+            var folder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Select Default Clone Directory",
+                AllowMultiple = false,
+            });
 
-                if (folder.Count == 1)
-                {
-                    return folder[0].Path.LocalPath;
-                }
-                return null;
-           
+            if (folder.Count == 1)
+            {
+                return folder[0].Path.LocalPath;
+            }
+            return null;
+
         }
 
         public async Task SelectGPGExecutableAsync()
         {
-     
+
             var patterns = new List<string>();
             if (OperatingSystem.IsWindows())
                 patterns.Add($"{GPGFormat.Program}.exe");
@@ -898,8 +897,8 @@ namespace SourceGit.ViewModels
 
             var options = new FilePickerOpenOptions()
             {
-                         Title = "Select GPG Executable",
-     FileTypeFilter = [new FilePickerFileType("GPG Program") { Patterns = patterns }],
+                Title = "Select GPG Executable",
+                FileTypeFilter = [new FilePickerFileType("GPG Program") { Patterns = patterns }],
                 AllowMultiple = false,
             };
 
@@ -915,8 +914,8 @@ namespace SourceGit.ViewModels
 
         public async Task SelectShellOrTerminalAsync()
         {
-        
-            var type = ViewModels.Preferences.Instance.ShellOrTerminal;
+
+            var type = ShellOrTerminal;
             if (type == -1)
                 return;
 
@@ -939,10 +938,10 @@ namespace SourceGit.ViewModels
 
         public async Task SelectExternalMergeToolAsync()
         {
-            var type = ViewModels.Preferences.Instance.ExternalMergeToolType;
+            var type = ExternalMergeToolType;
             if (type < 0 || type >= Models.ExternalMerger.Supported.Count)
             {
-                ViewModels.Preferences.Instance.ExternalMergeToolType = 0;
+                ExternalMergeToolType = 0;
 
                 return;
             }
@@ -958,19 +957,11 @@ namespace SourceGit.ViewModels
             var selected = await StorageProvider.OpenFilePickerAsync(options);
             if (selected.Count == 1)
             {
-                ViewModels.Preferences.Instance.ExternalMergeToolPath = selected[0].Path.LocalPath;
+                ExternalMergeToolPath = selected[0].Path.LocalPath;
             }
 
         }
 
-        public void OnUseNativeWindowFrameChanged(object? parameter)
-        {
-            if (!_isLoading)
-            {
-                UseSystemWindowFrame = !UseSystemWindowFrame;
-                // TODO: Implement App.RaiseNotification or replace with appropriate notification logic
-            }
-        }
 
         public void AddOpenAIService()
         {
@@ -1011,7 +1002,7 @@ namespace SourceGit.ViewModels
         public async Task SelectExecutableForCustomActionAsync(object? parameter)
         {
 
-                var options = new FilePickerOpenOptions()
+            var options = new FilePickerOpenOptions()
             {
                 Title = "Select Executable",
                 FileTypeFilter = [new FilePickerFileType("Executable file(script)") { Patterns = ["*.*"] }],

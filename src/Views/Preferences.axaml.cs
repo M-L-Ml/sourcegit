@@ -66,7 +66,11 @@ namespace SourceGit.Views
 
         private void OnUseNativeWindowFrameChanged(object sender, RoutedEventArgs e)
         {
-            ViewModel.UseNativeWindowFrameChangedCommand.Execute(sender);
+            if (sender is CheckBox box)
+            {
+                ViewModel.UseSystemWindowFrame = box.IsChecked == true;
+                App.ShowWindow(new ConfirmRestart(), true);
+            }
             e.Handled = true;
         }
 

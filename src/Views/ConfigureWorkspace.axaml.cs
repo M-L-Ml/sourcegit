@@ -26,18 +26,17 @@ namespace SourceGit.Views
             if (workspace?.Selected == null)
                 return;
 
-            var options = new FolderPickerOpenOptions() { AllowMultiple = false };
             try
             {
-                var selected = await StorageProvider.OpenFolderPickerAsync(options);
-                if (selected.Count == 1)
+                var selected = await ViewModels.Preferences.GetSelectDefaultCloneDirAsync( StorageProvider);
+                if (selected != null)
                 {
-                    workspace.Selected.DefaultCloneDir = selected[0].Path.LocalPath;
+                    workspace.Selected.DefaultCloneDir = selected;
                 }
             }
             catch (Exception ex)
             {
-                App.RaiseException(string.Empty, $"Failed to select default clone directory: {ex.Message}");
+                App.RaiseException(string.Empty, $"Failed to select default clone directory: {0}", ex);
             }
 
             e.Handled = true;
