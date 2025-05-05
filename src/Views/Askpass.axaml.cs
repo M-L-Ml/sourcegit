@@ -10,6 +10,11 @@ namespace SourceGit.Views
             InitializeComponent();
         }
 
+        public void SetTxtDescription(string text)
+        {
+            TxtDescription.Text = text;
+        }
+
         private void CloseWindow(object _1, RoutedEventArgs _2)
         {
             Console.Out.WriteLine("No passphrase entered.");

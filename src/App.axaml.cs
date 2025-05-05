@@ -544,7 +544,7 @@ namespace SourceGit
             if (args?.Length > 0)
             {
                 var askpass = new Views.Askpass();
-                askpass.TxtDescription.Text = args[0];
+                askpass.SetTxtDescription( args[0]);
                 desktop.MainWindow = askpass;
                 return true;
             }

@@ -1,6 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:s="using:SourceGit"
+             xmlns:vm="using:SourceGit.ViewModels"
              x:Class="SourceGit.App"
              Name="SourceGit"
              RequestedThemeVariant="Dark">
@@ -34,14 +35,14 @@
 
   <NativeMenu.Menu>
     <NativeMenu>
-      <NativeMenuItem Header="{DynamicResource Text.About.Menu}" Command="{x:Static s:App.OpenAboutCommand}"/>
-      <NativeMenuItem Header="{DynamicResource Text.Hotkeys}" Command="{x:Static s:App.OpenHotkeysCommand}" Gesture="F1"/>
-      <NativeMenuItem Header="{DynamicResource Text.SelfUpdate}" Command="{x:Static s:App.CheckForUpdateCommand}" IsVisible="{x:Static s:App.IsCheckForUpdateCommandVisible}"/>
+      <NativeMenuItem Header="{DynamicResource Text.About.Menu}" Command="{x:Static vm:App.OpenAboutCommand}"/>
+      <NativeMenuItem Header="{DynamicResource Text.Hotkeys}" Command="{x:Static vm:App.OpenHotkeysCommand}" Gesture="F1"/>
+      <NativeMenuItem Header="{DynamicResource Text.SelfUpdate}" Command="{x:Static vm:App.CheckForUpdateCommand}" IsVisible="{x:Static vm:App.IsCheckForUpdateCommandVisible}"/>
       <NativeMenuItemSeparator/>
-      <NativeMenuItem Header="{DynamicResource Text.Preferences}" Command="{x:Static s:App.OpenPreferencesCommand}" Gesture="⌘+,"/>
-      <NativeMenuItem Header="{DynamicResource Text.OpenAppDataDir}" Command="{x:Static s:App.OpenAppDataDirCommand}"/>
+      <NativeMenuItem Header="{DynamicResource Text.Preferences}" Command="{x:Static vm:App.OpenPreferencesCommand}" Gesture="⌘+,"/>
+      <NativeMenuItem Header="{DynamicResource Text.OpenAppDataDir}" Command="{x:Static vm:App.OpenAppDataDirCommand}"/>
       <NativeMenuItemSeparator/>
-      <NativeMenuItem Header="{DynamicResource Text.Quit}" Command="{x:Static s:App.QuitCommand}" Gesture="⌘+Q"/>
+      <NativeMenuItem Header="{DynamicResource Text.Quit}" Command="{x:Static vm:App.QuitCommand}" Gesture="⌘+Q"/>
     </NativeMenu>
   </NativeMenu.Menu>
 </Application>
