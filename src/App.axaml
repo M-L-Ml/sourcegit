@@ -8,7 +8,7 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceInclude Source="/Resources/Icons.axaml"/>
+        <ResourceInclude Source="avares://Resources/Icons.axaml"/>
         <ResourceInclude Source="/Resources/Themes.axaml"/>
       </ResourceDictionary.MergedDictionaries>
 

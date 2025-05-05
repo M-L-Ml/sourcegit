@@ -11,5 +11,11 @@
     <AvaloniaResource Include="Images/ExternalToolIcons/*" />
     <AvaloniaResource Include="Images/ExternalToolIcons/JetBrains/*" />
     <AvaloniaResource Include="Images/ShellIcons/*" />
+    <AvaloniaResource Include="Icons.axaml" />
+    <AvaloniaXaml Include="Icons.axaml" />
+    <PackageReference Include="Avalonia">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+
   </ItemGroup>
 </Project>
