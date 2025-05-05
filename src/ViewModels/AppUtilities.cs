@@ -16,6 +16,7 @@ using SourceGit.ViewModels;
 using Native = SourceGit.Native;
 using Avalonia.Data.Converters;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace SourceGit.ViewModels
 {
@@ -52,26 +53,36 @@ namespace SourceGit.ViewModels
         }
 
 
-        public static void RaiseException(string context, string message)
+        public static new void RaiseException(string context, string message)
         {
             if (_launcher != null)
                 _launcher.DispatchNotification(context, message, true);
+            else
+                Debug.Assert(false);
         }
-
+        public static void RaiseException(string context, string messagef, Exception original)
+        {
+            string message = string.Format(messagef, original.Message);
+            RaiseException(context, message);
+        }
         public static void SendNotification(string context, string message)
         {
             if (_launcher != null)
                 _launcher.DispatchNotification(context, message, false);
+            else
+                Debug.Assert(false, "Launcher not available in this context.");
 
         }
 
-        public static async void CopyText(string data)
+        public static async Task CopyText(string data)
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 if (desktop.MainWindow?.Clipboard is { } clipboard)
                     await clipboard.SetTextAsync(data ?? "");
             }
+            else
+                Debug.Assert(false, "Clipboard not available in this context.");
         }
 
         public static async Task<string> GetClipboardTextAsync()
@@ -83,6 +94,8 @@ namespace SourceGit.ViewModels
                     return await clipboard.GetTextAsync();
                 }
             }
+            else
+                Debug.Assert(false, "Clipboard not available in this context.");
             return default;
         }
 

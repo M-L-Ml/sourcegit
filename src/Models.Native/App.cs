@@ -11,15 +11,19 @@ namespace SourceGit
             public delegate void RaiseExceptionDelegate(string context, string message);
 
 
-            public static RaiseExceptionDelegate RaiseException
+            public static RaiseExceptionDelegate RaiseExceptionD
             {
                 get; set;
             } = RaiseExceptionDefault;
-
+            public static void RaiseException(string context, string message)
+            {
+                RaiseExceptionD.Invoke(context, message);
+            }
             public static void RaiseExceptionDefault(string context, string message)
             {
                 Debug.Assert(context != null);
                 Debug.WriteLine(context + ": " + message);
+                throw new NotImplementedException();
             }
         }
     }
