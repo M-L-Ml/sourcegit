@@ -286,6 +286,8 @@ namespace SourceGit.ViewModels
             {
                 if (Native.OS.GitExecutable != value)
                 {
+                    OnPropertyChanging();//just in case
+                    UpdateGitVersion();
                     Native.OS.GitExecutable = value;
                     OnPropertyChanged();
                 }

@@ -74,11 +74,6 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
-        private void OnGitInstallPathChanged(object sender, TextChangedEventArgs e)
-        {
-            ViewModel.UpdateGitVersion();
-        }
-
         private void OnAddOpenAIService(object sender, RoutedEventArgs e)
         {
             ViewModel.AddOpenAIServiceCommand.Execute(null);
