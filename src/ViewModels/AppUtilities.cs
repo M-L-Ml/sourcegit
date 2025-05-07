@@ -22,14 +22,6 @@ namespace SourceGit.ViewModels
 {
     public partial class App : Models.App
     {
-        //public static void ShowWindow(object data, bool showAsDialog)
-        //=>
-        //    AppUtilities.ShowWindow(data, showAsDialog);
-        //}
-        //public static class AppUtilities
-        //{
-        // Static property to encapsulate Application.Current as SourceGit.App
-        private static ViewModels.Launcher _launcher = null;
 
         private static dynamic AppDyn =>
             Application.Current;
@@ -50,10 +42,7 @@ namespace SourceGit.ViewModels
 
         public static new void RaiseException(string context, string message)
         {
-            if (_launcher != null)
-                _launcher.DispatchNotification(context, message, true);
-            else
-                Debug.Assert(false);
+            GetLauncer().DispatchNotification(context, message, true);
         }
         public static void RaiseException(string context, string messagef, Exception original)
         {
@@ -62,10 +51,7 @@ namespace SourceGit.ViewModels
         }
         public static void SendNotification(string context, string message)
         {
-            if (_launcher != null)
-                _launcher.DispatchNotification(context, message, false);
-            else
-                Debug.Assert(false, "Launcher not available in this context.");
+            GetLauncer().DispatchNotification(context, message, false);
 
         }
 
@@ -130,7 +116,7 @@ namespace SourceGit.ViewModels
 
         public static Launcher GetLauncer()
         {
-            return _launcher;// Application.Current is SourceGit.App app ? app._launcher : null;
+            return AppDyn.GetLauncherI();// Application.Current is SourceGit.App app ? app._launcher : null;
         }
 
         //public static void Quit(int exitCode)
@@ -175,8 +161,7 @@ namespace SourceGit.ViewModels
 
         public static void TryOpenRepositoryInTab(ViewModels.RepositoryNode node, LauncherPage arg)
         {
-            if (_launcher != null)
-                _launcher.OpenRepositoryInTab(node, arg);
+            GetLauncer().OpenRepositoryInTab(node, arg);
         }
     }
 

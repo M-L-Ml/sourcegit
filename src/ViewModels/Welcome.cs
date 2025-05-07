@@ -212,7 +212,7 @@ namespace SourceGit.ViewModels
                 open.Icon = App.CreateMenuIcon("Icons.Folder.Open");
                 open.Click += (_, e) =>
                 {
-                    App.GetLauncer()?.OpenRepositoryInTab(node, null);
+                    App.GetLauncer().OpenRepositoryInTab(node, null);
                     e.Handled = true;
                 };
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -1274,7 +1275,7 @@ namespace SourceGit.ViewModels
                 };
             }
 
-            App.GetLauncer()?.OpenRepositoryInTab(node, null);
+            App.GetLauncer().OpenRepositoryInTab(node, null);
         }
 
         public List<Models.OpenAIService> GetPreferedOpenAIServices()
@@ -2361,7 +2362,10 @@ namespace SourceGit.ViewModels
         {
             var launcher = App.GetLauncer();
             if (launcher == null)
+            { 
+                Debug.Assert(false, "Launcher not available?");
                 return null;
+            }
 
             foreach (var page in launcher.Pages)
             {

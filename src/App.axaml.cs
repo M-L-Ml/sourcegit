@@ -359,7 +359,12 @@ namespace SourceGit
         [return:NotNull]
         public static ViewModels.Launcher GetLauncer()
         {
-            return ((App)Current)._launcher;
+            return ((App)Current).GetLauncherI();
+        }
+        [return: NotNull]
+        public ViewModels.Launcher GetLauncherI()
+        {
+            return _launcher;
         }
 
         [return:NotNull]
@@ -588,6 +593,7 @@ namespace SourceGit
 
             _launcher = new ViewModels.Launcher(startupRepo);
             desktop.MainWindow = new Views.Launcher() { DataContext = _launcher };
+            desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
 #if !DISABLE_UPDATE_DETECTION
             if (pref.ShouldCheck4UpdateOnStartup())
