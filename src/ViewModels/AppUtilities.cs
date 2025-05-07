@@ -26,6 +26,14 @@ namespace SourceGit.ViewModels
         private static dynamic AppDyn =>
             Application.Current;
 
+        public static void LogException(Exception ex)
+        {
+            if (AppDyn != null)
+                AppDyn.LogExceptionI(ex);
+
+            Debug.WriteLine(ex.Message);
+        }
+
         public static void SetTheme(string theme, string themeOverridesFile)
         {
             AppDyn.SetTheme(theme, themeOverridesFile);

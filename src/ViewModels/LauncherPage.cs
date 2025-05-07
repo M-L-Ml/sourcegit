@@ -97,7 +97,6 @@ namespace SourceGit.ViewModels
             if (popup.CanStartDirectly())
                 ProcessPopup();
         }
-
         public async void ProcessPopup()
         {
             if (_popup is { InProgress: false } dump)

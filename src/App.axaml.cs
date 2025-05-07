@@ -78,7 +78,8 @@ namespace SourceGit
             Native.OS.SetupApp(builder);
             return builder;
         }
-
+        public void LogExceptionI(Exception ex)
+         => LogException(ex);
         public static void LogException(Exception ex)
         {
             if (ex == null)
