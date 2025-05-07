@@ -146,14 +146,38 @@ namespace SourceGit
                 return;
             }
 
-            var dataTypeName = data.GetType().FullName;
-            if (string.IsNullOrEmpty(dataTypeName) || !dataTypeName.Contains(".ViewModels.", StringComparison.Ordinal))
-                return;
+            string dataTypeName;
+            var modelName = data as string;
+            if ( modelName != null )
+            {
+                var referenceType = typeof(ViewModels.CommitDetail);
+                dataTypeName = referenceType.FullName.Replace("." + referenceType.Name, "." + modelName);
+            }
+            else
+            {
+                dataTypeName = data.GetType().FullName;
+            }
 
-            var viewTypeName = dataTypeName.Replace(".ViewModels.", ".Views.");
+            if (string.IsNullOrEmpty(dataTypeName) || !dataTypeName.Contains(".ViewModels.", StringComparison.Ordinal))
+            { Debug.Assert(false); return; }
+
+            string viewTypeName = dataTypeName.Replace(".ViewModels.", ".Views.");
             var viewType = Type.GetType(viewTypeName);
+
+            if (viewType == null )
+            {
+                var a = Assembly.Load("Views");
+                viewType = a.GetType(viewTypeName);
+                if (viewType == null)
+                {
+                    if (!string.IsNullOrEmpty(modelName))
+                    {
+                      Debug.Assert(false, $"Check View type not found for {modelName}.");
+                    }
+                }
+            }
             if (viewType == null || !viewType.IsSubclassOf(typeof(Views.ChromelessWindow)))
-                return;
+            { Debug.Assert(false); return; }
 
             window = Activator.CreateInstance(viewType) as Views.ChromelessWindow;
             if (window != null)

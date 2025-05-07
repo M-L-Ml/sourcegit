@@ -47,7 +47,7 @@ namespace SourceGit.ViewModels
         }
 
         public static readonly Command OpenPreferencesCommand = new Command(_ =>
-           ShowWindow("Preferences", false));
+           ShowWindow( ViewModels.Preferences.Instance, false));
 
         private static dynamic GetWindowService()
         {
