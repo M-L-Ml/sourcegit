@@ -46,24 +46,25 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
-        private void SelectGPGExecutable(object _, RoutedEventArgs e)
+        private async void SelectGPGExecutable(object _, RoutedEventArgs e)
         {
-            ViewModel.SelectGPGExecutableCommand.ExecuteAsync(null);
+            await ViewModel.SelectGPGExecutableCommand.ExecuteAsync(null);
             e.Handled = true;
         }
 
-        private void SelectShellOrTerminal(object _, RoutedEventArgs e)
+        private async void SelectShellOrTerminal(object _, RoutedEventArgs e)
         {
-            ViewModel.SelectShellOrTerminalCommand.ExecuteAsync(null);
+            await ViewModel.SelectShellOrTerminalCommand.ExecuteAsync(null);
             e.Handled = true;
         }
 
-        private void SelectExternalMergeTool(object _, RoutedEventArgs e)
+        private async void SelectExternalMergeTool(object _, RoutedEventArgs e)
         {
-            ViewModel.SelectExternalMergeToolCommand.ExecuteAsync(null);
+            await ViewModel.SelectExternalMergeToolCommand.ExecuteAsync(null);
             e.Handled = true;
         }
 
+        // TODO: refactor. See UseSystemWindowFrame and UseNativeWindowFrame binding property
         private void OnUseNativeWindowFrameChanged(object sender, RoutedEventArgs e)
         {
             if (sender is CheckBox box)

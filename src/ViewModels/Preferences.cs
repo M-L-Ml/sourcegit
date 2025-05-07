@@ -1001,12 +1001,12 @@ namespace SourceGit.ViewModels
             }
         }
 
+        //TODO: localization of Titles here and elsewhere, using existing resource files 
         public async Task SelectExecutableForCustomActionAsync(object? parameter)
         {
-
             var options = new FilePickerOpenOptions()
             {
-                Title = "Select Executable",
+                Title = "Select Executable For Custom Action",
                 FileTypeFilter = [new FilePickerFileType("Executable file(script)") { Patterns = ["*.*"] }],
                 AllowMultiple = false,
             };
@@ -1015,7 +1015,7 @@ namespace SourceGit.ViewModels
             if (selected.Count == 1)
             {
                 // TODO: refactor : why check for sender is Button - maybe just whether it has DataContext of type Models.CustomAction ?? Better ways to do this?
-                if (sender is Button { DataContext: Models.CustomAction action })
+                if (parameter is Button { DataContext: Models.CustomAction action })
                     action.Executable = selected[0].Path.LocalPath;
                 else
                     Debug.Assert(false, "sender is not a Button with DataContext of Models.CustomAction");
