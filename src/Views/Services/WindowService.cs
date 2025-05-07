@@ -23,14 +23,14 @@ namespace SourceGit.Views.Services
 
         #region IWindowService Implementation
 
-        public void ShowWindow(string windowKey, bool isModal = false)
+        public void ShowWindow2(string windowKey, bool isModal = false)
         {
-            ShowWindowInternal(windowKey, null, isModal);
+            ShowWindow2Internal(windowKey, null, isModal);
         }
 
-        public void ShowWindow(string windowKey, object viewModel, bool isModal = false)
+        public void ShowWindow2(string windowKey, object viewModel, bool isModal = false)
         {
-            ShowWindowInternal(windowKey, viewModel, isModal);
+            ShowWindow2Internal(windowKey, viewModel, isModal);
         }
 
         public Task<TResult> ShowDialogAsync<TResult>(string dialogKey, object viewModel = null)
@@ -84,7 +84,7 @@ namespace SourceGit.Views.Services
 
         #region Helper Methods
 
-        private void ShowWindowInternal(string windowKey, object viewModel, bool isModal)
+        private void ShowWindow2Internal(string windowKey, object viewModel, bool isModal)
         {
             try
             {
@@ -115,6 +115,7 @@ namespace SourceGit.Views.Services
             {
                 // Log exception or handle it appropriately
                 Console.WriteLine($"Error showing window: {ex.Message}");
+                throw;
             }
         }
 

@@ -14,7 +14,7 @@ namespace SourceGit.ViewModels.Services
         /// </summary>
         /// <param name="windowKey">Key identifying which window to show (e.g. "Preferences", "About")</param>
         /// <param name="isModal">Whether to show as modal dialog</param>
-        void ShowWindow(string windowKey, bool isModal = false);
+        void ShowWindow2(string windowKey, bool isModal = false);
         
         /// <summary>
         /// Shows a window by its logical name and with a ViewModel
@@ -22,7 +22,7 @@ namespace SourceGit.ViewModels.Services
         /// <param name="windowKey">Key identifying which window to show</param>
         /// <param name="viewModel">ViewModel to set as DataContext</param>
         /// <param name="isModal">Whether to show as modal dialog</param>
-        void ShowWindow(string windowKey, object viewModel, bool isModal = false);
+        void ShowWindow2(string windowKey, object viewModel, bool isModal = false);
         
         /// <summary>
         /// Shows a dialog and returns a result asynchronously
