@@ -147,11 +147,11 @@ namespace SourceGit
             }
 
             string dataTypeName;
-            var modelName = data as string;
-            if ( modelName != null )
+            var modelOrViewClassName = data as string;
+            if ( modelOrViewClassName != null )
             {
                 var referenceType = typeof(ViewModels.CommitDetail);
-                dataTypeName = referenceType.FullName.Replace("." + referenceType.Name, "." + modelName);
+                dataTypeName = referenceType.FullName.Replace("." + referenceType.Name, "." + modelOrViewClassName);
             }
             else
             {
@@ -168,13 +168,6 @@ namespace SourceGit
             {
                 var a = Assembly.Load("Views");
                 viewType = a.GetType(viewTypeName);
-                if (viewType == null)
-                {
-                    if (!string.IsNullOrEmpty(modelName))
-                    {
-                      Debug.Assert(false, $"Check View type not found for {modelName}.");
-                    }
-                }
             }
             if (viewType == null || !viewType.IsSubclassOf(typeof(Views.ChromelessWindow)))
             { Debug.Assert(false); return; }
