@@ -1062,6 +1062,8 @@ namespace SourceGit.ViewModels
 
                 if (_workingCopy != null)
                     _workingCopy.HasRemotes = remotes.Count > 0;
+
+                GetOwnerPage()?.ChangeDirtyState(Models.DirtyState.HasPendingPullOrPush, !CurrentBranch.TrackStatus.IsVisible);
             });
         }
 
@@ -1169,6 +1171,7 @@ namespace SourceGit.ViewModels
             {
                 LocalChangesCount = changes.Count;
                 OnPropertyChanged(nameof(InProgressContext));
+                GetOwnerPage()?.ChangeDirtyState(Models.DirtyState.HasLocalChanges, changes.Count == 0);
             });
         }
 
@@ -1219,7 +1222,7 @@ namespace SourceGit.ViewModels
 
             if (branch.IsLocal)
             {
-                if (_localChangesCount > 0)
+                if (_localChangesCount > 0 || _submodules.Count > 0)
                     ShowPopup(new Checkout(this, branch.Name));
                 else
                     ShowAndStartPopup(new Checkout(this, branch.Name));
@@ -2264,6 +2267,51 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
+        public ContextMenu CreateContextMenuForBranchSortMode(bool local)
+        {
+            var mode = local ? _settings.LocalBranchSortMode : _settings.RemoteBranchSortMode;
+            var changeMode = new Action<Models.BranchSortMode>(m =>
+            {
+                if (local)
+                    _settings.LocalBranchSortMode = m;
+                else
+                    _settings.RemoteBranchSortMode = m;
+
+                var builder = BuildBranchTree(_branches, _remotes);
+                LocalBranchTrees = builder.Locals;
+                RemoteBranchTrees = builder.Remotes;
+            });
+
+            var byNameAsc = new MenuItem();
+            byNameAsc.Header = App.Text("Repository.BranchSort.ByName");
+            if (mode == Models.BranchSortMode.Name)
+                byNameAsc.Icon = App.CreateMenuIcon("Icons.Check");
+            byNameAsc.Click += (_, ev) =>
+            {
+                if (mode != Models.BranchSortMode.Name)
+                    changeMode(Models.BranchSortMode.Name);
+
+                ev.Handled = true;
+            };
+
+            var byCommitterDate = new MenuItem();
+            byCommitterDate.Header = App.Text("Repository.BranchSort.ByCommitterDate");
+            if (mode == Models.BranchSortMode.CommitterDate)
+                byCommitterDate.Icon = App.CreateMenuIcon("Icons.Check");
+            byCommitterDate.Click += (_, ev) =>
+            {
+                if (mode != Models.BranchSortMode.CommitterDate)
+                    changeMode(Models.BranchSortMode.CommitterDate);
+
+                ev.Handled = true;
+            };
+
+            var menu = new ContextMenu();
+            menu.Items.Add(byNameAsc);
+            menu.Items.Add(byCommitterDate);
+            return menu;
+        }
+
         public ContextMenu CreateContextMenuForTagSortMode()
         {
             var mode = _settings.TagSortMode;
@@ -2436,7 +2484,7 @@ namespace SourceGit.ViewModels
 
         private BranchTreeNode.Builder BuildBranchTree(List<Models.Branch> branches, List<Models.Remote> remotes)
         {
-            var builder = new BranchTreeNode.Builder();
+            var builder = new BranchTreeNode.Builder(_settings.LocalBranchSortMode, _settings.RemoteBranchSortMode);
             if (string.IsNullOrEmpty(_filter))
             {
                 builder.SetExpandedNodes(_settings.ExpandedBranchNodesInSideBar);
