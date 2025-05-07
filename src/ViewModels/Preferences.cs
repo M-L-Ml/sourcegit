@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using Avalonia.Data.Converters;
 using System.Diagnostics;
 using Avalonia.Controls;
+using Avalonia;
 
 namespace SourceGit.ViewModels
 {
@@ -1008,14 +1009,14 @@ namespace SourceGit.ViewModels
             {
                 Title = "Select Executable For Custom Action",
                 FileTypeFilter = [new FilePickerFileType("Executable file(script)") { Patterns = ["*.*"] }],
-                AllowMultiple = false,
+                AllowMultiple = false, 
             };
 
             var selected = await StorageProvider.OpenFilePickerAsync(options);
             if (selected.Count == 1)
             {
-                // TODO: refactor : why check for sender is Button - maybe just whether it has DataContext of type Models.CustomAction ?? Better ways to do this?
-                if (parameter is Button { DataContext: Models.CustomAction action })
+                // TODO: refactor : Better ways to find this?
+                if (parameter is IDataContextProvider { DataContext: Models.CustomAction action })
                     action.Executable = selected[0].Path.LocalPath;
                 else
                     Debug.Assert(false, "sender is not a Button with DataContext of Models.CustomAction");
