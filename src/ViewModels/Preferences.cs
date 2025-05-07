@@ -1025,6 +1025,7 @@ namespace SourceGit.ViewModels
             if (changed)
                 Save();
         }
+        
         public void Save()
         {
             if (_isLoading || _isReadonly)

@@ -603,6 +603,7 @@
               <ContentControl.Content>
                 <Binding Path="SelectedCustomAction">
                   <Binding.TargetNullValue>
+                    <!-- TODO: why? why Empty icon for Binding.TargetNullValue is compatible with SelectedCustomAction -->
                     <Path Width="64" Height="64"
                           HorizontalAlignment="Center"
                           VerticalAlignment="Center"
