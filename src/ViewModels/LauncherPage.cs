@@ -1,5 +1,8 @@
 ﻿using System;
+
 using Avalonia.Collections;
+using Avalonia.Media;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SourceGit.ViewModels
@@ -16,6 +19,12 @@ namespace SourceGit.ViewModels
         {
             get => _data;
             set => SetProperty(ref _data, value);
+        }
+
+        public IBrush DirtyBrush
+        {
+            get => _dirtyBrush;
+            private set => SetProperty(ref _dirtyBrush, value);
         }
 
         public Popup Popup
@@ -56,6 +65,26 @@ namespace SourceGit.ViewModels
                 App.CopyText(_node.Id);
         }
 
+        public void ChangeDirtyState(Models.DirtyState flag, bool remove)
+        {
+            if (remove)
+            {
+                if (_dirtyState.HasFlag(flag))
+                    _dirtyState -= flag;
+            }
+            else
+            {
+                _dirtyState |= flag;
+            }
+
+            if (_dirtyState.HasFlag(Models.DirtyState.HasLocalChanges))
+                DirtyBrush = Brushes.Gray;
+            else if (_dirtyState.HasFlag(Models.DirtyState.HasPendingPullOrPush))
+                DirtyBrush = Brushes.RoyalBlue;
+            else
+                DirtyBrush = null;
+        }
+
         public bool CanCreatePopup()
         {
             return _popup == null || !_popup.InProgress;
@@ -71,23 +100,32 @@ namespace SourceGit.ViewModels
 
         public async void ProcessPopup()
         {
-            if (_popup is { InProgress: false })
+            if (_popup is { InProgress: false } dump)
             {
-                if (!_popup.Check())
+                if (!dump.Check())
                     return;
 
-                _popup.InProgress = true;
-                var task = _popup.Sure();
+                dump.InProgress = true;
+                var task = dump.Sure();
+                var finished = false;
                 if (task != null)
                 {
-                    var finished = await task;
-                    _popup.InProgress = false;
+                    try
+                    {
+                        finished = await task;
+                    }
+                    catch (Exception e)
+                    {
+                        App.LogException(e);
+                    }
+
+                    dump.InProgress = false;
                     if (finished)
                         Popup = null;
                 }
                 else
                 {
-                    _popup.InProgress = false;
+                    dump.InProgress = false;
                     Popup = null;
                 }
             }
@@ -104,6 +142,8 @@ namespace SourceGit.ViewModels
 
         private RepositoryNode _node = null;
         private object _data = null;
+        private IBrush _dirtyBrush = null;
+        private Models.DirtyState _dirtyState = Models.DirtyState.None;
         private Popup _popup = null;
     }
 }

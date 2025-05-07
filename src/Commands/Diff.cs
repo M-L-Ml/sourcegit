@@ -28,11 +28,11 @@ namespace SourceGit.Commands
             Context = repo;
 
             if (ignoreWhitespace)
-                Args = $"-c core.autocrlf=false diff --no-ext-diff --patch --ignore-all-space --unified={unified} {opt}";
+                Args = $"diff --no-ext-diff --patch --ignore-all-space --unified={unified} {opt}";
             else if (Models.DiffOption.IgnoreCRAtEOL)
-                Args = $"-c core.autocrlf=false diff --no-ext-diff --patch --ignore-cr-at-eol --unified={unified} {opt}";
+                Args = $"diff --no-ext-diff --patch --ignore-cr-at-eol --unified={unified} {opt}";
             else
-                Args = $"-c core.autocrlf=false diff --no-ext-diff --patch --unified={unified} {opt}";
+                Args = $"diff --no-ext-diff --patch --unified={unified} {opt}";
         }
 
         public Models.DiffResult Result()
@@ -105,7 +105,7 @@ namespace SourceGit.Commands
                     }
                     else if (line.StartsWith("-size ", StringComparison.Ordinal))
                     {
-                        _result.LFSDiff.Old.Size = long.Parse(line.AsSpan().Slice(6));
+                        _result.LFSDiff.Old.Size = long.Parse(line.AsSpan(6));
                     }
                 }
                 else if (ch == '+')
@@ -116,12 +116,12 @@ namespace SourceGit.Commands
                     }
                     else if (line.StartsWith("+size ", StringComparison.Ordinal))
                     {
-                        _result.LFSDiff.New.Size = long.Parse(line.AsSpan().Slice(6));
+                        _result.LFSDiff.New.Size = long.Parse(line.AsSpan(6));
                     }
                 }
                 else if (line.StartsWith(" size ", StringComparison.Ordinal))
                 {
-                    _result.LFSDiff.New.Size = _result.LFSDiff.Old.Size = long.Parse(line.AsSpan().Slice(6));
+                    _result.LFSDiff.New.Size = _result.LFSDiff.Old.Size = long.Parse(line.AsSpan(6));
                 }
                 return;
             }

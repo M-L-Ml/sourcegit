@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -596,40 +596,98 @@ namespace SourceGit.ViewModels
 
         public ContextMenu CreateContextMenuForExternalTools()
         {
-            var tools = Native.OS.ExternalTools;
-            if (tools.Count == 0)
-            {
-                App.RaiseException(_fullpath, "No available external editors found!");
-                return null;
-            }
-
             var menu = new ContextMenu();
             menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
+
             RenderOptions.SetBitmapInterpolationMode(menu, BitmapInterpolationMode.HighQuality);
+            RenderOptions.SetEdgeMode(menu, EdgeMode.Antialias);
+            RenderOptions.SetTextRenderingMode(menu, TextRenderingMode.Antialias);
 
-            foreach (var tool in tools)
+            var explore = new MenuItem();
+            explore.Header = App.Text("Repository.Explore");
+            explore.Icon = App.CreateMenuIcon("Icons.Explore");
+            explore.Click += (_, e) =>
             {
-                var dupTool = tool;
+                Native.OS.OpenInFileManager(_fullpath);
+                e.Handled = true;
+            };
 
-                var item = new MenuItem();
-                item.Header = App.Text("Repository.OpenIn", dupTool.Name);
-                try
-                {
-                    var asset = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://Resources/Images/ExternalToolIcons/{dupTool.IconName}.png", UriKind.RelativeOrAbsolute));
-                    item.Icon = new Image { Width = 16, Height = 16, Source = new Bitmap(asset) };
-                }
-                catch
-                {
-                    // If icon not found, show no icon or a default one
-                    item.Icon = null;
-                }
-                item.Click += (_, e) =>
-                {
-                    dupTool.Open(_fullpath);
-                    e.Handled = true;
-                };
+            var terminal = new MenuItem();
+            terminal.Header = App.Text("Repository.Terminal");
+            terminal.Icon = App.CreateMenuIcon("Icons.Terminal");
+            terminal.Click += (_, e) =>
+            {
+                Native.OS.OpenTerminal(_fullpath);
+                e.Handled = true;
+            };
 
-                menu.Items.Add(item);
+            menu.Items.Add(explore);
+            menu.Items.Add(terminal);
+
+            var tools = Native.OS.ExternalTools;
+            if (tools.Count > 0)
+            {
+                menu.Items.Add(new MenuItem() { Header = "-" });
+
+                foreach (var tool in Native.OS.ExternalTools)
+                {
+                    var dupTool = tool;
+
+                    var item = new MenuItem();
+                    item.Header = App.Text("Repository.OpenIn", dupTool.Name);
+
+                    try
+                    {
+                        var asset = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://Resources/Images/ExternalToolIcons/{dupTool.IconName}.png", UriKind.RelativeOrAbsolute));
+                        item.Icon = new Image { Width = 16, Height = 16, Source = new Bitmap(asset) };
+                    }
+                    catch
+                    {
+                        // If icon not found, show no icon or a default one
+                        item.Icon = null;
+                    }
+
+                    item.Click += (_, e) =>
+                    {
+                        dupTool.Open(_fullpath);
+                        e.Handled = true;
+                    };
+
+                    menu.Items.Add(item);
+                }
+            }
+            else
+            {
+                Debug.Assert(false, "Check this, No available external editors found!");
+            }
+            
+            var urls = new Dictionary<string, string>();
+            foreach (var r in _remotes)
+            {
+                if (r.TryGetVisitURL(out var visit))
+                    urls.Add(r.Name, visit);
+            }
+
+            if (urls.Count > 0)
+            {
+                menu.Items.Add(new MenuItem() { Header = "-" });
+
+                foreach (var url in urls)
+                {
+                    var name = url.Key;
+                    var addr = url.Value;
+
+                    var item = new MenuItem();
+                    item.Header = App.Text("Repository.Visit", name);
+                    item.Icon = App.CreateMenuIcon("Icons.Remotes");
+                    item.Click += (_, e) =>
+                    {
+                        Native.OS.OpenBrowser(addr);
+                        e.Handled = true;
+                    };
+
+                    menu.Items.Add(item);
+                }
             }
 
             return menu;
