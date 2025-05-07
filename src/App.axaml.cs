@@ -120,11 +120,16 @@ namespace SourceGit
                 return current;
             }
         }
-        public static void SShowWindow(object data, bool showAsDialog)
+        public static void ShowWindow(object data, bool showAsDialog)
         {
-            ((App)Application.Current).ShowWindow(data, showAsDialog);
+            ((App)Application.Current).ShowWindowI(data, showAsDialog);
         }
-        public void ShowWindow(object data, bool showAsDialog)
+        /// <summary>
+        /// instance version
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="showAsDialog"></param>
+        public void ShowWindowI(object data, bool showAsDialog)
         {
             /// <summary>   
             /// <see cref="SourceGit.ViewModels.App.ShowWindow"/>
@@ -341,9 +346,9 @@ namespace SourceGit
         }
 
         [return:NotNull]
-        public static Views.Services.WindowService GetWindowService()
+        public Views.Services.WindowService GetWindowService()
         {
-            return ((App)Current)._windowService;
+            return _windowService;
         }
 
         public void Quit(int exitCode)

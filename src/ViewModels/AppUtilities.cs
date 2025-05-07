@@ -34,11 +34,6 @@ namespace SourceGit.ViewModels
         private static dynamic AppDyn =>
             Application.Current;
 
-        public static void ShowWindow(object data, bool showAsDialog)
-        {
-            AppDyn.ShowWindow(data, showAsDialog);
-        }
-
         public static void SetTheme(string theme, string themeOverridesFile)
         {
             AppDyn.SetTheme(theme, themeOverridesFile);
