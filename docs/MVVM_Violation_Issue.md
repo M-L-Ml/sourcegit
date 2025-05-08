@@ -1,10 +1,26 @@
 # MVVM Violation Issue
 
-## 1st Issue: ViewModel Instantiation of View Controls Violates MVVM in Avalonia
+
+
+### 1st Issue: ViewModel Instantiation of Avalonia.Controls Violates MVVM
 
 ### Problem Statement
 
-In several places within the codebase (see the list below), ViewModels directly instantiate or reference View controls (e.g., `new Views.NameHighlightedTextBlock(...)`). This practice violates the MVVM (Model-View-ViewModel) pattern, which is fundamental to Avalonia and similar UI frameworks. MVVM dictates that ViewModels should not know about or manipulate View/UI elements directly.
+In several places within the codebase, ViewModels directly instantiate or reference controls from the Avalonia.Controls assembly, such as `MenuItem`, `ContextMenu`, and others (e.g., `new MenuItem(...)`, `new ContextMenu(...)`). This also includes previous cases like `new Views.NameHighlightedTextBlock(...)`. This practice violates the MVVM (Model-View-ViewModel) pattern, which is fundamental to Avalonia and similar UI frameworks. MVVM dictates that ViewModels should not know about or manipulate View/UI elements directly.
+
+#### Concrete Examples in Codebase
+
+Below are some ViewModel methods that instantiate Avalonia.Controls:
+- `Welcome.CreateContextMenu`
+- `CommitDetail.CreateChangeContextMenu`
+- `WorkingCopy.CreateContextMenuForStagedChanges`
+- `Launcher.CreateContextForWorkspace`
+- `Repository.CreateContextMenuForCustomAction`, `CreateContextMenuForRemoteBranch`, `CreateContextMenuForExternalTools`, `CreateContextMenuForGitLFS`, `CreateContextMenuForLocalBranch`, `CreateContextMenuForTag`, `CreateContextMenuForRemote`, `CreateContextMenuForWorktree`, `CreateContextMenuForBranchSortMode`, `CreateContextMenuForHistoriesPage`, `CreateContextMenuForGitFlow`, `CreateContextMenuForSubmodule`
+- `StashesPage.MakeContextMenu`, `MakeContextMenuForChange`
+- `Histories.MakeContextMenu`, `FillCurrentBranchMenu`
+- `App.Commands.cs` (custom command logic referencing controls)
+
+This is not an exhaustive list, but shows the pattern is widespread.
 
 ### Why This is a Problem
 
@@ -14,28 +30,22 @@ In several places within the codebase (see the list below), ViewModels directly 
 - **Limits Reusability:** ViewModels coupled to specific controls cannot be reused in other contexts or platforms.
 
 **Key Principle:**
-> "The ViewModel should not directly reference any View or UI elements. All UI logic should be handled in the View, with the ViewModel exposing only data and commands."
+> "The ViewModel should not directly reference any View or UI elements (including MenuItem, ContextMenu, or any Avalonia.Controls). All UI logic should be handled in the View, with the ViewModel exposing only data and commands."
 
-### Status
+### Official Guidance and Recommendations
 
-Mostly solved. A few instances may still be present; search for `new Views.` in the ViewModels.* code to find them. Since ViewModels are in a separate project and will not have references to View-related libraries, it will not be possible to instantiate View controls from ViewModels directly.
+- The [Avalonia MVVM documentation](https://docs.avaloniaui.net/docs/concepts/the-mvvm-pattern) states that ViewModels should be code-only classes, not dependent on UI controls or platform APIs.
+- UI elements like `MenuItem` and `ContextMenu` should be defined in the View (XAML or code-behind), not in the ViewModel.
+- Bind menu items and context menus in XAML using data binding and command binding. Use DataTemplates, DataTriggers, or Converters as needed.
+- ViewModels should expose only data (properties/collections) and commands (ICommand), which the View binds to and renders as UI.
+- See also: [Avalonia Docs: ContextMenu](https://docs.avaloniaui.net/docs/reference/controls/contextmenu)
 
 ### Suggested Refactoring
 
-- Move all UI control instantiation to the View layer (e.g., XAML or code-behind).
-- Use DataTemplates, DataTriggers, or Converters to bind ViewModel data to Views.
-- Expose only pure data and commands from the ViewModel.
+- Move all UI control instantiation (e.g., MenuItem, ContextMenu) to the View layer (XAML or code-behind).
+- In ViewModels, expose collections of menu item descriptors (simple data objects) and commands.
+- In the View, use XAML DataTemplates to turn these descriptors into UI controls.
 - If custom visualizations are needed, expose data in a format the View can bind to and render appropriately.
-
-## Official Guidance (Avalonia)
-
-- [Avalonia Documentation: MVVM](https://docs.avaloniaui.net/docs/concepts/mvvm)
-- [Microsoft Docs: MVVM pattern](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/data/?view=netdesktop-8.0#the-model-view-viewmodel-pattern) (applies to Avalonia as well)
-
-### References
-
-- [Avalonia MVVM Best Practices](https://docs.avaloniaui.net/docs/concepts/mvvm)
-- [Microsoft Docs: MVVM pattern](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/data/?view=netdesktop-8.0#the-model-view-viewmodel-pattern)
 
 ---
 
@@ -154,6 +164,9 @@ This pattern, while convenient for global access, violates MVVM principles and m
 ### Best Practice Solution: Dependency Injection
 
 The CommunityToolkit.MVVM package works well with Microsoft's dependency injection framework. The recommended approach is:
+
+
+E.g. method CreateContextMenuForHistoriesPage in src\ViewModels\Repository.cs do  var layout = new MenuItem();
 
 1. **Register ViewModels in a DI Container**:
    ```csharp
