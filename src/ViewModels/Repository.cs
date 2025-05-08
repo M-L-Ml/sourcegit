@@ -435,6 +435,21 @@ namespace SourceGit.ViewModels
             IsBare = isBare;
             FullPath = path;
             GitDir = gitDir;
+            InitializeGitFlowCommands();
+        }
+
+        public Repository()
+        {
+            InitializeGitFlowCommands();
+        }
+
+        // Attribution: src/ViewModels/Repository.cs, GitFlow command initialization refactor
+        private void InitializeGitFlowCommands()
+        {
+            StartFeatureCommand = new RelayCommand(() => GitFlowStartFeature());
+            StartReleaseCommand = new RelayCommand(() => GitFlowStartRelease());
+            StartHotfixCommand = new RelayCommand(() => GitFlowStartHotfix());
+            InitGitFlowCommand = new RelayCommand(() => GitFlowInit());
         }
 
         public void Open()
@@ -1423,10 +1438,10 @@ namespace SourceGit.ViewModels
 
         // GitFlow command properties and implementations for menu items
         // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForGitFlow
-        public RelayCommand StartFeatureCommand { get; }
-        public RelayCommand StartReleaseCommand { get; }
-        public RelayCommand StartHotfixCommand { get; }
-        public RelayCommand InitGitFlowCommand { get; }
+        public RelayCommand StartFeatureCommand { get; private set; }
+        public RelayCommand StartReleaseCommand { get; private set; }
+        public RelayCommand StartHotfixCommand { get; private set; }
+        public RelayCommand InitGitFlowCommand { get; private set; }
 
         private void GitFlowStartFeature()
         {
