@@ -1,4 +1,6 @@
 
+using Avalonia.Collections;
+
 /// <summary>
 /// This is POCO  
 /// and maybe better named MenuAction 
@@ -14,5 +16,15 @@ namespace SourceGit.ViewModels
         public bool IsEnabled { get; set; } = true;
         public bool IsSeparator { get; set; } = false;
         public object Tag { get; set; } // Optional: for attaching extra data
+        public ViewModelInfo ViewToDo { get; internal set; }
     }
+
+    public class ContextMenuModel : MenuItem
+    {
+        public AvaloniaList<MenuItem> Items { get; set; } = new ();
+   
+   
+    }
+
+
 }

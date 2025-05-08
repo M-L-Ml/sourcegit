@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -14,6 +14,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace SourceGit.ViewModels
 {
@@ -539,20 +540,26 @@ namespace SourceGit.ViewModels
             _matchedFilesForSearching = null;
         }
 
+
         public bool CanCreatePopup()
         {
             var page = GetOwnerPage();
             if (page == null)
+            {
+                Debug.Assert(false);
                 return false;
-
+            }
             return !_isAutoFetching && page.CanCreatePopup();
         }
-
         public void ShowPopup(Popup popup)
         {
             var page = GetOwnerPage();
-            if (page != null)
-                page.Popup = popup;
+            if (page == null)
+            {
+                Debug.Assert(false);
+                return;
+            }
+            page.Popup = popup;
         }
 
         public void ShowAndStartPopup(Popup popup)
@@ -660,7 +667,7 @@ namespace SourceGit.ViewModels
             {
                 Debug.Assert(false, "Check this, No available external editors found!");
             }
-            
+
             var urls = new Dictionary<string, string>();
             foreach (var r in _remotes)
             {
@@ -1363,25 +1370,38 @@ namespace SourceGit.ViewModels
 
         // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
         // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForGitFlow
-        public List<MenuItem> CreateGitFlowMenuItems()
+        // public List<MenuItem> CreateGitFlowMenuItems()
+        public ContextMenuModel CreateContextMenuForGitFlow()
         {
-            var items = new List<MenuItem>();
+            var menu = new ViewModels.ContextMenuModel();
+            var items = menu.Items;
+            //  menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
+            menu.ViewToDo = new ViewModelInfo(new()
+            {
+                ( "Placement" , "PlacementMode.BottomEdgeAlignedLeft" )
+            }
+             );
             var isGitFlowEnabled = Commands.GitFlow.IsEnabled(_fullpath, _branches);
             if (isGitFlowEnabled)
             {
-                items.Add(new MenuItem {
+                items.Add(new MenuItem
+                {
                     Header = App.ResText("GitFlow.StartFeature"),
                     IconKey = App.MenuIconKey("Icons.GitFlow.Feature"),
                     Command = StartFeatureCommand,
                     IsEnabled = true
                 });
-                items.Add(new MenuItem {
+                //  StartFeatureCommand = new ViewModels.DelegateCommand( );
+                //  var startFeature =
+                items.Add(new MenuItem
+                {
                     Header = App.ResText("GitFlow.StartRelease"),
                     IconKey = App.MenuIconKey("Icons.GitFlow.Release"),
                     Command = StartReleaseCommand,
                     IsEnabled = true
                 });
-                items.Add(new MenuItem {
+                items.Add(new MenuItem
+                {
                     Header = App.ResText("GitFlow.StartHotfix"),
                     IconKey = App.MenuIconKey("Icons.GitFlow.Hotfix"),
                     Command = StartHotfixCommand,
@@ -1390,7 +1410,8 @@ namespace SourceGit.ViewModels
             }
             else
             {
-                items.Add(new MenuItem {
+                items.Add(new MenuItem
+                {
                     Header = App.ResText("GitFlow.Init"),
                     IconKey = App.MenuIconKey("Icons.Init"),
                     Command = InitGitFlowCommand,
@@ -1401,10 +1422,17 @@ namespace SourceGit.ViewModels
         }
 
         // Example ICommand properties for the above menu items (to be implemented elsewhere in the ViewModel)
-        public System.Windows.Input.ICommand StartFeatureCommand { get; set; }
-        public System.Windows.Input.ICommand StartReleaseCommand { get; set; }
-        public System.Windows.Input.ICommand StartHotfixCommand { get; set; }
-        public System.Windows.Input.ICommand InitGitFlowCommand { get; set; }
+        public RelayCommand StartFeatureCommand { get; } = new(
+                                this.GitFlowStartFeature);
+        private void GitFlowStartFeature()
+        {
+            if (CanCreatePopup())
+                ShowPopup(new GitFlowStart(this, "feature"));
+          //  e.Handled = true;
+        }
+        public RelayCommand StartReleaseCommand { get; set; }
+        public RelayCommand StartHotfixCommand { get; set; }
+        public RelayCommand InitGitFlowCommand { get; set; }
 
 
         public ContextMenu CreateContextMenuForGitLFS()
@@ -2456,7 +2484,7 @@ namespace SourceGit.ViewModels
         {
             var launcher = App.GetLauncer();
             if (launcher == null)
-            { 
+            {
                 Debug.Assert(false, "Launcher not available?");
                 return null;
             }
@@ -2790,4 +2818,5 @@ namespace SourceGit.ViewModels
 
         private string _navigateToBranchDelayed = string.Empty;
     }
+
 }
