@@ -162,6 +162,9 @@ namespace SourceGit
             if (string.IsNullOrEmpty(dataTypeName) || !dataTypeName.Contains(".ViewModels.", StringComparison.Ordinal))
             { Debug.Assert(false); return; }
 
+            /// <summary> TODO: refactor : DRY see same logic in 
+            /// LauncherPage <see cref="SourceGit.Views.LauncherPage.OnPopupDataContextChanged"/>
+            ///  see also WindowsService to move into. </summary> 
             string viewTypeName = dataTypeName.Replace(".ViewModels.", ".Views.");
             var viewType = Type.GetType(viewTypeName);
 

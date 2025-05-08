@@ -8,6 +8,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SourceGit.ViewModels
 {
+    /// <summary>
+    /// Model for popups
+    /// For the view and its' OK and Cancel  Buttons
+    /// see <see cref="SourceGit.Views.LauncherPage.OnPopupSure"/>
+    /// </summary>
     public class Popup : ObservableValidator
     {
         public bool InProgress
@@ -41,11 +46,15 @@ namespace SourceGit.ViewModels
             return null;
         }
 
+        //TODO: fix MVVM violation. This should be in the View project
         protected void CallUIThread(Action action)
         {
             Dispatcher.UIThread.Invoke(action);
         }
-
+        /// <summary>
+        /// todo:rename to UseLog?
+        /// </summary>
+        /// <param name="log"></param>
         protected void Use(CommandLog log)
         {
             log.Register(newline => ProgressDescription = newline.Trim());

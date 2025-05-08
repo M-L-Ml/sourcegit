@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Input;
@@ -13,18 +14,24 @@ namespace SourceGit.Views
             InitializeComponent();
         }
 
+        public ViewModels.LauncherPage? LauncherPageModel => DataContext as ViewModels.LauncherPage;
+        /// <summary>
+        /// it's OK button
+        /// </summary>
+        /// <param name="_"></param>
+        /// <param name="e"></param>
         private void OnPopupSure(object _, RoutedEventArgs e)
         {
-            if (DataContext is ViewModels.LauncherPage page)
-                page.ProcessPopup();
+            Debug.Assert(LauncherPageModel != null);
+            LauncherPageModel?.ProcessPopup();
 
             e.Handled = true;
         }
 
         private void OnPopupCancel(object _, RoutedEventArgs e)
         {
-            if (DataContext is ViewModels.LauncherPage page)
-                page.CancelPopup();
+            Debug.Assert(LauncherPageModel != null);
+            LauncherPageModel?.CancelPopup();
 
             e.Handled = true;
         }

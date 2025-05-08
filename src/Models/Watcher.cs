@@ -77,6 +77,8 @@ namespace SourceGit.Models
 
         public void Dispose()
         {
+            //TODO: check whether it's better to use WeakEvent-s or WeakEventHandler 
+            // from Avalonia or from CommunityToolkit.
             _repoWatcher.EnableRaisingEvents = false;
             _repoWatcher.Created -= OnRepositoryChanged;
             _repoWatcher.Renamed -= OnRepositoryChanged;

@@ -101,6 +101,10 @@ namespace SourceGit.ViewModels
 
         public override Task<bool> Sure()
         {
+            /// <summary> TODO: SetWatcherEnabled is a lock counter addition. So 
+            /// there is corresponding <code> _repo.SetWatcherEnabled(true)); </code> below
+            /// and its it is not thread-safe . Seems it isn't the only place.
+            /// </summary>
             _repo.SetWatcherEnabled(false);
             ProgressDescription = "Init git-flow ...";
 

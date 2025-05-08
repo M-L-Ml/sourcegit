@@ -454,6 +454,7 @@ namespace SourceGit.Views
 
         private void OnBisectCommand(object sender, RoutedEventArgs e)
         {
+            //TODO: Refactor: is it good to use Tag as a ViewModel entity?
             if (sender is Button button &&
                 DataContext is ViewModels.Repository { IsBisectCommandRunning: false } repo &&
                 repo.CanCreatePopup())

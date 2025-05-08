@@ -1384,8 +1384,6 @@ namespace SourceGit.ViewModels
         }
 
         // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
-        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForGitFlow
-        // public List<MenuItem> CreateGitFlowMenuItems()
         public ContextMenuModel CreateContextMenuForGitFlow()
         {
             var menu = new ViewModels.ContextMenuModel();
