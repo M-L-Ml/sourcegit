@@ -8,20 +8,31 @@ using Avalonia.Collections;
 /// </summary>
 namespace SourceGit.ViewModels
 {
-    public class MenuItem
+    public class MenuItemModel
     {
-        public string Header { get; set; } // Should be set using App.ResText
-        public string IconKey { get; set; } // Should be set using App.MenuIconKey
+        /// <summary>
+        /// Should be set using App.ResText 
+        /// should be displayed after using App.Text
+        /// </summary>
+        public string Header { get; set; } 
+        /// <summary>
+        /// Should be set using App.MenuIconKey
+        /// should be displayed after using App.Icon
+        /// </summary>
+        public string IconKey { get; set; }
         public System.Windows.Input.ICommand Command { get; set; }
         public bool IsEnabled { get; set; } = true;
-        public bool IsSeparator { get; set; } = false;
+    //    public bool IsSeparator { get; set; } = false;
         public object Tag { get; set; } // Optional: for attaching extra data
+       /// <summary>
+       /// ToDo: implement setting the properties
+       /// </summary>
         public ViewModelInfo ViewToDo { get; internal set; }
     }
 
-    public class ContextMenuModel : MenuItem
+    public class ContextMenuModel : MenuItemModel
     {
-        public AvaloniaList<MenuItem> Items { get; set; } = new ();
+        public AvaloniaList<MenuItemModel> Items { get; set; } = new ();
    
    
     }

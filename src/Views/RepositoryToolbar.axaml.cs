@@ -1,3 +1,4 @@
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -98,12 +99,15 @@ namespace SourceGit.Views
         {
             if (DataContext is ViewModels.Repository repo && sender is Control control)
             {
-                var menu = repo.CreateContextMenuForGitFlow();
+                var menuModel = repo.CreateContextMenuForGitFlow();
+                var menu = menuModel.CreateContextMenuFromModel();
                 menu?.Open(control);
             }
 
             e.Handled = true;
         }
+
+
 
         private void OpenGitLFSMenu(object sender, RoutedEventArgs e)
         {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -1386,9 +1386,9 @@ namespace SourceGit.ViewModels
         // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
         public ContextMenuModel CreateContextMenuForGitFlow()
         {
-            var menu = new ViewModels.ContextMenuModel();
+            var menu = new ContextMenuModel();
             var items = menu.Items;
-            //  menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
+            // TODO: apply menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
             menu.ViewToDo = new ViewModelInfo(new()
             {
                 ( "Placement" , "PlacementMode.BottomEdgeAlignedLeft" )
@@ -1397,7 +1397,7 @@ namespace SourceGit.ViewModels
             var isGitFlowEnabled = Commands.GitFlow.IsEnabled(_fullpath, _branches);
             if (isGitFlowEnabled)
             {
-                items.Add(new MenuItem
+                items.Add(new MenuItemModel
                 {
                     Header = App.ResText("GitFlow.StartFeature"),
                     IconKey = App.MenuIconKey("Icons.GitFlow.Feature"),
@@ -1406,14 +1406,14 @@ namespace SourceGit.ViewModels
                 });
                 //  StartFeatureCommand = new ViewModels.DelegateCommand( );
                 //  var startFeature =
-                items.Add(new MenuItem
+                items.Add(new MenuItemModel
                 {
                     Header = App.ResText("GitFlow.StartRelease"),
                     IconKey = App.MenuIconKey("Icons.GitFlow.Release"),
                     Command = StartReleaseCommand,
                     IsEnabled = true
                 });
-                items.Add(new MenuItem
+                items.Add(new MenuItemModel
                 {
                     Header = App.ResText("GitFlow.StartHotfix"),
                     IconKey = App.MenuIconKey("Icons.GitFlow.Hotfix"),
@@ -1423,7 +1423,7 @@ namespace SourceGit.ViewModels
             }
             else
             {
-                items.Add(new MenuItem
+                items.Add(new MenuItemModel
                 {
                     Header = App.ResText("GitFlow.Init"),
                     IconKey = App.MenuIconKey("Icons.Init"),
@@ -1431,7 +1431,7 @@ namespace SourceGit.ViewModels
                     IsEnabled = true
                 });
             }
-            return items;
+            return menu;
         }
 
         // GitFlow command properties and implementations for menu items
