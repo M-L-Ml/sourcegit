@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -1421,18 +1421,33 @@ namespace SourceGit.ViewModels
             return items;
         }
 
-        // Example ICommand properties for the above menu items (to be implemented elsewhere in the ViewModel)
-        public RelayCommand StartFeatureCommand { get; } = new(
-                                this.GitFlowStartFeature);
+        // GitFlow command properties and implementations for menu items
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForGitFlow
+        public RelayCommand StartFeatureCommand { get; }
+        public RelayCommand StartReleaseCommand { get; }
+        public RelayCommand StartHotfixCommand { get; }
+        public RelayCommand InitGitFlowCommand { get; }
+
         private void GitFlowStartFeature()
         {
             if (CanCreatePopup())
                 ShowPopup(new GitFlowStart(this, "feature"));
-          //  e.Handled = true;
         }
-        public RelayCommand StartReleaseCommand { get; set; }
-        public RelayCommand StartHotfixCommand { get; set; }
-        public RelayCommand InitGitFlowCommand { get; set; }
+        private void GitFlowStartRelease()
+        {
+            if (CanCreatePopup())
+                ShowPopup(new GitFlowStart(this, "release"));
+        }
+        private void GitFlowStartHotfix()
+        {
+            if (CanCreatePopup())
+                ShowPopup(new GitFlowStart(this, "hotfix"));
+        }
+        private void GitFlowInit()
+        {
+            if (CanCreatePopup())
+                ShowPopup(new InitGitFlow(this));
+        }
 
 
         public ContextMenu CreateContextMenuForGitLFS()
