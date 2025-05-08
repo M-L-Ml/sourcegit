@@ -88,18 +88,38 @@ namespace SourceGit.ViewModels
             return default;
         }
 
+        /// <summary> 
+        /// TODO: refactor, it can be a part of a data template in an axaml
+        /// first move it to Views
+        /// <see cref="SourceGit.ViewModels.MenuItem.Header"/>
+        /// </summary>
+        /// <returns></returns>
+        public static string Text(string key)
+            => TextInternal(key);
         public static string Text(string key, params object[] args)
+            => TextInternal(key, args);
+
+        private static string TextInternal(string key, params object[] args)
         {
             var fmt = Application.Current?.FindResource($"Text.{key}") as string;
             if (string.IsNullOrWhiteSpace(fmt))
+            {
+                Debug.Assert(false, $"Text resource not found: {key}");
+                //Debug.Assert(!(args == null || args.Length == 0), $"Text resource not found: {key}");
                 return $"Text.{key}";
-
+            }
             if (args == null || args.Length == 0)
                 return fmt;
 
             return string.Format(fmt, args);
         }
 
+
+        /// <summary> 
+        /// TODO: refactor, it can be a part of a data template in an axaml
+        /// first move it to Views
+        /// <see cref="SourceGit.ViewModels.MenuItem.IconKey"/>
+        /// </summary>
         public static Avalonia.Controls.Shapes.Path CreateMenuIcon(string key)
         {
             var icon = new Avalonia.Controls.Shapes.Path();
@@ -122,8 +142,14 @@ namespace SourceGit.ViewModels
             return null;
         }
 
+
+        /// <summary>
+        /// <see cref="SourceGit.App.GetLauncherI"/>
+        /// </summary>
+        /// <returns></returns>
         public static Launcher GetLauncer()
         {
+
             return AppDyn.GetLauncherI();// Application.Current is SourceGit.App app ? app._launcher : null;
         }
 

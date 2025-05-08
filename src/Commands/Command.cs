@@ -10,6 +10,7 @@ using SourceGit.Models;
 
 namespace SourceGit.Commands
 {
+     // other part of the class is in App.Commands.cs
     public partial class Command
     {
         public class ReadToEndResult

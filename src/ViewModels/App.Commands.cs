@@ -8,6 +8,7 @@ namespace SourceGit.ViewModels
 {
     public partial class App
     {
+        // other part of the class is in Command.cs
         //TODO : maybe use CommunityToolkit.Mvvm.Input; RelayCommand?
         //         ReactiveCommand (ReactiveUI)
         // Avalonia works well with ReactiveUI, which provides ReactiveCommand:
