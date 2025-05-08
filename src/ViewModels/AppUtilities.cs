@@ -171,6 +171,25 @@ namespace SourceGit.ViewModels
         {
             GetLauncer().OpenRepositoryInTab(node, arg);
         }
+
+        /// <summary>
+        /// This is a stub do nothing , but maybe it will return some class in future
+        /// or just check if it's a key.
+        /// <see cref="App.Text"/> App.Text(stringKey);
+        /// <param name="stringKey">for <see cref="App.Text"/> </param>
+        /// </summary>
+        internal static string ResText(string stringKey)
+        {
+            return stringKey;
+        }
+
+        /// <summary>
+        ///  <see cref="App.CreateMenuIcon"/> <code>App.CreateMenuIcon(iconKey);</code>
+        /// </summary>
+        internal static string MenuIconKey(string iconKey)
+        {
+            return iconKey;
+        }
     }
 
     //namespace SourceGit.Converters

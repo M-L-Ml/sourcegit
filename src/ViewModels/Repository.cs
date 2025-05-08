@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -1361,63 +1361,51 @@ namespace SourceGit.ViewModels
             return all;
         }
 
-        public ContextMenu CreateContextMenuForGitFlow()
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForGitFlow
+        public List<MenuItem> CreateGitFlowMenuItems()
         {
-            var menu = new ContextMenu();
-            menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
-
+            var items = new List<MenuItem>();
             var isGitFlowEnabled = Commands.GitFlow.IsEnabled(_fullpath, _branches);
             if (isGitFlowEnabled)
             {
-                var startFeature = new MenuItem();
-                startFeature.Header = App.Text("GitFlow.StartFeature");
-                startFeature.Icon = App.CreateMenuIcon("Icons.GitFlow.Feature");
-                startFeature.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                        ShowPopup(new GitFlowStart(this, "feature"));
-                    e.Handled = true;
-                };
-
-                var startRelease = new MenuItem();
-                startRelease.Header = App.Text("GitFlow.StartRelease");
-                startRelease.Icon = App.CreateMenuIcon("Icons.GitFlow.Release");
-                startRelease.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                        ShowPopup(new GitFlowStart(this, "release"));
-                    e.Handled = true;
-                };
-
-                var startHotfix = new MenuItem();
-                startHotfix.Header = App.Text("GitFlow.StartHotfix");
-                startHotfix.Icon = App.CreateMenuIcon("Icons.GitFlow.Hotfix");
-                startHotfix.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                        ShowPopup(new GitFlowStart(this, "hotfix"));
-                    e.Handled = true;
-                };
-
-                menu.Items.Add(startFeature);
-                menu.Items.Add(startRelease);
-                menu.Items.Add(startHotfix);
+                items.Add(new MenuItem {
+                    Header = App.ResText("GitFlow.StartFeature"),
+                    IconKey = App.MenuIconKey("Icons.GitFlow.Feature"),
+                    Command = StartFeatureCommand,
+                    IsEnabled = true
+                });
+                items.Add(new MenuItem {
+                    Header = App.ResText("GitFlow.StartRelease"),
+                    IconKey = App.MenuIconKey("Icons.GitFlow.Release"),
+                    Command = StartReleaseCommand,
+                    IsEnabled = true
+                });
+                items.Add(new MenuItem {
+                    Header = App.ResText("GitFlow.StartHotfix"),
+                    IconKey = App.MenuIconKey("Icons.GitFlow.Hotfix"),
+                    Command = StartHotfixCommand,
+                    IsEnabled = true
+                });
             }
             else
             {
-                var init = new MenuItem();
-                init.Header = App.Text("GitFlow.Init");
-                init.Icon = App.CreateMenuIcon("Icons.Init");
-                init.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                        ShowPopup(new InitGitFlow(this));
-                    e.Handled = true;
-                };
-                menu.Items.Add(init);
+                items.Add(new MenuItem {
+                    Header = App.ResText("GitFlow.Init"),
+                    IconKey = App.MenuIconKey("Icons.Init"),
+                    Command = InitGitFlowCommand,
+                    IsEnabled = true
+                });
             }
-            return menu;
+            return items;
         }
+
+        // Example ICommand properties for the above menu items (to be implemented elsewhere in the ViewModel)
+        public System.Windows.Input.ICommand StartFeatureCommand { get; set; }
+        public System.Windows.Input.ICommand StartReleaseCommand { get; set; }
+        public System.Windows.Input.ICommand StartHotfixCommand { get; set; }
+        public System.Windows.Input.ICommand InitGitFlowCommand { get; set; }
+
 
         public ContextMenu CreateContextMenuForGitLFS()
         {
