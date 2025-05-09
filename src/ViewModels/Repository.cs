@@ -2077,7 +2077,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForBranchSortMode(bool local)
+        public ContextMenuModel CreateContextMenuForBranchSortMode(bool local)
         {
             var mode = local ? _settings.LocalBranchSortMode : _settings.RemoteBranchSortMode;
             var changeMode = new Action<Models.BranchSortMode>(m =>
@@ -2107,8 +2107,6 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
-        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForTagSortMode
         public ContextMenuModel CreateContextMenuForTagSortMode()
         {
             var mode = _settings.TagSortMode;
