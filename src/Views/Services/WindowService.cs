@@ -160,7 +160,7 @@ namespace SourceGit.Views.Services
 
         private static Window GetMainWindow()
         {
-            if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (ViewModels.App.GetDesktopApp(out var desktop))
             {
                 return desktop.MainWindow;
             }

@@ -65,7 +65,7 @@ namespace SourceGit.ViewModels
 
         public static async Task CopyText(string data)
         {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (GetDesktopApp(out var desktop))
             {
                 if (desktop.MainWindow?.Clipboard is { } clipboard)
                     await clipboard.SetTextAsync(data ?? "");
@@ -76,7 +76,7 @@ namespace SourceGit.ViewModels
 
         public static async Task<string> GetClipboardTextAsync()
         {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (GetDesktopApp(out var desktop))
             {
                 if (desktop.MainWindow?.Clipboard is { } clipboard)
                 {
@@ -136,7 +136,7 @@ namespace SourceGit.ViewModels
 
         public static IStorageProvider GetStorageProvider()
         {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (GetDesktopApp(out var desktop))
                 return desktop.MainWindow?.StorageProvider;
 
             return null;
@@ -153,13 +153,27 @@ namespace SourceGit.ViewModels
             return AppDyn.GetLauncherI();// Application.Current is SourceGit.App app ? app._launcher : null;
         }
 
+        public static bool GetDesktopApp(out IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop1)
+            {
+                desktop = desktop1;
+                return true;
+            }
+            Debug.Assert(false);
+            desktop = null;
+            return false;
+        }
+        public static IClassicDesktopStyleApplicationLifetime  GetDesktopApp()
+        => GetDesktopApp(out var d)?d : throw new Exception("Desktop app not found");
+        
         //public static void Quit(int exitCode)
         //{
         //    AppDyn.Quit(exitCode);
         //}
         public static void Quit(int exitCode)
         {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (GetDesktopApp(out var desktop))
             {
                 desktop.MainWindow?.Close();
                 desktop.Shutdown(exitCode);
