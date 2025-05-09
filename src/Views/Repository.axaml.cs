@@ -396,7 +396,8 @@ namespace SourceGit.Views
         {
             if (sender is Button button && DataContext is ViewModels.Repository repo)
             {
-                var menu = repo.CreateContextMenuForHistoriesPage();
+                var menuModel = repo.CreateContextMenuForHistoriesPage();
+                var menu = menuModel.CreateContextMenuFromModel();
                 menu?.Open(button);
             }
 

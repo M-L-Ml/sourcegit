@@ -236,8 +236,9 @@ namespace SourceGit.Views
 
             if (selected != null && DataContext is ViewModels.Repository repo)
             {
-                var menu = repo.CreateContextMenuForTag(selected).CreateContextMenuFromModel();
-                menu?.Open(control);
+                var menuModel = repo.CreateContextMenuForTag(selected);
+                var menu = menuModel.CreateContextMenuFromModel();
+                menu.Open(control);
             }
 
             e.Handled = true;
