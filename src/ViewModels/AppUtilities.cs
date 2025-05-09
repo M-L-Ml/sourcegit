@@ -184,29 +184,6 @@ namespace SourceGit.ViewModels
             }
         }
 
-        //    public static void TryLaunchAsNormal(IClassicDesktopStyleApplicationLifetime desktop)
-        //    {
-        //        Native.OS.SetupEnternalTools();
-        //        Models.AvatarManager.Instance.Start();
-
-        //        string startupRepo = null;
-        //        if (desktop.Args != null && desktop.Args.Length == 1 && Directory.Exists(desktop.Args[0]))
-        //            startupRepo = desktop.Args[0];
-
-        //        var pref = Preferences.Instance;
-        //        pref.SetCanModify();
-
-        //        var launcher = _launcher = new Launcher(startupRepo);
-        //        if (desktop.MainWindow is IDisposable disposable)
-        //            disposable.Dispose();
-        //        desktop.MainWindow = new Views.Launcher() { DataContext = launcher };
-
-        //#if !DISABLE_UPDATE_DETECTION
-        //        if (pref.ShouldCheck4UpdateOnStartup())
-        //            App.Check4Update();
-        //#endif
-        //    }
-
         public static void TryOpenRepositoryInTab(ViewModels.RepositoryNode node, LauncherPage arg)
         {
             GetLauncer().OpenRepositoryInTab(node, arg);
