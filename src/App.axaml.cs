@@ -316,7 +316,7 @@ namespace SourceGit
 
         public static async void CopyText(string data)
         {
-            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (CurrentDesktopAppLifetime is { } desktop)
             {
                 if (desktop.MainWindow?.Clipboard is { } clipboard)
                     await clipboard.SetTextAsync(data ?? "");
@@ -325,7 +325,7 @@ namespace SourceGit
 
         public static async Task<string> GetClipboardTextAsync()
         {
-            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (CurrentDesktopAppLifetime is { } desktop)
             {
                 if (desktop.MainWindow?.Clipboard is { } clipboard)
                 {
@@ -354,7 +354,7 @@ namespace SourceGit
 
         public static IStorageProvider GetStorageProvider()
         {
-            if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (CurrentDesktopAppLifetime is { } desktop)
                 return desktop.MainWindow?.StorageProvider;
 
             return null;
