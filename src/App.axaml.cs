@@ -377,17 +377,12 @@ namespace SourceGit
             return _windowService;
         }
 
-        public void Quit(int exitCode)
+        /// <summary>
+        /// <see cref="SourceGit.ViewModels.App.Quit(int)"> is proxy to this.
+        /// </summary>
+        public static void Quit(int exitCode)
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow?.Close();
-                desktop.Shutdown(exitCode);
-            }
-            else
-            {
-                Environment.Exit(exitCode);
-            }
+            ViewModels.App.Quit(exitCode);
         }
         #endregion
 
