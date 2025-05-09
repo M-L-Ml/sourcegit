@@ -63,4 +63,5 @@ namespace SourceGit.Views
             }
             return menu;
         }
+    }
 }
