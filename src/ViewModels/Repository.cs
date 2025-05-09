@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -1472,18 +1472,21 @@ namespace SourceGit.ViewModels
             var lfs = new Commands.LFS(_fullpath);
             if (lfs.IsEnabled())
             {
-                items.Add(new MenuItemModel {
+                items.Add(new MenuItemModel
+                {
                     Header = App.Text("GitLFS.AddTrackPattern"),
                     IconKey = App.MenuIconKey("Icons.File.Add"),
                     Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new LFSTrackCustomPattern(this)); })
                 });
                 items.Add(new MenuItemModel { Header = "-" });
 
-                items.Add(new MenuItemModel {
+                items.Add(new MenuItemModel
+                {
                     Header = App.Text("GitLFS.Fetch"),
                     IconKey = App.MenuIconKey("Icons.Fetch"),
                     IsEnabled = _remotes.Count > 0,
-                    Command = new RelayCommand(() => {
+                    Command = new RelayCommand(() =>
+                    {
                         if (CanCreatePopup())
                         {
                             if (_remotes.Count == 1)
@@ -1493,11 +1496,13 @@ namespace SourceGit.ViewModels
                         }
                     })
                 });
-                items.Add(new MenuItemModel {
+                items.Add(new MenuItemModel
+                {
                     Header = App.Text("GitLFS.Pull"),
                     IconKey = App.MenuIconKey("Icons.Pull"),
                     IsEnabled = _remotes.Count > 0,
-                    Command = new RelayCommand(() => {
+                    Command = new RelayCommand(() =>
+                    {
                         if (CanCreatePopup())
                         {
                             if (_remotes.Count == 1)
@@ -1507,11 +1512,13 @@ namespace SourceGit.ViewModels
                         }
                     })
                 });
-                items.Add(new MenuItemModel {
+                items.Add(new MenuItemModel
+                {
                     Header = App.Text("GitLFS.Push"),
                     IconKey = App.MenuIconKey("Icons.Push"),
                     IsEnabled = _remotes.Count > 0,
-                    Command = new RelayCommand(() => {
+                    Command = new RelayCommand(() =>
+                    {
                         if (CanCreatePopup())
                         {
                             if (_remotes.Count == 1)
@@ -1522,46 +1529,51 @@ namespace SourceGit.ViewModels
                     })
                 });
                 items.Add(new MenuItemModel { Header = "-" });
-                items.Add(new MenuItemModel {
+                items.Add(new MenuItemModel
+                {
                     Header = App.Text("GitLFS.Prune"),
                     IconKey = App.MenuIconKey("Icons.Clean"),
                     Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new LFSPrune(this)); })
                 });
-                // MenuItemModel does not support submenus; flatten the locks menu for now.
+                // Use MenuModel for submenus (locks menu)
+                var locks = new MenuModel
+                {
+                    Header = App.Text("GitLFS.Locks"),
+                    IconKey = App.MenuIconKey("Icons.Lock"),
+                    IsEnabled = _remotes.Count > 0
+                };
                 if (_remotes.Count == 1)
                 {
-                    items.Add(new MenuItemModel {
-                        Header = App.Text("GitLFS.Locks"),
-                        IconKey = App.MenuIconKey("Icons.Lock"),
-                        IsEnabled = _remotes.Count > 0,
-                        Command = new RelayCommand(() => App.ShowWindow(new LFSLocks(this, _remotes[0].Name), true))
-                    });
+                    locks.Command = new RelayCommand(() =>
+                    App.ShowWindow(new LFSLocks(this, _remotes[0].Name), true))
+                   ;
                 }
-                else if (_remotes.Count > 1)
+                else
                 {
-                    items.Add(new MenuItemModel {
-                        Header = App.Text("GitLFS.Locks"),
-                        IconKey = App.MenuIconKey("Icons.Lock"),
-                        IsEnabled = false // Header only, not clickable
-                    });
+
                     foreach (var remote in _remotes)
                     {
                         var remoteName = remote.Name;
-                        items.Add(new MenuItemModel {
+                        locks.Items.Add(new MenuItemModel
+                        {
                             Header = remoteName,
                             IconKey = App.MenuIconKey("Icons.Lock"),
                             Command = new RelayCommand(() => App.ShowWindow(new LFSLocks(this, remoteName), true))
                         });
                     }
+
                 }
                 items.Add(new MenuItemModel { Header = "-" });
+                items.Add(locks);
             }
             else
             {
-                items.Add(new MenuItemModel {
+                items.Add(new MenuItemModel
+                {
                     Header = App.Text("GitLFS.Install"),
                     IconKey = App.MenuIconKey("Icons.Init"),
-                    Command = new RelayCommand(() => {
+                    Command = new RelayCommand(() =>
+                    {
                         var log = CreateLog("Install LFS");
                         var succ = new Commands.LFS(_fullpath).Install(log);
                         if (succ)
@@ -1585,7 +1597,8 @@ namespace SourceGit.ViewModels
                 foreach (var action in actions)
                 {
                     var dup = action;
-                    items.Add(new MenuItemModel {
+                    items.Add(new MenuItemModel
+                    {
                         Header = dup.Name,
                         IconKey = App.MenuIconKey("Icons.Action"),
                         Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new ExecuteCustomAction(this, dup)); })
@@ -1599,334 +1612,237 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForHistoriesPage()
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForHistoriesPage
+        public ContextMenuModel CreateContextMenuForHistoriesPage()
         {
-            var layout = new MenuItem();
-            layout.Header = App.Text("Repository.HistoriesLayout");
-            layout.IsEnabled = false;
-
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
             var isHorizontal = Preferences.Instance.UseTwoColumnsLayoutInHistories;
-            var horizontal = new MenuItem();
-            horizontal.Header = App.Text("Repository.HistoriesLayout.Horizontal");
-            if (isHorizontal)
-                horizontal.Icon = App.CreateMenuIcon("Icons.Check");
-            horizontal.Click += (_, ev) =>
+            items.Add(new MenuItemModel
             {
-                Preferences.Instance.UseTwoColumnsLayoutInHistories = true;
-                ev.Handled = true;
-            };
-
-            var vertical = new MenuItem();
-            vertical.Header = App.Text("Repository.HistoriesLayout.Vertical");
-            if (!isHorizontal)
-                vertical.Icon = App.CreateMenuIcon("Icons.Check");
-            vertical.Click += (_, ev) =>
+                Header = App.Text("Repository.HistoriesLayout"),
+                IsEnabled = false
+            });
+            items.Add(new MenuItemModel
             {
-                Preferences.Instance.UseTwoColumnsLayoutInHistories = false;
-                ev.Handled = true;
-            };
-
-            var order = new MenuItem();
-            order.Header = App.Text("Repository.HistoriesOrder");
-            order.IsEnabled = false;
-
-            var dateOrder = new MenuItem();
-            dateOrder.Header = App.Text("Repository.HistoriesOrder.ByDate");
-            // dateOrder.SetValue(Views.MenuItemExtension.CommandProperty, "--date-order");
-            //TODO: implement ViewModelInfo read in view
-
-            dateOrder.DataContext = new ViewModelInfo(new()
+                Header = App.Text("Repository.HistoriesLayout.Horizontal"),
+                IconKey = isHorizontal ? App.MenuIconKey("Icons.Check") : null,
+                Command = new RelayCommand(() => Preferences.Instance.UseTwoColumnsLayoutInHistories = true)
+            });
+            items.Add(new MenuItemModel
             {
-                ( "Views.MenuItemExtension.CommandProperty", "--date-order" )
-            }
-             );
-            if (!_settings.EnableTopoOrderInHistories)
-                dateOrder.Icon = App.CreateMenuIcon("Icons.Check");
-            dateOrder.Click += (_, ev) =>
+                Header = App.Text("Repository.HistoriesLayout.Vertical"),
+                IconKey = !isHorizontal ? App.MenuIconKey("Icons.Check") : null,
+                Command = new RelayCommand(() => Preferences.Instance.UseTwoColumnsLayoutInHistories = false)
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (_settings.EnableTopoOrderInHistories)
+                Header = App.Text("Repository.HistoriesOrder"),
+                IsEnabled = false
+            });
+            items.Add(new MenuItemModel
+            {
+                Header = App.Text("Repository.HistoriesOrder.ByDate"),
+                IconKey = !_settings.EnableTopoOrderInHistories ? App.MenuIconKey("Icons.Check") : null,
+                ViewToDo = new ViewModelInfo(new() { ("Views.MenuItemExtension.CommandProperty", "--date-order") }),
+                Command = new RelayCommand(() =>
                 {
-                    _settings.EnableTopoOrderInHistories = false;
-                    Task.Run(RefreshCommits);
-                }
-
-                ev.Handled = true;
-            };
-
-            var topoOrder = new MenuItem();
-            topoOrder.Header = App.Text("Repository.HistoriesOrder.Topo");
-            //TODO: implement ViewModelInfo read in view
-            topoOrder.DataContext = new ViewModelInfo(new()
+                    if (_settings.EnableTopoOrderInHistories)
+                    {
+                        _settings.EnableTopoOrderInHistories = false;
+                        Task.Run(RefreshCommits);
+                    }
+                })
+            });
+            items.Add(new MenuItemModel
             {
-                ( "Views.MenuItemExtension.CommandProperty", "--top-order" )
-            }
-            );
-            if (_settings.EnableTopoOrderInHistories)
-                topoOrder.Icon = App.CreateMenuIcon("Icons.Check");
-            topoOrder.Click += (_, ev) =>
-            {
-                if (!_settings.EnableTopoOrderInHistories)
+                Header = App.Text("Repository.HistoriesOrder.Topo"),
+                IconKey = _settings.EnableTopoOrderInHistories ? App.MenuIconKey("Icons.Check") : null,
+                ViewToDo = new ViewModelInfo(new() { ("Views.MenuItemExtension.CommandProperty", "--top-order") }),
+                Command = new RelayCommand(() =>
                 {
-                    _settings.EnableTopoOrderInHistories = true;
-                    Task.Run(RefreshCommits);
-                }
-
-                ev.Handled = true;
-            };
-
-            var menu = new ContextMenu();
-            menu.Items.Add(layout);
-            menu.Items.Add(horizontal);
-            menu.Items.Add(vertical);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(order);
-            menu.Items.Add(dateOrder);
-            menu.Items.Add(topoOrder);
+                    if (!_settings.EnableTopoOrderInHistories)
+                    {
+                        _settings.EnableTopoOrderInHistories = true;
+                        Task.Run(RefreshCommits);
+                    }
+                })
+            });
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForLocalBranch(Models.Branch branch)
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForLocalBranch
+        public ContextMenuModel CreateContextMenuForLocalBranch(Models.Branch branch)
         {
-            var menu = new ContextMenu();
-
-            var push = new MenuItem();
-            push.Header = App.Text("BranchCM.Push", branch.Name);
-            push.Icon = App.CreateMenuIcon("Icons.Push");
-            push.IsEnabled = _remotes.Count > 0;
-            push.Click += (_, e) =>
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
+            var push = new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new Push(this, branch));
-                e.Handled = true;
+                Header = App.Text("BranchCM.Push", branch.Name),
+                IconKey = App.MenuIconKey("Icons.Push"),
+                IsEnabled = _remotes.Count > 0,
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Push(this, branch)); })
             };
 
             if (branch.IsCurrent)
             {
                 if (!IsBare)
                 {
-                    var discard = new MenuItem();
-                    discard.Header = App.Text("BranchCM.DiscardAll");
-                    discard.Icon = App.CreateMenuIcon("Icons.Undo");
-                    discard.Click += (_, e) =>
+                    items.Add(new MenuItemModel
                     {
-                        if (CanCreatePopup())
-                            ShowPopup(new Discard(this));
-                        e.Handled = true;
-                    };
-
-                    menu.Items.Add(discard);
-                    menu.Items.Add(new MenuItem() { Header = "-" });
-
+                        Header = App.Text("BranchCM.DiscardAll"),
+                        IconKey = App.MenuIconKey("Icons.Undo"),
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Discard(this)); })
+                    });
+                    items.Add(new MenuItemModel { Header = "-" });
                     if (!string.IsNullOrEmpty(branch.Upstream))
                     {
                         var upstream = branch.Upstream.Substring(13);
-                        var fastForward = new MenuItem();
-                        fastForward.Header = App.Text("BranchCM.FastForward", upstream);
-                        fastForward.Icon = App.CreateMenuIcon("Icons.FastForward");
-                        fastForward.IsEnabled = branch.TrackStatus.Ahead.Count == 0;
-                        fastForward.Click += (_, e) =>
+                        items.Add(new MenuItemModel
                         {
-                            var b = _branches.Find(x => x.FriendlyName == upstream);
-                            if (b == null)
-                                return;
-
-                            if (CanCreatePopup())
-                                ShowAndStartPopup(new Merge(this, b, branch.Name, true));
-
-                            e.Handled = true;
-                        };
-
-                        var pull = new MenuItem();
-                        pull.Header = App.Text("BranchCM.Pull", upstream);
-                        pull.Icon = App.CreateMenuIcon("Icons.Pull");
-                        pull.Click += (_, e) =>
+                            Header = App.Text("BranchCM.FastForward", upstream),
+                            IconKey = App.MenuIconKey("Icons.FastForward"),
+                            IsEnabled = branch.TrackStatus.Ahead.Count == 0,
+                            Command = new RelayCommand(() =>
+                            {
+                                var b = _branches.Find(x => x.FriendlyName == upstream);
+                                if (b == null)
+                                    return;
+                                if (CanCreatePopup())
+                                    ShowAndStartPopup(new Merge(this, b, branch.Name, true));
+                            })
+                        });
+                        items.Add(new MenuItemModel
                         {
-                            if (CanCreatePopup())
-                                ShowPopup(new Pull(this, null));
-                            e.Handled = true;
-                        };
-
-                        menu.Items.Add(fastForward);
-                        menu.Items.Add(pull);
+                            Header = App.Text("BranchCM.Pull", upstream),
+                            IconKey = App.MenuIconKey("Icons.Pull"),
+                            Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Pull(this, null)); })
+                        });
                     }
                 }
-
-                menu.Items.Add(push);
+                items.Add(push);
             }
             else
             {
                 if (!IsBare)
                 {
-                    var checkout = new MenuItem();
-                    checkout.Header = App.Text("BranchCM.Checkout", branch.Name);
-                    checkout.Icon = App.CreateMenuIcon("Icons.Check");
-                    checkout.Click += (_, e) =>
+                    items.Add(new MenuItemModel
                     {
-                        CheckoutBranch(branch);
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(checkout);
-                    menu.Items.Add(new MenuItem() { Header = "-" });
+                        Header = App.Text("BranchCM.Checkout", branch.Name),
+                        IconKey = App.MenuIconKey("Icons.Check"),
+                        Command = new RelayCommand(() => CheckoutBranch(branch))
+                    });
+                    items.Add(new MenuItemModel { Header = "-" });
                 }
-
                 var worktree = _worktrees.Find(x => x.Branch == branch.FullName);
                 var upstream = _branches.Find(x => x.FullName == branch.Upstream);
                 if (upstream != null && worktree == null)
                 {
-                    var fastForward = new MenuItem();
-                    fastForward.Header = App.Text("BranchCM.FastForward", upstream.FriendlyName);
-                    fastForward.Icon = App.CreateMenuIcon("Icons.FastForward");
-                    fastForward.IsEnabled = branch.TrackStatus.Ahead.Count == 0;
-                    fastForward.Click += (_, e) =>
+                    items.Add(new MenuItemModel
                     {
-                        if (CanCreatePopup())
-                            ShowAndStartPopup(new FastForwardWithoutCheckout(this, branch, upstream));
-                        e.Handled = true;
-                    };
-
-                    var fetchInto = new MenuItem();
-                    fetchInto.Header = App.Text("BranchCM.FetchInto", upstream.FriendlyName, branch.Name);
-                    fetchInto.Icon = App.CreateMenuIcon("Icons.Fetch");
-                    fetchInto.IsEnabled = branch.TrackStatus.Ahead.Count == 0;
-                    fetchInto.Click += (_, e) =>
+                        Header = App.Text("BranchCM.FastForward", upstream.FriendlyName),
+                        IconKey = App.MenuIconKey("Icons.FastForward"),
+                        IsEnabled = branch.TrackStatus.Ahead.Count == 0,
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new FastForwardWithoutCheckout(this, branch, upstream)); })
+                    });
+                    items.Add(new MenuItemModel { Header = "-" });
+                    items.Add(new MenuItemModel
                     {
-                        if (CanCreatePopup())
-                            ShowAndStartPopup(new FetchInto(this, branch, upstream));
-                        e.Handled = true;
-                    };
-
-                    menu.Items.Add(fastForward);
-                    menu.Items.Add(new MenuItem() { Header = "-" });
-                    menu.Items.Add(fetchInto);
+                        Header = App.Text("BranchCM.FetchInto", upstream.FriendlyName, branch.Name),
+                        IconKey = App.MenuIconKey("Icons.Fetch"),
+                        IsEnabled = branch.TrackStatus.Ahead.Count == 0,
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new FetchInto(this, branch, upstream)); })
+                    });
                 }
-
-                menu.Items.Add(push);
-
+                items.Add(push);
                 if (!IsBare)
                 {
-                    var merge = new MenuItem();
-                    merge.Header = App.Text("BranchCM.Merge", branch.Name, _currentBranch.Name);
-                    merge.Icon = App.CreateMenuIcon("Icons.Merge");
-                    merge.Click += (_, e) =>
+                    items.Add(new MenuItemModel
                     {
-                        if (CanCreatePopup())
-                            ShowPopup(new Merge(this, branch, _currentBranch.Name, false));
-                        e.Handled = true;
-                    };
-
-                    var rebase = new MenuItem();
-                    rebase.Header = App.Text("BranchCM.Rebase", _currentBranch.Name, branch.Name);
-                    rebase.Icon = App.CreateMenuIcon("Icons.Rebase");
-                    rebase.Click += (_, e) =>
+                        Header = App.Text("BranchCM.Merge", branch.Name, _currentBranch.Name),
+                        IconKey = App.MenuIconKey("Icons.Merge"),
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Merge(this, branch, _currentBranch.Name, false)); })
+                    });
+                    items.Add(new MenuItemModel
                     {
-                        if (CanCreatePopup())
-                            ShowPopup(new Rebase(this, _currentBranch, branch));
-                        e.Handled = true;
-                    };
-
-                    menu.Items.Add(merge);
-                    menu.Items.Add(rebase);
+                        Header = App.Text("BranchCM.Rebase", _currentBranch.Name, branch.Name),
+                        IconKey = App.MenuIconKey("Icons.Rebase"),
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Rebase(this, _currentBranch, branch)); })
+                    });
                 }
-
-                var compareWithHead = new MenuItem();
-                compareWithHead.Header = App.Text("BranchCM.CompareWithHead");
-                compareWithHead.Icon = App.CreateMenuIcon("Icons.Compare");
-                compareWithHead.Click += (_, _) =>
+                items.Add(new MenuItemModel
                 {
-                    App.ShowWindow(new BranchCompare(_fullpath, branch, _currentBranch), false);
-                };
-                menu.Items.Add(new MenuItem() { Header = "-" });
-                menu.Items.Add(compareWithHead);
-
+                    Header = App.Text("BranchCM.CompareWithHead"),
+                    IconKey = App.MenuIconKey("Icons.Compare"),
+                    Command = new RelayCommand(() => App.ShowWindow(new BranchCompare(_fullpath, branch, _currentBranch), false))
+                });
+                items.Add(new MenuItemModel { Header = "-" });
                 if (_localChangesCount > 0)
                 {
-                    var compareWithWorktree = new MenuItem();
-                    compareWithWorktree.Header = App.Text("BranchCM.CompareWithWorktree");
-                    compareWithWorktree.Icon = App.CreateMenuIcon("Icons.Compare");
-                    compareWithWorktree.Click += (_, _) =>
+                    items.Add(new MenuItemModel
                     {
-                        SelectedSearchedCommit = null;
-
-                        if (_histories != null)
+                        Header = App.Text("BranchCM.CompareWithWorktree"),
+                        IconKey = App.MenuIconKey("Icons.Compare"),
+                        Command = new RelayCommand(() =>
                         {
-                            var target = new Commands.QuerySingleCommit(_fullpath, branch.Head).Result();
-                            _histories.AutoSelectedCommit = null;
-                            _histories.DetailContext = new RevisionCompare(_fullpath, target, null);
-                        }
-                    };
-                    menu.Items.Add(compareWithWorktree);
+                            SelectedSearchedCommit = null;
+                            if (_histories != null)
+                            {
+                                var target = new Commands.QuerySingleCommit(_fullpath, branch.Head).Result();
+                                _histories.AutoSelectedCommit = null;
+                                _histories.DetailContext = new RevisionCompare(_fullpath, target, null);
+                            }
+                        })
+                    });
                 }
             }
-
             if (!IsBare)
             {
                 var detect = Commands.GitFlow.DetectType(_fullpath, _branches, branch.Name);
                 if (detect.IsGitFlowBranch)
                 {
-                    var finish = new MenuItem();
-                    finish.Header = App.Text("BranchCM.Finish", branch.Name);
-                    finish.Icon = App.CreateMenuIcon("Icons.GitFlow");
-                    finish.Click += (_, e) =>
+                    items.Add(new MenuItemModel { Header = "-" });
+                    items.Add(new MenuItemModel
                     {
-                        if (CanCreatePopup())
-                            ShowPopup(new GitFlowFinish(this, branch, detect.Type, detect.Prefix));
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(new MenuItem() { Header = "-" });
-                    menu.Items.Add(finish);
+                        Header = App.Text("BranchCM.Finish", branch.Name),
+                        IconKey = App.MenuIconKey("Icons.GitFlow"),
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new GitFlowFinish(this, branch, detect.Type, detect.Prefix)); })
+                    });
                 }
             }
-
-            var rename = new MenuItem();
-            rename.Header = App.Text("BranchCM.Rename", branch.Name);
-            rename.Icon = App.CreateMenuIcon("Icons.Rename");
-            rename.Click += (_, e) =>
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new RenameBranch(this, branch));
-                e.Handled = true;
-            };
-
-            var delete = new MenuItem();
-            delete.Header = App.Text("BranchCM.Delete", branch.Name);
-            delete.Icon = App.CreateMenuIcon("Icons.Clear");
-            delete.IsEnabled = !branch.IsCurrent;
-            delete.Click += (_, e) =>
+                Header = App.Text("BranchCM.Rename", branch.Name),
+                IconKey = App.MenuIconKey("Icons.Rename"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new RenameBranch(this, branch)); })
+            });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new DeleteBranch(this, branch));
-                e.Handled = true;
-            };
-
-            var createBranch = new MenuItem();
-            createBranch.Icon = App.CreateMenuIcon("Icons.Branch.Add");
-            createBranch.Header = App.Text("CreateBranch");
-            createBranch.Click += (_, e) =>
+                Header = App.Text("BranchCM.Delete", branch.Name),
+                IconKey = App.MenuIconKey("Icons.Clear"),
+                IsEnabled = !branch.IsCurrent,
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteBranch(this, branch)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new CreateBranch(this, branch));
-                e.Handled = true;
-            };
-
-            var createTag = new MenuItem();
-            createTag.Icon = App.CreateMenuIcon("Icons.Tag.Add");
-            createTag.Header = App.Text("CreateTag");
-            createTag.Click += (_, e) =>
+                Header = App.Text("CreateBranch"),
+                IconKey = App.MenuIconKey("Icons.Branch.Add"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateBranch(this, branch)); })
+            });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new CreateTag(this, branch));
-                e.Handled = true;
-            };
-
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(rename);
-            menu.Items.Add(delete);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(createBranch);
-            menu.Items.Add(createTag);
-            menu.Items.Add(new MenuItem() { Header = "-" });
+                Header = App.Text("CreateTag"),
+                IconKey = App.MenuIconKey("Icons.Tag.Add"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateTag(this, branch)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            // Custom actions submenu
             TryToAddCustomActionsToBranchContextMenu(menu, branch);
-
             if (!IsBare)
             {
                 var remoteBranches = new List<Models.Branch>();
@@ -1935,267 +1851,178 @@ namespace SourceGit.ViewModels
                     if (!b.IsLocal)
                         remoteBranches.Add(b);
                 }
-
                 if (remoteBranches.Count > 0)
                 {
-                    var tracking = new MenuItem();
-                    tracking.Header = App.Text("BranchCM.Tracking");
-                    tracking.Icon = App.CreateMenuIcon("Icons.Track");
-                    tracking.Click += (_, e) =>
+                    items.Add(new MenuItemModel
                     {
-                        if (CanCreatePopup())
-                            ShowPopup(new SetUpstream(this, branch, remoteBranches));
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(tracking);
+                        Header = App.Text("BranchCM.Tracking"),
+                        IconKey = App.MenuIconKey("Icons.Track"),
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new SetUpstream(this, branch, remoteBranches)); })
+                    });
                 }
             }
-
-            var archive = new MenuItem();
-            archive.Icon = App.CreateMenuIcon("Icons.Archive");
-            archive.Header = App.Text("Archive");
-            archive.Click += (_, e) =>
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new Archive(this, branch));
-                e.Handled = true;
-            };
-            menu.Items.Add(archive);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-
-            var copy = new MenuItem();
-            copy.Header = App.Text("BranchCM.CopyName");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, e) =>
+                Header = App.Text("Archive"),
+                IconKey = App.MenuIconKey("Icons.Archive"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Archive(this, branch)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                App.CopyText(branch.Name);
-                e.Handled = true;
-            };
-            menu.Items.Add(copy);
-
+                Header = App.Text("BranchCM.CopyName"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(branch.Name))
+            });
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForRemote(Models.Remote remote)
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForRemote
+        public ContextMenuModel CreateContextMenuForRemote(Models.Remote remote)
         {
-            var menu = new ContextMenu();
-
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
             if (remote.TryGetVisitURL(out string visitURL))
             {
-                var visit = new MenuItem();
-                visit.Header = App.Text("RemoteCM.OpenInBrowser");
-                visit.Icon = App.CreateMenuIcon("Icons.OpenWith");
-                visit.Click += (_, e) =>
+                items.Add(new MenuItemModel
                 {
-                    Native.OS.OpenBrowser(visitURL);
-                    e.Handled = true;
-                };
-
-                menu.Items.Add(visit);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                    Header = App.Text("RemoteCM.OpenInBrowser"),
+                    IconKey = App.MenuIconKey("Icons.OpenWith"),
+                    Command = new RelayCommand(() => Native.OS.OpenBrowser(visitURL))
+                });
+                items.Add(new MenuItemModel { Header = "-" });
             }
-
-            var fetch = new MenuItem();
-            fetch.Header = App.Text("RemoteCM.Fetch");
-            fetch.Icon = App.CreateMenuIcon("Icons.Fetch");
-            fetch.Click += (_, e) =>
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowAndStartPopup(new Fetch(this, remote));
-                e.Handled = true;
-            };
-
-            var prune = new MenuItem();
-            prune.Header = App.Text("RemoteCM.Prune");
-            prune.Icon = App.CreateMenuIcon("Icons.Clean");
-            prune.Click += (_, e) =>
+                Header = App.Text("RemoteCM.Fetch"),
+                IconKey = App.MenuIconKey("Icons.Fetch"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new Fetch(this, remote)); })
+            });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowAndStartPopup(new PruneRemote(this, remote));
-                e.Handled = true;
-            };
-
-            var edit = new MenuItem();
-            edit.Header = App.Text("RemoteCM.Edit");
-            edit.Icon = App.CreateMenuIcon("Icons.Edit");
-            edit.Click += (_, e) =>
+                Header = App.Text("RemoteCM.Prune"),
+                IconKey = App.MenuIconKey("Icons.Clean"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new PruneRemote(this, remote)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new EditRemote(this, remote));
-                e.Handled = true;
-            };
-
-            var delete = new MenuItem();
-            delete.Header = App.Text("RemoteCM.Delete");
-            delete.Icon = App.CreateMenuIcon("Icons.Clear");
-            delete.Click += (_, e) =>
+                Header = App.Text("RemoteCM.Edit"),
+                IconKey = App.MenuIconKey("Icons.Edit"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new EditRemote(this, remote)); })
+            });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new DeleteRemote(this, remote));
-                e.Handled = true;
-            };
-
-            var copy = new MenuItem();
-            copy.Header = App.Text("RemoteCM.CopyURL");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, e) =>
+                Header = App.Text("RemoteCM.Delete"),
+                IconKey = App.MenuIconKey("Icons.Clear"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteRemote(this, remote)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                App.CopyText(remote.URL);
-                e.Handled = true;
-            };
-
-            menu.Items.Add(fetch);
-            menu.Items.Add(prune);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(edit);
-            menu.Items.Add(delete);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(copy);
+                Header = App.Text("RemoteCM.CopyURL"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(remote.URL))
+            });
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForRemoteBranch(Models.Branch branch)
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForRemoteBranch
+        public ContextMenuModel CreateContextMenuForRemoteBranch(Models.Branch branch)
         {
-            var menu = new ContextMenu();
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
             var name = branch.FriendlyName;
-
-            var checkout = new MenuItem();
-            checkout.Header = App.Text("BranchCM.Checkout", name);
-            checkout.Icon = App.CreateMenuIcon("Icons.Check");
-            checkout.Click += (_, e) =>
+            items.Add(new MenuItemModel
             {
-                CheckoutBranch(branch);
-                e.Handled = true;
-            };
-            menu.Items.Add(checkout);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-
+                Header = App.Text("BranchCM.Checkout", name),
+                IconKey = App.MenuIconKey("Icons.Check"),
+                Command = new RelayCommand(() => CheckoutBranch(branch))
+            });
+            items.Add(new MenuItemModel { Header = "-" });
             if (_currentBranch != null)
             {
-                var pull = new MenuItem();
-                pull.Header = App.Text("BranchCM.PullInto", name, _currentBranch.Name);
-                pull.Icon = App.CreateMenuIcon("Icons.Pull");
-                pull.Click += (_, e) =>
+                items.Add(new MenuItemModel
                 {
-                    if (CanCreatePopup())
-                        ShowPopup(new Pull(this, branch));
-                    e.Handled = true;
-                };
-
-                var merge = new MenuItem();
-                merge.Header = App.Text("BranchCM.Merge", name, _currentBranch.Name);
-                merge.Icon = App.CreateMenuIcon("Icons.Merge");
-                merge.Click += (_, e) =>
+                    Header = App.Text("BranchCM.PullInto", name, _currentBranch.Name),
+                    IconKey = App.MenuIconKey("Icons.Pull"),
+                    Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Pull(this, branch)); })
+                });
+                items.Add(new MenuItemModel
                 {
-                    if (CanCreatePopup())
-                        ShowPopup(new Merge(this, branch, _currentBranch.Name, false));
-                    e.Handled = true;
-                };
-
-                var rebase = new MenuItem();
-                rebase.Header = App.Text("BranchCM.Rebase", _currentBranch.Name, name);
-                rebase.Icon = App.CreateMenuIcon("Icons.Rebase");
-                rebase.Click += (_, e) =>
+                    Header = App.Text("BranchCM.Merge", name, _currentBranch.Name),
+                    IconKey = App.MenuIconKey("Icons.Merge"),
+                    Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Merge(this, branch, _currentBranch.Name, false)); })
+                });
+                items.Add(new MenuItemModel
                 {
-                    if (CanCreatePopup())
-                        ShowPopup(new Rebase(this, _currentBranch, branch));
-                    e.Handled = true;
-                };
-
-                menu.Items.Add(pull);
-                menu.Items.Add(merge);
-                menu.Items.Add(rebase);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                    Header = App.Text("BranchCM.Rebase", _currentBranch.Name, name),
+                    IconKey = App.MenuIconKey("Icons.Rebase"),
+                    Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Rebase(this, _currentBranch, branch)); })
+                });
+                items.Add(new MenuItemModel { Header = "-" });
             }
-
-            var compareWithHead = new MenuItem();
-            compareWithHead.Header = App.Text("BranchCM.CompareWithHead");
-            compareWithHead.Icon = App.CreateMenuIcon("Icons.Compare");
-            compareWithHead.Click += (_, _) =>
+            items.Add(new MenuItemModel
             {
-                App.ShowWindow(new BranchCompare(_fullpath, branch, _currentBranch), false);
-            };
-            menu.Items.Add(compareWithHead);
-
+                Header = App.Text("BranchCM.CompareWithHead"),
+                IconKey = App.MenuIconKey("Icons.Compare"),
+                Command = new RelayCommand(() => App.ShowWindow(new BranchCompare(_fullpath, branch, _currentBranch), false))
+            });
             if (_localChangesCount > 0)
             {
-                var compareWithWorktree = new MenuItem();
-                compareWithWorktree.Header = App.Text("BranchCM.CompareWithWorktree");
-                compareWithWorktree.Icon = App.CreateMenuIcon("Icons.Compare");
-                compareWithWorktree.Click += (_, _) =>
+                items.Add(new MenuItemModel
                 {
-                    SelectedSearchedCommit = null;
-
-                    if (_histories != null)
+                    Header = App.Text("BranchCM.CompareWithWorktree"),
+                    IconKey = App.MenuIconKey("Icons.Compare"),
+                    Command = new RelayCommand(() =>
                     {
-                        var target = new Commands.QuerySingleCommit(_fullpath, branch.Head).Result();
-                        _histories.AutoSelectedCommit = null;
-                        _histories.DetailContext = new RevisionCompare(_fullpath, target, null);
-                    }
-                };
-                menu.Items.Add(compareWithWorktree);
+                        SelectedSearchedCommit = null;
+                        if (_histories != null)
+                        {
+                            var target = new Commands.QuerySingleCommit(_fullpath, branch.Head).Result();
+                            _histories.AutoSelectedCommit = null;
+                            _histories.DetailContext = new RevisionCompare(_fullpath, target, null);
+                        }
+                    })
+                });
             }
-            menu.Items.Add(new MenuItem() { Header = "-" });
-
-            var delete = new MenuItem();
-            delete.Header = App.Text("BranchCM.Delete", name);
-            delete.Icon = App.CreateMenuIcon("Icons.Clear");
-            delete.Click += (_, e) =>
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new DeleteBranch(this, branch));
-                e.Handled = true;
-            };
-
-            var createBranch = new MenuItem();
-            createBranch.Icon = App.CreateMenuIcon("Icons.Branch.Add");
-            createBranch.Header = App.Text("CreateBranch");
-            createBranch.Click += (_, e) =>
+                Header = App.Text("BranchCM.Delete", name),
+                IconKey = App.MenuIconKey("Icons.Clear"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteBranch(this, branch)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new CreateBranch(this, branch));
-                e.Handled = true;
-            };
-
-            var createTag = new MenuItem();
-            createTag.Icon = App.CreateMenuIcon("Icons.Tag.Add");
-            createTag.Header = App.Text("CreateTag");
-            createTag.Click += (_, e) =>
+                Header = App.Text("CreateBranch"),
+                IconKey = App.MenuIconKey("Icons.Branch.Add"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateBranch(this, branch)); })
+            });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new CreateTag(this, branch));
-                e.Handled = true;
-            };
-
-            var archive = new MenuItem();
-            archive.Icon = App.CreateMenuIcon("Icons.Archive");
-            archive.Header = App.Text("Archive");
-            archive.Click += (_, e) =>
+                Header = App.Text("CreateTag"),
+                IconKey = App.MenuIconKey("Icons.Tag.Add"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateTag(this, branch)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new Archive(this, branch));
-                e.Handled = true;
-            };
-
-            var copy = new MenuItem();
-            copy.Header = App.Text("BranchCM.CopyName");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, e) =>
-            {
-                App.CopyText(name);
-                e.Handled = true;
-            };
-
-            menu.Items.Add(delete);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(createBranch);
-            menu.Items.Add(createTag);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(archive);
-            menu.Items.Add(new MenuItem() { Header = "-" });
+                Header = App.Text("Archive"),
+                IconKey = App.MenuIconKey("Icons.Archive"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Archive(this, branch)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
             TryToAddCustomActionsToBranchContextMenu(menu, branch);
-            menu.Items.Add(copy);
-
+            items.Add(new MenuItemModel
+            {
+                Header = App.Text("BranchCM.CopyName"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(name))
+            });
             return menu;
         }
 
