@@ -197,15 +197,15 @@ namespace SourceGit.ViewModels
         /// <see cref="App.Text"/> App.Text(stringKey);
         /// <param name="stringKey">for <see cref="App.Text"/> </param>
         /// </summary>
-        internal static string ResText(string stringKey)
+        public static StringResource ResText(string key, params object[] args)
         {
-            return stringKey;
+            return new StringResource(key, args);
         }
 
         /// <summary>
         ///  <see cref="App.CreateMenuIcon"/> <code>App.CreateMenuIcon(iconKey);</code>
         /// </summary>
-        internal static string MenuIconKey(string iconKey)
+        public static string MenuIconKey(string iconKey)
         {
             return iconKey;
         }
@@ -231,6 +231,17 @@ namespace SourceGit.ViewModels
         public static readonly FormatByResourceKeyConverter FormatByResourceKey = new FormatByResourceKeyConverter();
     }
 
+    public record struct StringResource(string Key, params object[] Args)
+    {
+        //TODO: remove this operators in future
+        // Implicit conversion from MyRecord to int
+        public static implicit operator string(StringResource r) => r.Text();
+
+        // Explicit conversion from int to MyRecord
+        public static explicit operator StringResource(string s) => new StringResource(s, null);
+
+        public string Text() => ViewModels.App.Text(Key, Args);
+    }
     public static class ObsSExtensions
     {
 

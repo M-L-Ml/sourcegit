@@ -427,29 +427,19 @@ namespace SourceGit.Views
             }
             else if (branches.Find(x => x.IsCurrent) == null)
             {
-                var menu = new ContextMenu();
-
-                var mergeMulti = new MenuItem();
-                mergeMulti.Header = App.Text("BranchCM.MergeMultiBranches", branches.Count);
-                mergeMulti.Icon = App.CreateMenuIcon("Icons.Merge");
-                mergeMulti.Click += (_, ev) =>
-                {
-                    repo.MergeMultipleBranches(branches);
-                    ev.Handled = true;
-                };
-                menu.Items.Add(mergeMulti);
-                menu.Items.Add(new MenuItem() { Header = "-" });
-
-                var deleteMulti = new MenuItem();
-                deleteMulti.Header = App.Text("BranchCM.DeleteMultiBranches", branches.Count);
-                deleteMulti.Icon = App.CreateMenuIcon("Icons.Clear");
-                deleteMulti.Click += (_, ev) =>
-                {
-                    repo.DeleteMultipleBranches(branches, branches[0].IsLocal);
-                    ev.Handled = true;
-                };
-                menu.Items.Add(deleteMulti);
-
+                var menuModel = new ViewModels.ContextMenuModel();
+                menuModel.Items.Add(new ViewModels.MenuItemModel {
+                    Header = App.Text("BranchCM.MergeMultiBranches", branches.Count),
+                    IconKey = App.MenuIconKey("Icons.Merge"),
+                    Command = new CommunityToolkit.Mvvm.Input.RelayCommand(() => repo.MergeMultipleBranches(branches))
+                });
+                menuModel.Items.Add(new ViewModels.MenuItemModel { Header = "-" });
+                menuModel.Items.Add(new ViewModels.MenuItemModel {
+                    Header = App.Text("BranchCM.DeleteMultiBranches", branches.Count),
+                    IconKey = App.MenuIconKey("Icons.Clear"),
+                    Command = new CommunityToolkit.Mvvm.Input.RelayCommand(() => repo.DeleteMultipleBranches(branches, branches[0].IsLocal))
+                });
+                var menu = menuModel.CreateContextMenuFromModel();
                 menu?.Open(this);
             }
         }
