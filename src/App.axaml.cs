@@ -404,7 +404,7 @@ namespace SourceGit
 
         public override void OnFrameworkInitializationCompleted()
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (DesktopAppLifetime is { } desktop)
             {
                 BindingPlugins.DataValidators.RemoveAt(0);
 
@@ -670,9 +670,11 @@ namespace SourceGit
         }
 
        [MaybeNull]
-        public  IClassicDesktopStyleApplicationLifetime DesktopAppLifetime => Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        public  IClassicDesktopStyleApplicationLifetime DesktopAppLifetime =>
+                ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
        [MaybeNull]
-       public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime => Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+       public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime => 
+                Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
         private void ShowSelfUpdateResult(object data)
         {
