@@ -1,6 +1,6 @@
 # Rules for AI
 
-- When copying or porting code from original SourceGit source code file, always include a comment with the original file path and fully qualified class name. This attribution must be preserved through all code transformations. But don't add comments if the file name and the function name are the same as the original file.
+- When copying or porting code from original SourceGit source code file, always include a comment with the original file path and fully qualified class name. This attribution must be preserved through all code transformations. However, do not add such comments if both the file name and the function name match exactly.
 - Upon receiving the prompt "Act as [file name]" or "Follow [file name]", always start with reading that file and following its instructions.
 - If prompted to capture knowledge or rules or whatever like this, update the "# Agent Knowledge" section in the followed process md file. If the section does not exist, append the information at the end of the file.
 - Avoid fixing linter warnings in a file if all of the following apply:
