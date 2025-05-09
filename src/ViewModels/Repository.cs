@@ -1482,7 +1482,7 @@ namespace SourceGit.ViewModels
 
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("GitLFS.Fetch"),
+                    Header = App.ResText("GitLFS.Fetch"),
                     IconKey = App.MenuIconKey("Icons.Fetch"),
                     IsEnabled = _remotes.Count > 0,
                     Command = new RelayCommand(() =>
@@ -1498,7 +1498,7 @@ namespace SourceGit.ViewModels
                 });
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("GitLFS.Pull"),
+                    Header = App.ResText("GitLFS.Pull"),
                     IconKey = App.MenuIconKey("Icons.Pull"),
                     IsEnabled = _remotes.Count > 0,
                     Command = new RelayCommand(() =>
@@ -1607,7 +1607,7 @@ namespace SourceGit.ViewModels
             }
             else
             {
-                items.Add(new MenuItemModel { Header = App.Text("Repository.CustomActions.Empty") });
+                items.Add(new MenuItemModel { Header = App.ResText("Repository.CustomActions.Empty") });
             }
             return menu;
         }
@@ -1621,18 +1621,18 @@ namespace SourceGit.ViewModels
             var isHorizontal = Preferences.Instance.UseTwoColumnsLayoutInHistories;
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Repository.HistoriesLayout"),
+                Header = App.ResText("Repository.HistoriesLayout"),
                 IsEnabled = false
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Repository.HistoriesLayout.Horizontal"),
+                Header = App.ResText("Repository.HistoriesLayout.Horizontal"),
                 IconKey = isHorizontal ? App.MenuIconKey("Icons.Check") : null,
                 Command = new RelayCommand(() => Preferences.Instance.UseTwoColumnsLayoutInHistories = true)
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Repository.HistoriesLayout.Vertical"),
+                Header = App.ResText("Repository.HistoriesLayout.Vertical"),
                 IconKey = !isHorizontal ? App.MenuIconKey("Icons.Check") : null,
                 Command = new RelayCommand(() => Preferences.Instance.UseTwoColumnsLayoutInHistories = false)
             });

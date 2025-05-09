@@ -9,6 +9,7 @@ using Avalonia.Data.Converters;
 using System.Globalization;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace SourceGit.ViewModels
 {
@@ -164,7 +165,7 @@ namespace SourceGit.ViewModels
                 // Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
                 if (GetCurrentDesktopAppLifetime(out var d))
                 {
-                     return d;
+                    return d;
                 }
                 else
                 {
@@ -238,9 +239,20 @@ namespace SourceGit.ViewModels
         public static implicit operator string(StringResource r) => r.Text();
 
         // Explicit conversion from int to MyRecord
-        public static explicit operator StringResource(string s) => new StringResource(s, null);
+        public static implicit operator StringResource(string s) => new StringResource(s, string.Empty);
 
-        public string Text() => ViewModels.App.Text(Key, Args);
+        public bool DontLookUpResource => Args?.Length == 1 && (Args[0] is string s && (s == string.Empty));
+        public override string ToString() =>Key + (DontLookUpResource ? " |" : " (Key) ") + nameof(StringResource) + ". ";
+        public string Text()
+        {
+            if (DontLookUpResource)
+            {
+                //TODO: remove assert.
+                Debug.Assert(!Regex.IsMatch(Key, @"\w*\.\w*", RegexOptions.IgnoreCase),  "check");
+                return Key;
+            }
+            return ViewModels.App.Text(Key, Args);
+        }
     }
     public static class ObsSExtensions
     {
