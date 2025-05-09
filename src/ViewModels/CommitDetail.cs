@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -276,282 +276,252 @@ namespace SourceGit.ViewModels
             }
         }
 
-        public ContextMenu CreateChangeContextMenu(Models.Change change)
+        public ContextMenuModel CreateChangeContextMenu(Models.Change change)
         {
-            var diffWithMerger = new MenuItem();
-            diffWithMerger.Header = App.Text("DiffWithMerger");
-            diffWithMerger.Icon = App.CreateMenuIcon("Icons.OpenWith");
-            diffWithMerger.Click += (_, ev) =>
-            {
-                var toolType = Preferences.Instance.ExternalMergeToolType;
-                var toolPath = Preferences.Instance.ExternalMergeToolPath;
-                var opt = new Models.DiffOption(_commit, change);
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
 
-                Task.Run(() => Commands.MergeTool.OpenForDiff(_repo.FullPath, toolType, toolPath, opt));
-                ev.Handled = true;
-            };
+            items.Add(new MenuItemModel
+            {
+                Header = App.ResText("DiffWithMerger"),
+                IconKey = App.MenuIconKey("Icons.OpenWith"),
+                Command = new RelayCommand(() =>
+                {
+                    var toolType = Preferences.Instance.ExternalMergeToolType;
+                    var toolPath = Preferences.Instance.ExternalMergeToolPath;
+                    var opt = new Models.DiffOption(_commit, change);
+                    Task.Run(() => Commands.MergeTool.OpenForDiff(_repo.FullPath, toolType, toolPath, opt));
+                })
+            });
 
             var fullPath = Path.Combine(_repo.FullPath, change.Path);
-            var explore = new MenuItem();
-            explore.Header = App.Text("RevealFile");
-            explore.Icon = App.CreateMenuIcon("Icons.Explore");
-            explore.IsEnabled = File.Exists(fullPath);
-            explore.Click += (_, ev) =>
+            items.Add(new MenuItemModel
             {
-                Native.OS.OpenInFileManager(fullPath, true);
-                ev.Handled = true;
-            };
+                Header = App.ResText("RevealFile"),
+                IconKey = App.MenuIconKey("Icons.Explore"),
+                IsEnabled = File.Exists(fullPath),
+                Command = new RelayCommand(() => Native.OS.OpenInFileManager(fullPath, true))
+            });
 
-            var history = new MenuItem();
-            history.Header = App.Text("FileHistory");
-            history.Icon = App.CreateMenuIcon("Icons.Histories");
-            history.Click += (_, ev) =>
+            items.Add(MenuModel.Separator());
+
+            items.Add(new MenuItemModel
             {
-                App.ShowWindow(new FileHistories(_repo, change.Path, _commit.SHA), false);
-                ev.Handled = true;
-            };
+                Header = App.ResText("FileHistory"),
+                IconKey = App.MenuIconKey("Icons.Histories"),
+                Command = new RelayCommand(() => App.ShowWindow(new FileHistories(_repo, change.Path, _commit.SHA), false))
+            });
 
-            var blame = new MenuItem();
-            blame.Header = App.Text("Blame");
-            blame.Icon = App.CreateMenuIcon("Icons.Blame");
-            blame.IsEnabled = change.Index != Models.ChangeState.Deleted;
-            blame.Click += (_, ev) =>
+            items.Add(new MenuItemModel
             {
-                App.ShowWindow(new Blame(_repo.FullPath, change.Path, _commit.SHA), false);
-                ev.Handled = true;
-            };
+                Header = App.ResText("Blame"),
+                IconKey = App.MenuIconKey("Icons.Blame"),
+                IsEnabled = change.Index != Models.ChangeState.Deleted,
+                Command = new RelayCommand(() => App.ShowWindow(new Blame(_repo.FullPath, change.Path, _commit.SHA), false))
+            });
 
-            var patch = new MenuItem();
-            patch.Header = App.Text("FileCM.SaveAsPatch");
-            patch.Icon = App.CreateMenuIcon("Icons.Diff");
-            patch.Click += async (_, e) =>
+            items.Add(new MenuItemModel
             {
-                var storageProvider = App.GetStorageProvider();
-                if (storageProvider == null)
-                    return;
-
-                var options = new FilePickerSaveOptions();
-                options.Title = App.Text("FileCM.SaveAsPatch");
-                options.DefaultExtension = ".patch";
-                options.FileTypeChoices = [new FilePickerFileType("Patch File") { Patterns = ["*.patch"] }];
-
-                var baseRevision = _commit.Parents.Count == 0 ? "4b825dc642cb6eb9a060e54bf8d69288fbee4904" : _commit.Parents[0];
-                var storageFile = await storageProvider.SaveFilePickerAsync(options);
-                if (storageFile != null)
+                Header = App.ResText("FileCM.SaveAsPatch"),
+                IconKey = App.MenuIconKey("Icons.Diff"),
+                Command = new RelayCommand(async () =>
                 {
-                    var saveTo = storageFile.Path.LocalPath;
-                    var succ = await Task.Run(() => Commands.SaveChangesAsPatch.ProcessRevisionCompareChanges(_repo.FullPath, [change], baseRevision, _commit.SHA, saveTo));
-                    if (succ)
-                        App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
-                }
+                    var storageProvider = App.GetStorageProvider();
+                    if (storageProvider == null)
+                        return;
+                    var options = new FilePickerSaveOptions
+                    {
+                        Title = App.Text("FileCM.SaveAsPatch"),
+                        DefaultExtension = ".patch",
+                        FileTypeChoices = [new FilePickerFileType("Patch File") { Patterns = ["*.patch"] }]
+                    };
+                    var baseRevision = _commit.Parents.Count == 0 ? "4b825dc642cb6eb9a060e54bf8d69288fbee4904" : _commit.Parents[0];
+                    var storageFile = await storageProvider.SaveFilePickerAsync(options);
+                    if (storageFile != null)
+                    {
+                        var saveTo = storageFile.Path.LocalPath;
+                        var succ = await Task.Run(() => Commands.SaveChangesAsPatch.ProcessRevisionCompareChanges(_repo.FullPath, [change], baseRevision, _commit.SHA, saveTo));
+                        if (succ)
+                            App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
+                    }
+                })
+            });
 
-                e.Handled = true;
-            };
-
-            var menu = new ContextMenu();
-            menu.Items.Add(diffWithMerger);
-            menu.Items.Add(explore);
-            menu.Items.Add(new MenuItem { Header = "-" });
-            menu.Items.Add(history);
-            menu.Items.Add(blame);
-            menu.Items.Add(patch);
-            menu.Items.Add(new MenuItem { Header = "-" });
+            items.Add(MenuModel.Separator());
 
             if (!_repo.IsBare)
             {
-                var resetToThisRevision = new MenuItem();
-                resetToThisRevision.Header = App.Text("ChangeCM.CheckoutThisRevision");
-                resetToThisRevision.Icon = App.CreateMenuIcon("Icons.File.Checkout");
-                resetToThisRevision.Click += (_, ev) =>
+                items.Add(new MenuItemModel
                 {
-                    var log = _repo.CreateLog($"Reset File to '{_commit.SHA}'");
-                    new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(change.Path, $"{_commit.SHA}");
-                    log.Complete();
-                    ev.Handled = true;
-                };
+                    Header = App.ResText("ChangeCM.CheckoutThisRevision"),
+                    IconKey = App.MenuIconKey("Icons.File.Checkout"),
+                    Command = new RelayCommand(() =>
+                    {
+                        var log = _repo.CreateLog($"Reset File to '{_commit.SHA}'");
+                        new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(change.Path, $"{_commit.SHA}");
+                        log.Complete();
+                    })
+                });
 
-                var resetToFirstParent = new MenuItem();
-                resetToFirstParent.Header = App.Text("ChangeCM.CheckoutFirstParentRevision");
-                resetToFirstParent.Icon = App.CreateMenuIcon("Icons.File.Checkout");
-                resetToFirstParent.IsEnabled = _commit.Parents.Count > 0;
-                resetToFirstParent.Click += (_, ev) =>
+                items.Add(new MenuItemModel
                 {
-                    var log = _repo.CreateLog($"Reset File to '{_commit.SHA}~1'");
-                    if (change.Index == Models.ChangeState.Renamed)
-                        new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(change.OriginalPath, $"{_commit.SHA}~1");
+                    Header = App.ResText("ChangeCM.CheckoutFirstParentRevision"),
+                    IconKey = App.MenuIconKey("Icons.File.Checkout"),
+                    IsEnabled = _commit.Parents.Count > 0,
+                    Command = new RelayCommand(() =>
+                    {
+                        var log = _repo.CreateLog($"Reset File to '{_commit.SHA}~1'");
+                        if (change.Index == Models.ChangeState.Renamed)
+                            new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(change.OriginalPath, $"{_commit.SHA}~1");
+                        new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(change.Path, $"{_commit.SHA}~1");
+                        log.Complete();
+                    })
+                });
 
-                    new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(change.Path, $"{_commit.SHA}~1");
-                    log.Complete();
-                    ev.Handled = true;
-                };
+                items.Add(MenuModel.Separator());
 
-                menu.Items.Add(resetToThisRevision);
-                menu.Items.Add(resetToFirstParent);
-                menu.Items.Add(new MenuItem { Header = "-" });
-
-                if (File.Exists(Path.Combine(fullPath)))
+                if (File.Exists(fullPath))
                     TryToAddContextMenuItemsForGitLFS(menu, change.Path);
             }
 
-            var copyPath = new MenuItem();
-            copyPath.Header = App.Text("CopyPath");
-            copyPath.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyPath.Click += (_, ev) =>
+            items.Add(new MenuItemModel
             {
-                App.CopyText(change.Path);
-                ev.Handled = true;
-            };
+                Header = App.ResText("CopyPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(change.Path))
+            });
 
-            var copyFullPath = new MenuItem();
-            copyFullPath.Header = App.Text("CopyFullPath");
-            copyFullPath.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyFullPath.Click += (_, e) =>
+            items.Add(new MenuItemModel
             {
-                App.CopyText(Native.OS.GetAbsPath(_repo.FullPath, change.Path));
-                e.Handled = true;
-            };
+                Header = App.ResText("CopyFullPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(Native.OS.GetAbsPath(_repo.FullPath, change.Path)))
+            });
 
-            menu.Items.Add(copyPath);
-            menu.Items.Add(copyFullPath);
             return menu;
         }
 
-        public ContextMenu CreateRevisionFileContextMenu(Models.Object file)
+        public ContextMenuModel CreateRevisionFileContextMenu(Models.Object file)
         {
-            var menu = new ContextMenu();
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
             var fullPath = Path.Combine(_repo.FullPath, file.Path);
-            var explore = new MenuItem();
-            explore.Header = App.Text("RevealFile");
-            explore.Icon = App.CreateMenuIcon("Icons.Explore");
-            explore.IsEnabled = File.Exists(fullPath);
-            explore.Click += (_, ev) =>
-            {
-                Native.OS.OpenInFileManager(fullPath, file.Type == Models.ObjectType.Blob);
-                ev.Handled = true;
-            };
 
-            var openWith = new MenuItem();
-            openWith.Header = App.Text("OpenWith");
-            openWith.Icon = App.CreateMenuIcon("Icons.OpenWith");
-            openWith.Click += (_, ev) =>
+            items.Add(new MenuItemModel
             {
-                var fileName = Path.GetFileNameWithoutExtension(fullPath) ?? "";
-                var fileExt = Path.GetExtension(fullPath) ?? "";
-                var tmpFile = Path.Combine(Path.GetTempPath(), $"{fileName}~{_commit.SHA.Substring(0, 10)}{fileExt}");
-                Commands.SaveRevisionFile.Run(_repo.FullPath, _commit.SHA, file.Path, tmpFile);
-                Native.OS.OpenWithDefaultEditor(tmpFile);
-                ev.Handled = true;
-            };
+                Header = App.ResText("RevealFile"),
+                IconKey = App.MenuIconKey("Icons.Explore"),
+                IsEnabled = File.Exists(fullPath),
+                Command = new RelayCommand(() => Native.OS.OpenInFileManager(fullPath, file.Type == Models.ObjectType.Blob))
+            });
 
-            var saveAs = new MenuItem();
-            saveAs.Header = App.Text("SaveAs");
-            saveAs.Icon = App.CreateMenuIcon("Icons.Save");
-            saveAs.IsEnabled = file.Type == Models.ObjectType.Blob;
-            saveAs.Click += async (_, ev) =>
+            items.Add(new MenuItemModel
             {
-                var storageProvider = App.GetStorageProvider();
-                if (storageProvider == null)
-                    return;
-
-                var options = new FolderPickerOpenOptions() { AllowMultiple = false };
-                try
+                Header = App.ResText("OpenWith"),
+                IconKey = App.MenuIconKey("Icons.OpenWith"),
+                Command = new RelayCommand(() =>
                 {
-                    var selected = await storageProvider.OpenFolderPickerAsync(options);
-                    if (selected.Count == 1)
+                    var fileName = Path.GetFileNameWithoutExtension(fullPath) ?? "";
+                    var fileExt = Path.GetExtension(fullPath) ?? "";
+                    var tmpFile = Path.Combine(Path.GetTempPath(), $"{fileName}~{_commit.SHA.Substring(0, 10)}{fileExt}");
+                    Commands.SaveRevisionFile.Run(_repo.FullPath, _commit.SHA, file.Path, tmpFile);
+                    Native.OS.OpenWithDefaultEditor(tmpFile);
+                })
+            });
+
+            items.Add(new MenuItemModel
+            {
+                Header = App.ResText("SaveAs"),
+                IconKey = App.MenuIconKey("Icons.Save"),
+                IsEnabled = file.Type == Models.ObjectType.Blob,
+                Command = new RelayCommand(async () =>
+                {
+                    var storageProvider = App.GetStorageProvider();
+                    if (storageProvider == null)
+                        return;
+                    var options = new FolderPickerOpenOptions { AllowMultiple = false };
+                    try
                     {
-                        var saveTo = Path.Combine(selected[0].Path.LocalPath, Path.GetFileName(file.Path));
-                        Commands.SaveRevisionFile.Run(_repo.FullPath, _commit.SHA, file.Path, saveTo);
+                        var selected = await storageProvider.OpenFolderPickerAsync(options);
+                        if (selected.Count == 1)
+                        {
+                            var saveTo = Path.Combine(selected[0].Path.LocalPath, Path.GetFileName(file.Path));
+                            Commands.SaveRevisionFile.Run(_repo.FullPath, _commit.SHA, file.Path, saveTo);
+                        }
                     }
-                }
-                catch (Exception e)
+                    catch (Exception e)
+                    {
+                        App.RaiseException(_repo.FullPath, $"Failed to save file: {e.Message}");
+                    }
+                })
+            });
+
+            items.Add(MenuModel.Separator());
+
+            items.Add(new MenuItemModel
+            {
+                Header = App.ResText("FileHistory"),
+                IconKey = App.MenuIconKey("Icons.Histories"),
+                Command = new RelayCommand(() => App.ShowWindow(new FileHistories(_repo, file.Path, _commit.SHA), false))
+            });
+
+            items.Add(new MenuItemModel
+            {
+                Header = App.ResText("Blame"),
+                IconKey = App.MenuIconKey("Icons.Blame"),
+                IsEnabled = file.Type == Models.ObjectType.Blob,
+                Command = new RelayCommand(() => App.ShowWindow(new Blame(_repo.FullPath, file.Path, _commit.SHA), false))
+            });
+
+            items.Add(MenuModel.Separator());
+
+            items.Add(new MenuItemModel
+            {
+                Header = App.ResText("ChangeCM.CheckoutThisRevision"),
+                IconKey = App.MenuIconKey("Icons.File.Checkout"),
+                IsEnabled = File.Exists(fullPath),
+                Command = new RelayCommand(() =>
                 {
-                    App.RaiseException(_repo.FullPath, $"Failed to save file: {e.Message}");
-                }
+                    var log = _repo.CreateLog($"Reset File to '{_commit.SHA}'");
+                    new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(file.Path, $"{_commit.SHA}");
+                    log.Complete();
+                })
+            });
 
-                ev.Handled = true;
-            };
-
-            menu.Items.Add(explore);
-            menu.Items.Add(openWith);
-            menu.Items.Add(saveAs);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-
-            var history = new MenuItem();
-            history.Header = App.Text("FileHistory");
-            history.Icon = App.CreateMenuIcon("Icons.Histories");
-            history.Click += (_, ev) =>
-            {
-                App.ShowWindow(new FileHistories(_repo, file.Path, _commit.SHA), false);
-                ev.Handled = true;
-            };
-
-            var blame = new MenuItem();
-            blame.Header = App.Text("Blame");
-            blame.Icon = App.CreateMenuIcon("Icons.Blame");
-            blame.IsEnabled = file.Type == Models.ObjectType.Blob;
-            blame.Click += (_, ev) =>
-            {
-                App.ShowWindow(new Blame(_repo.FullPath, file.Path, _commit.SHA), false);
-                ev.Handled = true;
-            };
-
-            menu.Items.Add(history);
-            menu.Items.Add(blame);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-
-            var resetToThisRevision = new MenuItem();
-            resetToThisRevision.Header = App.Text("ChangeCM.CheckoutThisRevision");
-            resetToThisRevision.Icon = App.CreateMenuIcon("Icons.File.Checkout");
-            resetToThisRevision.IsEnabled = File.Exists(fullPath);
-            resetToThisRevision.Click += (_, ev) =>
-            {
-                var log = _repo.CreateLog($"Reset File to '{_commit.SHA}'");
-                new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(file.Path, $"{_commit.SHA}");
-                log.Complete();
-                ev.Handled = true;
-            };
-
-            var resetToFirstParent = new MenuItem();
-            resetToFirstParent.Header = App.Text("ChangeCM.CheckoutFirstParentRevision");
-            resetToFirstParent.Icon = App.CreateMenuIcon("Icons.File.Checkout");
             var fileInChanges = _changes.Find(x => x.Path == file.Path);
             var fileIndex = fileInChanges?.Index;
-            resetToFirstParent.IsEnabled = _commit.Parents.Count > 0 && fileIndex != Models.ChangeState.Renamed;
-            resetToFirstParent.Click += (_, ev) =>
+            items.Add(new MenuItemModel
             {
-                var log = _repo.CreateLog($"Reset File to '{_commit.SHA}~1'");
-                new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(file.Path, $"{_commit.SHA}~1");
-                log.Complete();
-                ev.Handled = true;
-            };
+                Header = App.ResText("ChangeCM.CheckoutFirstParentRevision"),
+                IconKey = App.MenuIconKey("Icons.File.Checkout"),
+                IsEnabled = _commit.Parents.Count > 0 && fileIndex != Models.ChangeState.Renamed,
+                Command = new RelayCommand(() =>
+                {
+                    var log = _repo.CreateLog($"Reset File to '{_commit.SHA}~1'");
+                    new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(file.Path, $"{_commit.SHA}~1");
+                    log.Complete();
+                })
+            });
 
-            menu.Items.Add(resetToThisRevision);
-            menu.Items.Add(resetToFirstParent);
-            menu.Items.Add(new MenuItem() { Header = "-" });
+            items.Add(MenuModel.Separator());
 
-            if (File.Exists(Path.Combine(fullPath)))
+            if (File.Exists(fullPath))
                 TryToAddContextMenuItemsForGitLFS(menu, file.Path);
 
-            var copyPath = new MenuItem();
-            copyPath.Header = App.Text("CopyPath");
-            copyPath.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyPath.Click += (_, ev) =>
+            items.Add(new MenuItemModel
             {
-                App.CopyText(file.Path);
-                ev.Handled = true;
-            };
+                Header = App.ResText("CopyPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(file.Path))
+            });
 
-            var copyFullPath = new MenuItem();
-            copyFullPath.Header = App.Text("CopyFullPath");
-            copyFullPath.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyFullPath.Click += (_, e) =>
+            items.Add(new MenuItemModel
             {
-                App.CopyText(Native.OS.GetAbsPath(_repo.FullPath, file.Path));
-                e.Handled = true;
-            };
+                Header = App.ResText("CopyFullPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(Native.OS.GetAbsPath(_repo.FullPath, file.Path)))
+            });
 
-            menu.Items.Add(copyPath);
-            menu.Items.Add(copyFullPath);
             return menu;
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -256,7 +256,7 @@ namespace SourceGit.ViewModels
             }
         }
 
-        public ContextMenu MakeContextMenu(ListBox list)
+        public ContextMenuModel MakeContextMenu(ListBox list)
         {
             var current = _repo.CurrentBranch;
             if (current == null || list.SelectedItems == null)
@@ -289,116 +289,116 @@ namespace SourceGit.ViewModels
                 // Sort selected commits in order.
                 selected.Sort((l, r) => _commits.IndexOf(r) - _commits.IndexOf(l));
 
-                var multipleMenu = new ContextMenu();
+                var multipleMenu = new ContextMenuModel();
+                var items = multipleMenu.Items;
 
                 if (!_repo.IsBare)
                 {
                     if (canCherryPick)
                     {
-                        var cherryPickMultiple = new MenuItem();
-                        cherryPickMultiple.Header = App.Text("CommitCM.CherryPickMultiple");
-                        cherryPickMultiple.Icon = App.CreateMenuIcon("Icons.CherryPick");
-                        cherryPickMultiple.Click += (_, e) =>
+                        items.Add(new MenuItemModel
                         {
-                            if (_repo.CanCreatePopup())
-                                _repo.ShowPopup(new CherryPick(_repo, selected));
-                            e.Handled = true;
-                        };
-                        multipleMenu.Items.Add(cherryPickMultiple);
+                            Header = App.ResText("CommitCM.CherryPickMultiple"),
+                            IconKey = App.MenuIconKey("Icons.CherryPick"),
+                            Command = new RelayCommand(() =>
+                            {
+                                if (_repo.CanCreatePopup())
+                                    _repo.ShowPopup(new CherryPick(_repo, selected));
+                            })
+                        });
                     }
 
                     if (canMerge)
                     {
-                        var mergeMultiple = new MenuItem();
-                        mergeMultiple.Header = App.Text("CommitCM.MergeMultiple");
-                        mergeMultiple.Icon = App.CreateMenuIcon("Icons.Merge");
-                        mergeMultiple.Click += (_, e) =>
+                        items.Add(new MenuItemModel
                         {
-                            if (_repo.CanCreatePopup())
-                                _repo.ShowPopup(new MergeMultiple(_repo, selected));
-                            e.Handled = true;
-                        };
-                        multipleMenu.Items.Add(mergeMultiple);
+                            Header = App.ResText("CommitCM.MergeMultiple"),
+                            IconKey = App.MenuIconKey("Icons.Merge"),
+                            Command = new RelayCommand(() =>
+                            {
+                                if (_repo.CanCreatePopup())
+                                    _repo.ShowPopup(new MergeMultiple(_repo, selected));
+                            })
+                        });
                     }
 
                     if (canCherryPick || canMerge)
-                        multipleMenu.Items.Add(new MenuItem() { Header = "-" });
+                        items.Add(MenuModel.Separator());
                 }
 
-                var saveToPatchMultiple = new MenuItem();
-                saveToPatchMultiple.Icon = App.CreateMenuIcon("Icons.Diff");
-                saveToPatchMultiple.Header = App.Text("CommitCM.SaveAsPatch");
-                saveToPatchMultiple.Click += async (_, e) =>
+                items.Add(new MenuItemModel
                 {
-                    var storageProvider = App.GetStorageProvider();
-                    if (storageProvider == null)
-                        return;
-
-                    var options = new FolderPickerOpenOptions() { AllowMultiple = false };
-                    var log = null as CommandLog;
-                    try
+                    Header = App.ResText("CommitCM.SaveAsPatch"),
+                    IconKey = App.MenuIconKey("Icons.Diff"),
+                    Command = new RelayCommand(async () =>
                     {
-                        var picker = await storageProvider.OpenFolderPickerAsync(options);
-                        if (picker.Count == 1)
+                        var storageProvider = App.GetStorageProvider();
+                        if (storageProvider == null)
+                            return;
+
+                        var options = new FolderPickerOpenOptions { AllowMultiple = false };
+                        CommandLog log = null;
+                        try
                         {
-                            log = _repo.CreateLog("Save as Patch");
-
-                            var succ = false;
-                            for (var i = 0; i < selected.Count; i++)
+                            var picker = await storageProvider.OpenFolderPickerAsync(options);
+                            if (picker.Count == 1)
                             {
-                                var saveTo = GetPatchFileName(picker[0].Path.LocalPath, selected[i], i);
-                                succ = await Task.Run(() => new Commands.FormatPatch(_repo.FullPath, selected[i].SHA, saveTo).Use(log).Exec());
-                                if (!succ)
-                                    break;
+                                log = _repo.CreateLog("Save as Patch");
+                                var succ = false;
+                                for (var i = 0; i < selected.Count; i++)
+                                {
+                                    var saveTo = GetPatchFileName(picker[0].Path.LocalPath, selected[i], i);
+                                    succ = await Task.Run(() => new Commands.FormatPatch(_repo.FullPath, selected[i].SHA, saveTo).Use(log).Exec());
+                                    if (!succ)
+                                        break;
+                                }
+                                if (succ)
+                                    App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
                             }
-
-                            if (succ)
-                                App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
                         }
-                    }
-                    catch (Exception exception)
+                        catch (Exception exception)
+                        {
+                            App.RaiseException(_repo.FullPath, $"Failed to save as patch: {exception.Message}");
+                        }
+                        log?.Complete();
+                    })
+                });
+                items.Add(MenuModel.Separator());
+
+                var copyMultipleSHAs = new MenuItemModel
+                {
+                    Header = App.ResText("CommitCM.CopySHA"),
+                    IconKey = App.MenuIconKey("Icons.Fingerprint"),
+                    Command = new RelayCommand(() =>
                     {
-                        App.RaiseException(_repo.FullPath, $"Failed to save as patch: {exception.Message}");
-                    }
-
-                    log?.Complete();
-                    e.Handled = true;
+                        var builder = new StringBuilder();
+                        foreach (var c in selected)
+                            builder.AppendLine(c.SHA);
+                        App.CopyText(builder.ToString());
+                    })
                 };
-                multipleMenu.Items.Add(saveToPatchMultiple);
-                multipleMenu.Items.Add(new MenuItem() { Header = "-" });
 
-                var copyMultipleSHAs = new MenuItem();
-                copyMultipleSHAs.Header = App.Text("CommitCM.CopySHA");
-                copyMultipleSHAs.Icon = App.CreateMenuIcon("Icons.Fingerprint");
-                copyMultipleSHAs.Click += (_, e) =>
+                var copyMultipleInfo = new MenuItemModel
                 {
-                    var builder = new StringBuilder();
-                    foreach (var c in selected)
-                        builder.AppendLine(c.SHA);
-
-                    App.CopyText(builder.ToString());
-                    e.Handled = true;
+                    Header = App.ResText("CommitCM.CopyInfo"),
+                    IconKey = App.MenuIconKey("Icons.Info"),
+                    Command = new RelayCommand(() =>
+                    {
+                        var builder = new StringBuilder();
+                        foreach (var c in selected)
+                            builder.AppendLine($"{c.SHA.Substring(0, 10)} - {c.Subject}");
+                        App.CopyText(builder.ToString());
+                    })
                 };
 
-                var copyMultipleInfo = new MenuItem();
-                copyMultipleInfo.Header = App.Text("CommitCM.CopyInfo");
-                copyMultipleInfo.Icon = App.CreateMenuIcon("Icons.Info");
-                copyMultipleInfo.Click += (_, e) =>
+                var copyMultiple = new MenuModel
                 {
-                    var builder = new StringBuilder();
-                    foreach (var c in selected)
-                        builder.AppendLine($"{c.SHA.Substring(0, 10)} - {c.Subject}");
-
-                    App.CopyText(builder.ToString());
-                    e.Handled = true;
+                    Header = App.ResText("Copy"),
+                    IconKey = App.MenuIconKey("Icons.Copy")
                 };
-
-                var copyMultiple = new MenuItem();
-                copyMultiple.Header = App.Text("Copy");
-                copyMultiple.Icon = App.CreateMenuIcon("Icons.Copy");
                 copyMultiple.Items.Add(copyMultipleSHAs);
                 copyMultiple.Items.Add(copyMultipleInfo);
-                multipleMenu.Items.Add(copyMultiple);
+                items.Add(copyMultiple);
 
                 return multipleMenu;
             }
