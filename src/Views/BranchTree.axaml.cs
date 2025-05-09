@@ -403,7 +403,8 @@ namespace SourceGit.Views
 
             if (selected.Count == 1 && selected[0] is ViewModels.BranchTreeNode { Backend: Models.Remote remote })
             {
-                var menu = repo.CreateContextMenuForRemote(remote);
+                var menuModel = repo.CreateContextMenuForRemote(remote);
+                var menu = menuModel.CreateContextMenuFromModel();
                 menu?.Open(this);
                 return;
             }
@@ -418,9 +419,10 @@ namespace SourceGit.Views
             if (branches.Count == 1)
             {
                 var branch = branches[0];
-                var menu = branch.IsLocal ?
+                var menuModel = branch.IsLocal ?
                     repo.CreateContextMenuForLocalBranch(branch) :
                     repo.CreateContextMenuForRemoteBranch(branch);
+                var menu = menuModel.CreateContextMenuFromModel();
                 menu?.Open(this);
             }
             else if (branches.Find(x => x.IsCurrent) == null)

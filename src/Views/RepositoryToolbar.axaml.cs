@@ -113,7 +113,8 @@ namespace SourceGit.Views
         {
             if (DataContext is ViewModels.Repository repo && sender is Control control)
             {
-                var menu = repo.CreateContextMenuForGitLFS();
+                var menuModel = repo.CreateContextMenuForGitLFS();
+                var menu = menuModel.CreateContextMenuFromModel();
                 menu?.Open(control);
             }
 
@@ -139,7 +140,8 @@ namespace SourceGit.Views
         {
             if (DataContext is ViewModels.Repository repo && sender is Control control)
             {
-                var menu = repo.CreateContextMenuForCustomAction();
+                var menuModel = repo.CreateContextMenuForCustomAction();
+                var menu = menuModel.CreateContextMenuFromModel();
                 menu?.Open(control);
             }
 
