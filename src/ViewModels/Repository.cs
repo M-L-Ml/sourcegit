@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -2026,78 +2026,54 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForTag(Models.Tag tag)
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForTag
+        public ContextMenuModel CreateContextMenuForTag(Models.Tag tag)
         {
-            var createBranch = new MenuItem();
-            createBranch.Icon = App.CreateMenuIcon("Icons.Branch.Add");
-            createBranch.Header = App.Text("CreateBranch");
-            createBranch.Click += (_, ev) =>
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
+            // [MenuItemModel] usage: Header via App.Text, IconKey via App.MenuIconKey, Command via RelayCommand
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new CreateBranch(this, tag));
-                ev.Handled = true;
-            };
-
-            var pushTag = new MenuItem();
-            pushTag.Header = App.Text("TagCM.Push", tag.Name);
-            pushTag.Icon = App.CreateMenuIcon("Icons.Push");
-            pushTag.IsEnabled = _remotes.Count > 0;
-            pushTag.Click += (_, ev) =>
+                Header = App.Text("CreateBranch"),
+                IconKey = App.MenuIconKey("Icons.Branch.Add"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateBranch(this, tag)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new PushTag(this, tag));
-                ev.Handled = true;
-            };
-
-            var deleteTag = new MenuItem();
-            deleteTag.Header = App.Text("TagCM.Delete", tag.Name);
-            deleteTag.Icon = App.CreateMenuIcon("Icons.Clear");
-            deleteTag.Click += (_, ev) =>
+                Header = App.Text("TagCM.Push", tag.Name),
+                IconKey = App.MenuIconKey("Icons.Push"),
+                IsEnabled = _remotes.Count > 0,
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new PushTag(this, tag)); })
+            });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new DeleteTag(this, tag));
-                ev.Handled = true;
-            };
-
-            var archive = new MenuItem();
-            archive.Icon = App.CreateMenuIcon("Icons.Archive");
-            archive.Header = App.Text("Archive");
-            archive.Click += (_, ev) =>
+                Header = App.Text("TagCM.Delete", tag.Name),
+                IconKey = App.MenuIconKey("Icons.Clear"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteTag(this, tag)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                if (CanCreatePopup())
-                    ShowPopup(new Archive(this, tag));
-                ev.Handled = true;
-            };
-
-            var copy = new MenuItem();
-            copy.Header = App.Text("TagCM.Copy");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, ev) =>
+                Header = App.Text("Archive"),
+                IconKey = App.MenuIconKey("Icons.Archive"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Archive(this, tag)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel
             {
-                App.CopyText(tag.Name);
-                ev.Handled = true;
-            };
-
-            var copyMessage = new MenuItem();
-            copyMessage.Header = App.Text("TagCM.CopyMessage");
-            copyMessage.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyMessage.IsEnabled = !string.IsNullOrEmpty(tag.Message);
-            copyMessage.Click += (_, ev) =>
+                Header = App.Text("TagCM.Copy"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(tag.Name))
+            });
+            items.Add(new MenuItemModel
             {
-                App.CopyText(tag.Message);
-                ev.Handled = true;
-            };
-
-            var menu = new ContextMenu();
-            menu.Items.Add(createBranch);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(pushTag);
-            menu.Items.Add(deleteTag);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(archive);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(copy);
-            menu.Items.Add(copyMessage);
+                Header = App.Text("TagCM.CopyMessage"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                IsEnabled = !string.IsNullOrEmpty(tag.Message),
+                Command = new RelayCommand(() => App.CopyText(tag.Message))
+            });
             return menu;
         }
 
@@ -2195,106 +2171,79 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForSubmodule(string submodule)
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForSubmodule
+        public ContextMenuModel CreateContextMenuForSubmodule(string submodule)
         {
-            var open = new MenuItem();
-            open.Header = App.Text("Submodule.Open");
-            open.Icon = App.CreateMenuIcon("Icons.Folder.Open");
-            open.Click += (_, ev) =>
-            {
-                OpenSubmodule(submodule);
-                ev.Handled = true;
-            };
-
-            var copy = new MenuItem();
-            copy.Header = App.Text("Submodule.CopyPath");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, ev) =>
-            {
-                App.CopyText(submodule);
-                ev.Handled = true;
-            };
-
-            var rm = new MenuItem();
-            rm.Header = App.Text("Submodule.Remove");
-            rm.Icon = App.CreateMenuIcon("Icons.Clear");
-            rm.Click += (_, ev) =>
-            {
-                if (CanCreatePopup())
-                    ShowPopup(new DeleteSubmodule(this, submodule));
-                ev.Handled = true;
-            };
-
-            var menu = new ContextMenu();
-            menu.Items.Add(open);
-            menu.Items.Add(copy);
-            menu.Items.Add(rm);
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
+            items.Add(new MenuItemModel {
+                Header = App.Text("Submodule.Open"),
+                IconKey = App.MenuIconKey("Icons.Folder.Open"),
+                Command = new RelayCommand(() => OpenSubmodule(submodule))
+            });
+            items.Add(new MenuItemModel {
+                Header = App.Text("Submodule.CopyPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(submodule))
+            });
+            items.Add(new MenuItemModel {
+                Header = App.Text("Submodule.Remove"),
+                IconKey = App.MenuIconKey("Icons.Clear"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteSubmodule(this, submodule)); })
+            });
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForWorktree(Models.Worktree worktree)
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForWorktree
+        public ContextMenuModel CreateContextMenuForWorktree(Models.Worktree worktree)
         {
-            var menu = new ContextMenu();
-
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
             if (worktree.IsLocked)
             {
-                var unlock = new MenuItem();
-                unlock.Header = App.Text("Worktree.Unlock");
-                unlock.Icon = App.CreateMenuIcon("Icons.Unlock");
-                unlock.Click += (_, ev) =>
-                {
-                    SetWatcherEnabled(false);
-                    var log = CreateLog("Unlock Worktree");
-                    var succ = new Commands.Worktree(_fullpath).Use(log).Unlock(worktree.FullPath);
-                    if (succ)
-                        worktree.IsLocked = false;
-                    log.Complete();
-                    SetWatcherEnabled(true);
-                    ev.Handled = true;
-                };
-                menu.Items.Add(unlock);
+                items.Add(new MenuItemModel {
+                    Header = App.Text("Worktree.Unlock"),
+                    IconKey = App.MenuIconKey("Icons.Unlock"),
+                    Command = new RelayCommand(() => {
+                        SetWatcherEnabled(false);
+                        var log = CreateLog("Unlock Worktree");
+                        var succ = new Commands.Worktree(_fullpath).Use(log).Unlock(worktree.FullPath);
+                        if (succ)
+                            worktree.IsLocked = false;
+                        log.Complete();
+                        SetWatcherEnabled(true);
+                    })
+                });
             }
             else
             {
-                var loc = new MenuItem();
-                loc.Header = App.Text("Worktree.Lock");
-                loc.Icon = App.CreateMenuIcon("Icons.Lock");
-                loc.Click += (_, ev) =>
-                {
-                    SetWatcherEnabled(false);
-                    var log = CreateLog("Lock Worktree");
-                    var succ = new Commands.Worktree(_fullpath).Use(log).Lock(worktree.FullPath);
-                    if (succ)
-                        worktree.IsLocked = true;
-                    log.Complete();
-                    SetWatcherEnabled(true);
-                    ev.Handled = true;
-                };
-                menu.Items.Add(loc);
+                items.Add(new MenuItemModel {
+                    Header = App.Text("Worktree.Lock"),
+                    IconKey = App.MenuIconKey("Icons.Lock"),
+                    Command = new RelayCommand(() => {
+                        SetWatcherEnabled(false);
+                        var log = CreateLog("Lock Worktree");
+                        var succ = new Commands.Worktree(_fullpath).Use(log).Lock(worktree.FullPath);
+                        if (succ)
+                            worktree.IsLocked = true;
+                        log.Complete();
+                        SetWatcherEnabled(true);
+                    })
+                });
             }
-
-            var remove = new MenuItem();
-            remove.Header = App.Text("Worktree.Remove");
-            remove.Icon = App.CreateMenuIcon("Icons.Clear");
-            remove.Click += (_, ev) =>
-            {
-                if (CanCreatePopup())
-                    ShowPopup(new RemoveWorktree(this, worktree));
-                ev.Handled = true;
-            };
-            menu.Items.Add(remove);
-
-            var copy = new MenuItem();
-            copy.Header = App.Text("Worktree.CopyPath");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, e) =>
-            {
-                App.CopyText(worktree.FullPath);
-                e.Handled = true;
-            };
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(copy);
-
+            items.Add(new MenuItemModel {
+                Header = App.Text("Worktree.Remove"),
+                IconKey = App.MenuIconKey("Icons.Clear"),
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new RemoveWorktree(this, worktree)); })
+            });
+            items.Add(new MenuItemModel { Header = "-" });
+            items.Add(new MenuItemModel {
+                Header = App.Text("Worktree.CopyPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(worktree.FullPath))
+            });
             return menu;
         }
 
