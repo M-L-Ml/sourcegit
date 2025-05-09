@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -186,107 +186,78 @@ namespace SourceGit.ViewModels
             Refresh();
         }
 
-        public ContextMenu CreateContextMenu(RepositoryNode node)
+        public ContextMenuModel CreateContextMenuModel(RepositoryNode node)
         {
-            var menu = new ContextMenu();
+            var menu = new ContextMenuModel();
 
             if (!node.IsRepository && node.SubNodes.Count > 0)
             {
-                var openAll = new MenuItem();
-                openAll.Header = App.Text("Welcome.OpenAllInNode");
-                openAll.Icon = App.CreateMenuIcon("Icons.Folder.Open");
-                openAll.Click += (_, e) =>
+                menu.Items.Add(new MenuItemModel
                 {
-                    OpenAllInNode(App.GetLauncer(), node);
-                    e.Handled = true;
-                };
-
-                menu.Items.Add(openAll);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                    Header = App.ResText("Welcome.OpenAllInNode"),
+                    IconKey = App.MenuIconKey("Icons.Folder.Open"),
+                    Command = new RelayCommand(() => OpenAllInNode(App.GetLauncer(), node))
+                });
+                menu.Items.Add(MenuModel.Separator());
             }
 
             if (node.IsRepository)
             {
-                var open = new MenuItem();
-                open.Header = App.Text("Welcome.OpenOrInit");
-                open.Icon = App.CreateMenuIcon("Icons.Folder.Open");
-                open.Click += (_, e) =>
+                menu.Items.Add(new MenuItemModel
                 {
-                    App.GetLauncer().OpenRepositoryInTab(node, null);
-                    e.Handled = true;
-                };
-
-                var explore = new MenuItem();
-                explore.Header = App.Text("Repository.Explore");
-                explore.Icon = App.CreateMenuIcon("Icons.Explore");
-                explore.Click += (_, e) =>
+                    Header = App.ResText("Welcome.OpenOrInit"),
+                    IconKey = App.MenuIconKey("Icons.Folder.Open"),
+                    Command = new RelayCommand(() => App.GetLauncer().OpenRepositoryInTab(node, null))
+                });
+                menu.Items.Add(MenuModel.Separator());
+                menu.Items.Add(new MenuItemModel
                 {
-                    node.OpenInFileManager();
-                    e.Handled = true;
-                };
-
-                var terminal = new MenuItem();
-                terminal.Header = App.Text("Repository.Terminal");
-                terminal.Icon = App.CreateMenuIcon("Icons.Terminal");
-                terminal.Click += (_, e) =>
+                    Header = App.ResText("Repository.Explore"),
+                    IconKey = App.MenuIconKey("Icons.Explore"),
+                    Command = new RelayCommand(() => node.OpenInFileManager())
+                });
+                menu.Items.Add(new MenuItemModel
                 {
-                    node.OpenTerminal();
-                    e.Handled = true;
-                };
-
-                menu.Items.Add(open);
-                menu.Items.Add(new MenuItem() { Header = "-" });
-                menu.Items.Add(explore);
-                menu.Items.Add(terminal);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                    Header = App.ResText("Repository.Terminal"),
+                    IconKey = App.MenuIconKey("Icons.Terminal"),
+                    Command = new RelayCommand(() => node.OpenTerminal())
+                });
+                menu.Items.Add(MenuModel.Separator());
             }
             else
             {
-                var addSubFolder = new MenuItem();
-                addSubFolder.Header = App.Text("Welcome.AddSubFolder");
-                addSubFolder.Icon = App.CreateMenuIcon("Icons.Folder.Add");
-                addSubFolder.Click += (_, e) =>
+                menu.Items.Add(new MenuItemModel
                 {
-                    node.AddSubFolder();
-                    e.Handled = true;
-                };
-                menu.Items.Add(addSubFolder);
+                    Header = App.ResText("Welcome.AddSubFolder"),
+                    IconKey = App.MenuIconKey("Icons.Folder.Add"),
+                    Command = new RelayCommand(() => node.AddSubFolder())
+                });
             }
 
-            var edit = new MenuItem();
-            edit.Header = App.Text("Welcome.Edit");
-            edit.Icon = App.CreateMenuIcon("Icons.Edit");
-            edit.Click += (_, e) =>
+            menu.Items.Add(new MenuItemModel
             {
-                node.Edit();
-                e.Handled = true;
-            };
-
-            var move = new MenuItem();
-            move.Header = App.Text("Welcome.Move");
-            move.Icon = App.CreateMenuIcon("Icons.MoveToAnotherGroup");
-            move.Click += (_, e) =>
+                Header = App.ResText("Welcome.Edit"),
+                IconKey = App.MenuIconKey("Icons.Edit"),
+                Command = new RelayCommand(() => node.Edit())
+            });
+            menu.Items.Add(new MenuItemModel
             {
-                var activePage = App.GetLauncer().ActivePage;
-                if (activePage != null && activePage.CanCreatePopup())
-                    activePage.Popup = new MoveRepositoryNode(node);
-
-                e.Handled = true;
-            };
-
-            var delete = new MenuItem();
-            delete.Header = App.Text("Welcome.Delete");
-            delete.Icon = App.CreateMenuIcon("Icons.Clear");
-            delete.Click += (_, e) =>
+                Header = App.ResText("Welcome.Move"),
+                IconKey = App.MenuIconKey("Icons.MoveToAnotherGroup"),
+                Command = new RelayCommand(() =>
+                {
+                    var activePage = App.GetLauncer().ActivePage;
+                    if (activePage != null && activePage.CanCreatePopup())
+                        activePage.Popup = new MoveRepositoryNode(node);
+                })
+            });
+            menu.Items.Add(MenuModel.Separator());
+            menu.Items.Add(new MenuItemModel
             {
-                node.Delete();
-                e.Handled = true;
-            };
-
-            menu.Items.Add(edit);
-            menu.Items.Add(move);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-            menu.Items.Add(delete);
+                Header = App.ResText("Welcome.Delete"),
+                IconKey = App.MenuIconKey("Icons.Clear"),
+                Command = new RelayCommand(() => node.Delete())
+            });
 
             return menu;
         }
