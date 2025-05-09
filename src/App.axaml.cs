@@ -669,6 +669,8 @@ namespace SourceGit
             });
         }
 
+        public IClassicDesktopStyleApplicationLifetime? DesktopAppLifetime => ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+
         private void ShowSelfUpdateResult(object data)
         {
             Dispatcher.UIThread.Post(() =>
