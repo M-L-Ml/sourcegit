@@ -17,6 +17,7 @@ using Native = SourceGit.Native;
 using Avalonia.Data.Converters;
 using System.Globalization;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SourceGit.ViewModels
 {
@@ -65,7 +66,7 @@ namespace SourceGit.ViewModels
 
         public static async Task CopyText(string data)
         {
-            if (GetDesktopApp(out var desktop))
+            if (GetCurrentDesktopAppLifetime(out var desktop))
             {
                 if (desktop.MainWindow?.Clipboard is { } clipboard)
                     await clipboard.SetTextAsync(data ?? "");
@@ -76,7 +77,7 @@ namespace SourceGit.ViewModels
 
         public static async Task<string> GetClipboardTextAsync()
         {
-            if (GetDesktopApp(out var desktop))
+            if (GetCurrentDesktopAppLifetime(out var desktop))
             {
                 if (desktop.MainWindow?.Clipboard is { } clipboard)
                 {
@@ -136,7 +137,7 @@ namespace SourceGit.ViewModels
 
         public static IStorageProvider GetStorageProvider()
         {
-            if (GetDesktopApp(out var desktop))
+            if (GetCurrentDesktopAppLifetime(out var desktop))
                 return desktop.MainWindow?.StorageProvider;
 
             return null;
@@ -153,7 +154,7 @@ namespace SourceGit.ViewModels
             return AppDyn.GetLauncherI();// Application.Current is SourceGit.App app ? app._launcher : null;
         }
 
-        public static bool GetDesktopApp(out IClassicDesktopStyleApplicationLifetime desktop)
+        public static bool GetCurrentDesktopAppLifetime(out IClassicDesktopStyleApplicationLifetime desktop)
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop1)
             {
@@ -164,8 +165,24 @@ namespace SourceGit.ViewModels
             desktop = null;
             return false;
         }
-        public static IClassicDesktopStyleApplicationLifetime GetDesktopApp()
-        => GetDesktopApp(out var d) ? d : throw new Exception("Desktop app not found");
+        [MaybeNull]
+        public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime
+        {
+            get
+            {
+                // Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+                if (GetCurrentDesktopAppLifetime(out var d))
+                {
+                     return d;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+       // public static IClassicDesktopStyleApplicationLifetime GetDesktopApp()
+       // => GetCurrentDesktopAppLifetime(out var d) ? d : throw new Exception("Desktop app not found");
 
         //public static void Quit(int exitCode)
         //{
@@ -173,7 +190,7 @@ namespace SourceGit.ViewModels
         //}
         public static void Quit(int exitCode)
         {
-            if (GetDesktopApp(out var desktop))
+            if (GetCurrentDesktopAppLifetime(out var desktop))
             {
                 desktop.MainWindow?.Close();
                 desktop.Shutdown(exitCode);

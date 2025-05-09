@@ -672,9 +672,9 @@ namespace SourceGit
        [MaybeNull]
         public  IClassicDesktopStyleApplicationLifetime DesktopAppLifetime =>
                 ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-       [MaybeNull]
-       public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime => 
-                Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        [MaybeNull]
+        public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime
+              =>ViewModels.App.CurrentDesktopAppLifetime;
 
         private void ShowSelfUpdateResult(object data)
         {

@@ -160,7 +160,7 @@ namespace SourceGit.Views.Services
 
         private static Window GetMainWindow()
         {
-            if (ViewModels.App.GetDesktopApp(out var desktop))
+            if (ViewModels.App.GetCurrentDesktopAppLifetime(out var desktop))
             {
                 return desktop.MainWindow;
             }
