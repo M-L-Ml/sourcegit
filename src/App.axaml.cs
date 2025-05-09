@@ -379,7 +379,7 @@ namespace SourceGit
 
         public void Quit(int exitCode)
         {
-            if (this is IClassicDesktopStyleApplicationLifetime desktop)
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow?.Close();
                 desktop.Shutdown(exitCode);
