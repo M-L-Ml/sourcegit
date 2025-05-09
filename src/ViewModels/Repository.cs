@@ -2391,36 +2391,31 @@ namespace SourceGit.ViewModels
             return null;
         }
 
-        private void TryToAddCustomActionsToBranchContextMenu(ContextMenu menu, Models.Branch branch)
-        {
-            var actions = GetCustomActions(Models.CustomActionScope.Branch);
-            if (actions.Count == 0)
-                return;
+        private void TryToAddCustomActionsToBranchContextMenu(ContextMenuModel menu, Models.Branch branch)
+{
+    var actions = GetCustomActions(Models.CustomActionScope.Branch);
+    if (actions.Count == 0)
+        return;
 
-            var custom = new MenuItem();
-            custom.Header = App.Text("BranchCM.CustomAction");
-            custom.Icon = App.CreateMenuIcon("Icons.Action");
+    menu.Items.Add(new MenuItemModel {
+        Header = App.Text("BranchCM.CustomAction"),
+        IconKey = App.MenuIconKey("Icons.Action"),
+        IsEnabled = false
+    });
 
-            foreach (var action in actions)
-            {
-                var dup = action;
-                var item = new MenuItem();
-                item.Icon = App.CreateMenuIcon("Icons.Action");
-                item.Header = dup.Name;
-                item.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                        ShowAndStartPopup(new ExecuteCustomAction(this, dup, branch));
+    foreach (var action in actions)
+    {
+        var dup = action;
+        menu.Items.Add(new MenuItemModel {
+            Header = dup.Name,
+            IconKey = App.MenuIconKey("Icons.Action"),
+            Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new ExecuteCustomAction(this, dup, branch)); })
+        });
+    }
 
-                    e.Handled = true;
-                };
+    menu.Items.Add(new MenuItemModel { Header = "-" });
+}
 
-                custom.Items.Add(item);
-            }
-
-            menu.Items.Add(custom);
-            menu.Items.Add(new MenuItem() { Header = "-" });
-        }
 
         private bool IsSearchingCommitsByFilePath()
         {
