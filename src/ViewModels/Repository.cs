@@ -2092,37 +2092,24 @@ namespace SourceGit.ViewModels
                 RemoteBranchTrees = builder.Remotes;
             });
 
-            var byNameAsc = new MenuItem();
-            byNameAsc.Header = App.Text("Repository.BranchSort.ByName");
-            if (mode == Models.BranchSortMode.Name)
-                byNameAsc.Icon = App.CreateMenuIcon("Icons.Check");
-            byNameAsc.Click += (_, ev) =>
-            {
-                if (mode != Models.BranchSortMode.Name)
-                    changeMode(Models.BranchSortMode.Name);
-
-                ev.Handled = true;
-            };
-
-            var byCommitterDate = new MenuItem();
-            byCommitterDate.Header = App.Text("Repository.BranchSort.ByCommitterDate");
-            if (mode == Models.BranchSortMode.CommitterDate)
-                byCommitterDate.Icon = App.CreateMenuIcon("Icons.Check");
-            byCommitterDate.Click += (_, ev) =>
-            {
-                if (mode != Models.BranchSortMode.CommitterDate)
-                    changeMode(Models.BranchSortMode.CommitterDate);
-
-                ev.Handled = true;
-            };
-
-            var menu = new ContextMenu();
-            menu.Items.Add(byNameAsc);
-            menu.Items.Add(byCommitterDate);
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
+            items.Add(new MenuItemModel {
+                Header = App.Text("Repository.BranchSort.ByName"),
+                IconKey = mode == Models.BranchSortMode.Name ? App.MenuIconKey("Icons.Check") : null,
+                Command = new RelayCommand(() => { if (mode != Models.BranchSortMode.Name) changeMode(Models.BranchSortMode.Name); })
+            });
+            items.Add(new MenuItemModel {
+                Header = App.Text("Repository.BranchSort.ByCommitterDate"),
+                IconKey = mode == Models.BranchSortMode.CommitterDate ? App.MenuIconKey("Icons.Check") : null,
+                Command = new RelayCommand(() => { if (mode != Models.BranchSortMode.CommitterDate) changeMode(Models.BranchSortMode.CommitterDate); })
+            });
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForTagSortMode()
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForTagSortMode
+        public ContextMenuModel CreateContextMenuForTagSortMode()
         {
             var mode = _settings.TagSortMode;
             var changeMode = new Action<Models.TagSortMode>((m) =>
@@ -2134,40 +2121,23 @@ namespace SourceGit.ViewModels
                 }
             });
 
-            var byCreatorDate = new MenuItem();
-            byCreatorDate.Header = App.Text("Repository.Tags.OrderByCreatorDate");
-            if (mode == Models.TagSortMode.CreatorDate)
-                byCreatorDate.Icon = App.CreateMenuIcon("Icons.Check");
-            byCreatorDate.Click += (_, ev) =>
-            {
-                changeMode(Models.TagSortMode.CreatorDate);
-                ev.Handled = true;
-            };
-
-            var byNameAsc = new MenuItem();
-            byNameAsc.Header = App.Text("Repository.Tags.OrderByNameAsc");
-            if (mode == Models.TagSortMode.NameInAscending)
-                byNameAsc.Icon = App.CreateMenuIcon("Icons.Check");
-            byNameAsc.Click += (_, ev) =>
-            {
-                changeMode(Models.TagSortMode.NameInAscending);
-                ev.Handled = true;
-            };
-
-            var byNameDes = new MenuItem();
-            byNameDes.Header = App.Text("Repository.Tags.OrderByNameDes");
-            if (mode == Models.TagSortMode.NameInDescending)
-                byNameDes.Icon = App.CreateMenuIcon("Icons.Check");
-            byNameDes.Click += (_, ev) =>
-            {
-                changeMode(Models.TagSortMode.NameInDescending);
-                ev.Handled = true;
-            };
-
-            var menu = new ContextMenu();
-            menu.Items.Add(byCreatorDate);
-            menu.Items.Add(byNameAsc);
-            menu.Items.Add(byNameDes);
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
+            items.Add(new MenuItemModel {
+                Header = App.Text("Repository.Tags.OrderByCreatorDate"),
+                IconKey = mode == Models.TagSortMode.CreatorDate ? App.MenuIconKey("Icons.Check") : null,
+                Command = new RelayCommand(() => changeMode(Models.TagSortMode.CreatorDate))
+            });
+            items.Add(new MenuItemModel {
+                Header = App.Text("Repository.Tags.OrderByNameAsc"),
+                IconKey = mode == Models.TagSortMode.NameInAscending ? App.MenuIconKey("Icons.Check") : null,
+                Command = new RelayCommand(() => changeMode(Models.TagSortMode.NameInAscending))
+            });
+            items.Add(new MenuItemModel {
+                Header = App.Text("Repository.Tags.OrderByNameDes"),
+                IconKey = mode == Models.TagSortMode.NameInDescending ? App.MenuIconKey("Icons.Check") : null,
+                Command = new RelayCommand(() => changeMode(Models.TagSortMode.NameInDescending))
+            });
             return menu;
         }
 
