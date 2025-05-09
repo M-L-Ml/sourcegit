@@ -164,9 +164,9 @@ namespace SourceGit.ViewModels
             desktop = null;
             return false;
         }
-        public static IClassicDesktopStyleApplicationLifetime  GetDesktopApp()
-        => GetDesktopApp(out var d)?d : throw new Exception("Desktop app not found");
-        
+        public static IClassicDesktopStyleApplicationLifetime GetDesktopApp()
+        => GetDesktopApp(out var d) ? d : throw new Exception("Desktop app not found");
+
         //public static void Quit(int exitCode)
         //{
         //    AppDyn.Quit(exitCode);
