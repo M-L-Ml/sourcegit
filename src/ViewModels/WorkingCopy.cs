@@ -560,12 +560,12 @@ namespace SourceGit.ViewModels
             DoCommit(false, true, false);
         }
 
-        public ContextMenu CreateContextMenuForUnstagedChanges()
+        public ContextMenuModel CreateContextMenuModelForUnstagedChanges()
         {
             if (_selectedUnstaged == null || _selectedUnstaged.Count == 0)
                 return null;
 
-            var menu = new ContextMenu();
+            var menu = new ContextMenuModel();
             if (_selectedUnstaged.Count == 1)
             {
                 var change = _selectedUnstaged[0];
@@ -1070,44 +1070,41 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForStagedChanges()
+        public ContextMenuModel CreateContextMenuModelForStagedChanges()
         {
             if (_selectedStaged == null || _selectedStaged.Count == 0)
                 return null;
 
-            var menu = new ContextMenu();
-
-            var ai = null as MenuItem;
+            var menu = new ContextMenuModel();
+            // AI menu item (if any)
+            MenuItemModel ai = null;
             var services = _repo.GetPreferedOpenAIServices();
             if (services.Count > 0)
             {
-                ai = new MenuItem();
-                ai.Icon = App.CreateMenuIcon("Icons.AIAssist");
-                ai.Header = App.Text("ChangeCM.GenerateCommitMessage");
-
+                ai = new MenuItemModel
+                {
+                    IconKey = App.MenuIconKey("Icons.AIAssist"),
+                    Header = App.ResText("ChangeCM.GenerateCommitMessage"),
+                    Items = new Avalonia.Collections.AvaloniaList<MenuItemModel>()
+                };
                 if (services.Count == 1)
                 {
-                    ai.Click += (_, e) =>
-                    {
-                        App.ShowWindow(new AIAssistant(_repo, services[0], _selectedStaged, t => CommitMessage = t), true);
-                        e.Handled = true;
-                    };
+                    ai.Command = new RelayCommand(() =>
+                        App.ShowWindow(new AIAssistant(_repo, services[0], _selectedStaged, t => CommitMessage = t), true)
+                    );
                 }
                 else
                 {
                     foreach (var service in services)
                     {
                         var dup = service;
-
-                        var item = new MenuItem();
-                        item.Header = service.Name;
-                        item.Click += (_, e) =>
+                        ai.Items.Add(new MenuItemModel
                         {
-                            App.ShowWindow(new AIAssistant(_repo, dup, _selectedStaged, t => CommitMessage = t), true);
-                            e.Handled = true;
-                        };
-
-                        ai.Items.Add(item);
+                            Header = service.Name,
+                            Command = new RelayCommand(() =>
+                                App.ShowWindow(new AIAssistant(_repo, dup, _selectedStaged, t => CommitMessage = t), true)
+                            )
+                        });
                     }
                 }
             }
