@@ -16,7 +16,7 @@ namespace SourceGit.ViewModels
         /// Should be set using App.ResText 
         /// should be displayed after using App.Text
         /// </summary>
-        public string Header { get; set; } 
+        public StringResource Header { get; set; } 
         /// <summary>
         /// Should be set using App.MenuIconKey
         /// should be displayed after using App.Icon
