@@ -1,5 +1,7 @@
 
 using Avalonia.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// This is POCO  
@@ -29,12 +31,15 @@ namespace SourceGit.ViewModels
        /// </summary>
         public ViewModelInfo ViewToDo { get; internal set; }
     }
-
-    public class ContextMenuModel : MenuItemModel
+    public class MenuModel : MenuItemModel
     {
         public AvaloniaList<MenuItemModel> Items { get; set; } = new ();
+        public IEnumerable<MenuModel> AllSubmenus => Items.OfType<MenuModel>();
    
-   
+    }
+    public class ContextMenuModel : MenuModel
+    {
+
     }
 
 

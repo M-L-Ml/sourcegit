@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -1463,176 +1463,139 @@ namespace SourceGit.ViewModels
         }
 
 
-        public ContextMenu CreateContextMenuForGitLFS()
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForGitLFS
+        public ContextMenuModel CreateContextMenuForGitLFS()
         {
-            var menu = new ContextMenu();
-            menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
-
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
             var lfs = new Commands.LFS(_fullpath);
             if (lfs.IsEnabled())
             {
-                var addPattern = new MenuItem();
-                addPattern.Header = App.Text("GitLFS.AddTrackPattern");
-                addPattern.Icon = App.CreateMenuIcon("Icons.File.Add");
-                addPattern.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                        ShowPopup(new LFSTrackCustomPattern(this));
+                items.Add(new MenuItemModel {
+                    Header = App.Text("GitLFS.AddTrackPattern"),
+                    IconKey = App.MenuIconKey("Icons.File.Add"),
+                    Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new LFSTrackCustomPattern(this)); })
+                });
+                items.Add(new MenuItemModel { Header = "-" });
 
-                    e.Handled = true;
-                };
-                menu.Items.Add(addPattern);
-                menu.Items.Add(new MenuItem() { Header = "-" });
-
-                var fetch = new MenuItem();
-                fetch.Header = App.Text("GitLFS.Fetch");
-                fetch.Icon = App.CreateMenuIcon("Icons.Fetch");
-                fetch.IsEnabled = _remotes.Count > 0;
-                fetch.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                    {
-                        if (_remotes.Count == 1)
-                            ShowAndStartPopup(new LFSFetch(this));
-                        else
-                            ShowPopup(new LFSFetch(this));
-                    }
-
-                    e.Handled = true;
-                };
-                menu.Items.Add(fetch);
-
-                var pull = new MenuItem();
-                pull.Header = App.Text("GitLFS.Pull");
-                pull.Icon = App.CreateMenuIcon("Icons.Pull");
-                pull.IsEnabled = _remotes.Count > 0;
-                pull.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                    {
-                        if (_remotes.Count == 1)
-                            ShowAndStartPopup(new LFSPull(this));
-                        else
-                            ShowPopup(new LFSPull(this));
-                    }
-
-                    e.Handled = true;
-                };
-                menu.Items.Add(pull);
-
-                var push = new MenuItem();
-                push.Header = App.Text("GitLFS.Push");
-                push.Icon = App.CreateMenuIcon("Icons.Push");
-                push.IsEnabled = _remotes.Count > 0;
-                push.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                    {
-                        if (_remotes.Count == 1)
-                            ShowAndStartPopup(new LFSPush(this));
-                        else
-                            ShowPopup(new LFSPush(this));
-                    }
-
-                    e.Handled = true;
-                };
-                menu.Items.Add(push);
-
-                var prune = new MenuItem();
-                prune.Header = App.Text("GitLFS.Prune");
-                prune.Icon = App.CreateMenuIcon("Icons.Clean");
-                prune.Click += (_, e) =>
-                {
-                    if (CanCreatePopup())
-                        ShowAndStartPopup(new LFSPrune(this));
-
-                    e.Handled = true;
-                };
-                menu.Items.Add(new MenuItem() { Header = "-" });
-                menu.Items.Add(prune);
-
-                var locks = new MenuItem();
-                locks.Header = App.Text("GitLFS.Locks");
-                locks.Icon = App.CreateMenuIcon("Icons.Lock");
-                locks.IsEnabled = _remotes.Count > 0;
+                items.Add(new MenuItemModel {
+                    Header = App.Text("GitLFS.Fetch"),
+                    IconKey = App.MenuIconKey("Icons.Fetch"),
+                    IsEnabled = _remotes.Count > 0,
+                    Command = new RelayCommand(() => {
+                        if (CanCreatePopup())
+                        {
+                            if (_remotes.Count == 1)
+                                ShowAndStartPopup(new LFSFetch(this));
+                            else
+                                ShowPopup(new LFSFetch(this));
+                        }
+                    })
+                });
+                items.Add(new MenuItemModel {
+                    Header = App.Text("GitLFS.Pull"),
+                    IconKey = App.MenuIconKey("Icons.Pull"),
+                    IsEnabled = _remotes.Count > 0,
+                    Command = new RelayCommand(() => {
+                        if (CanCreatePopup())
+                        {
+                            if (_remotes.Count == 1)
+                                ShowAndStartPopup(new LFSPull(this));
+                            else
+                                ShowPopup(new LFSPull(this));
+                        }
+                    })
+                });
+                items.Add(new MenuItemModel {
+                    Header = App.Text("GitLFS.Push"),
+                    IconKey = App.MenuIconKey("Icons.Push"),
+                    IsEnabled = _remotes.Count > 0,
+                    Command = new RelayCommand(() => {
+                        if (CanCreatePopup())
+                        {
+                            if (_remotes.Count == 1)
+                                ShowAndStartPopup(new LFSPush(this));
+                            else
+                                ShowPopup(new LFSPush(this));
+                        }
+                    })
+                });
+                items.Add(new MenuItemModel { Header = "-" });
+                items.Add(new MenuItemModel {
+                    Header = App.Text("GitLFS.Prune"),
+                    IconKey = App.MenuIconKey("Icons.Clean"),
+                    Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new LFSPrune(this)); })
+                });
+                // MenuItemModel does not support submenus; flatten the locks menu for now.
                 if (_remotes.Count == 1)
                 {
-                    locks.Click += (_, e) =>
-                    {
-                        App.ShowWindow(new LFSLocks(this, _remotes[0].Name), true);
-                        e.Handled = true;
-                    };
+                    items.Add(new MenuItemModel {
+                        Header = App.Text("GitLFS.Locks"),
+                        IconKey = App.MenuIconKey("Icons.Lock"),
+                        IsEnabled = _remotes.Count > 0,
+                        Command = new RelayCommand(() => App.ShowWindow(new LFSLocks(this, _remotes[0].Name), true))
+                    });
                 }
-                else
+                else if (_remotes.Count > 1)
                 {
+                    items.Add(new MenuItemModel {
+                        Header = App.Text("GitLFS.Locks"),
+                        IconKey = App.MenuIconKey("Icons.Lock"),
+                        IsEnabled = false // Header only, not clickable
+                    });
                     foreach (var remote in _remotes)
                     {
                         var remoteName = remote.Name;
-                        var lockRemote = new MenuItem();
-                        lockRemote.Header = remoteName;
-                        lockRemote.Click += (_, e) =>
-                        {
-                            App.ShowWindow(new LFSLocks(this, remoteName), true);
-                            e.Handled = true;
-                        };
-                        locks.Items.Add(lockRemote);
+                        items.Add(new MenuItemModel {
+                            Header = remoteName,
+                            IconKey = App.MenuIconKey("Icons.Lock"),
+                            Command = new RelayCommand(() => App.ShowWindow(new LFSLocks(this, remoteName), true))
+                        });
                     }
                 }
-
-                menu.Items.Add(new MenuItem() { Header = "-" });
-                menu.Items.Add(locks);
+                items.Add(new MenuItemModel { Header = "-" });
             }
             else
             {
-                var install = new MenuItem();
-                install.Header = App.Text("GitLFS.Install");
-                install.Icon = App.CreateMenuIcon("Icons.Init");
-                install.Click += (_, e) =>
-                {
-                    var log = CreateLog("Install LFS");
-                    var succ = new Commands.LFS(_fullpath).Install(log);
-                    if (succ)
-                        App.SendNotification(_fullpath, $"LFS enabled successfully!");
-
-                    log.Complete();
-                    e.Handled = true;
-                };
-                menu.Items.Add(install);
+                items.Add(new MenuItemModel {
+                    Header = App.Text("GitLFS.Install"),
+                    IconKey = App.MenuIconKey("Icons.Init"),
+                    Command = new RelayCommand(() => {
+                        var log = CreateLog("Install LFS");
+                        var succ = new Commands.LFS(_fullpath).Install(log);
+                        if (succ)
+                            App.SendNotification(_fullpath, $"LFS enabled successfully!");
+                        log.Complete();
+                    })
+                });
             }
-
             return menu;
         }
 
-        public ContextMenu CreateContextMenuForCustomAction()
+        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+        // Attribution: src/ViewModels/Repository.cs, Repository.CreateContextMenuForCustomAction
+        public ContextMenuModel CreateContextMenuForCustomAction()
         {
-            var menu = new ContextMenu();
-            menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
-
+            var menu = new ContextMenuModel();
+            var items = menu.Items;
             var actions = GetCustomActions(Models.CustomActionScope.Repository);
             if (actions.Count > 0)
             {
                 foreach (var action in actions)
                 {
                     var dup = action;
-                    var item = new MenuItem();
-                    item.Icon = App.CreateMenuIcon("Icons.Action");
-                    item.Header = dup.Name;
-                    item.Click += (_, e) =>
-                    {
-                        if (CanCreatePopup())
-                            ShowAndStartPopup(new ExecuteCustomAction(this, dup));
-
-                        e.Handled = true;
-                    };
-
-                    menu.Items.Add(item);
+                    items.Add(new MenuItemModel {
+                        Header = dup.Name,
+                        IconKey = App.MenuIconKey("Icons.Action"),
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new ExecuteCustomAction(this, dup)); })
+                    });
                 }
             }
             else
             {
-                menu.Items.Add(new MenuItem() { Header = App.Text("Repository.CustomActions.Empty") });
+                items.Add(new MenuItemModel { Header = App.Text("Repository.CustomActions.Empty") });
             }
-
             return menu;
         }
 
