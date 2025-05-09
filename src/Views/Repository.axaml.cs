@@ -183,7 +183,7 @@ namespace SourceGit.Views
         {
             if (sender is ListBox { SelectedItem: Models.Submodule submodule } grid && DataContext is ViewModels.Repository repo)
             {
-                var menu = repo.CreateContextMenuForSubmodule(submodule.Path);
+                var menu = repo.CreateContextMenuForSubmodule(submodule.Path).CreateContextMenuFromModel();
                 menu?.Open(grid);
             }
 
@@ -204,7 +204,7 @@ namespace SourceGit.Views
         {
             if (sender is ListBox { SelectedItem: Models.Worktree worktree } grid && DataContext is ViewModels.Repository repo)
             {
-                var menu = repo.CreateContextMenuForWorktree(worktree);
+                var menu = repo.CreateContextMenuForWorktree(worktree).CreateContextMenuFromModel();
                 menu?.Open(grid);
             }
 
@@ -407,7 +407,7 @@ namespace SourceGit.Views
         {
             if (sender is Button button && DataContext is ViewModels.Repository repo)
             {
-                var menu = repo.CreateContextMenuForBranchSortMode(true);
+                var menu = repo.CreateContextMenuForBranchSortMode(true).CreateContextMenuFromModel();
                 menu?.Open(button);
             }
 
@@ -418,7 +418,7 @@ namespace SourceGit.Views
         {
             if (sender is Button button && DataContext is ViewModels.Repository repo)
             {
-                var menu = repo.CreateContextMenuForBranchSortMode(false);
+                var menu = repo.CreateContextMenuForBranchSortMode(false).CreateContextMenuFromModel();
                 menu?.Open(button);
             }
 
@@ -429,7 +429,7 @@ namespace SourceGit.Views
         {
             if (sender is Button button && DataContext is ViewModels.Repository repo)
             {
-                var menu = repo.CreateContextMenuForTagSortMode();
+                var menu = repo.CreateContextMenuForTagSortMode().CreateContextMenuFromModel();
                 menu?.Open(button);
             }
 
