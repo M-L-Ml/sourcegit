@@ -669,7 +669,12 @@ namespace SourceGit
             });
         }
 
-        public IClassicDesktopStyleApplicationLifetime? DesktopAppLifetime => ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+       [MaybeNull]
+        public  IClassicDesktopStyleApplicationLifetime DesktopAppLifetime =>
+                ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+       [MaybeNull]
+       public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime => 
+                Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
         private void ShowSelfUpdateResult(object data)
         {
