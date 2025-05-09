@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -16,15 +17,50 @@ namespace SourceGit.Views
 
         public static MenuItem CreateMenuItemFromModel(this ViewModels.MenuItemModel x)
         {
-            return new MenuItem() { Header = App.Text(x.Header), DataContext = x, Command = x.Command,
-                Icon = App.CreateMenuIcon(x.IconKey), IsEnabled = x.IsEnabled };
-        }
-        public static ContextMenu CreateContextMenuFromModel(this ViewModels.ContextMenuModel menuModel)
-        {
-            var menu = new ContextMenu() { DataContext = menuModel };
-            foreach (var item in menuModel.Items.Select(x => x.CreateMenuItemFromModel()))
-                menu.Items.Add(item);
+            var menu = new MenuItem()
+            {
+                Header = App.Text(x.Header),
+                DataContext = x,
+                Command = x.Command,
+                Icon = App.CreateMenuIcon(x.IconKey),
+                IsEnabled = x.IsEnabled
+            };
+            if (x is ViewModels.MenuModel y)
+                y.CreateSubItemsFromModel(menu);
             return menu;
         }
-    }
+        public static MenuItem CreateMenuFromModel(this ViewModels.MenuModel menuModel)
+             => menuModel.CreateMenuItemFromModel();
+
+        public static MenuDeriv CreateMenuFromModelInternal<MenuDeriv>(this ViewModels.MenuModel menuModel)
+            where MenuDeriv : ItemsControl, new()
+        {
+            var menu = new MenuDeriv() { DataContext = menuModel };
+            CreateSubItemsFromModel(menuModel, menu);
+            return menu;
+        }
+        public static void CreateSubItemsFromModel<MenuDeriv>(this ViewModels.MenuModel menuModel, MenuDeriv menu)
+              where MenuDeriv : ItemsControl, new()
+        {
+            foreach (var item
+                    in menuModel.Items.Select(x =>
+                        {
+                            return x.CreateMenuItemFromModel();
+                        }))
+                menu.Items.Add(item);
+        }
+
+        public static ContextMenu CreateContextMenuFromModel(this ViewModels.ContextMenuModel menuModel)
+        {
+            var menu = menuModel.CreateMenuFromModelInternal<ContextMenu>();
+            // Implement assigning menuModel.ViewToDo
+            foreach (var (propName, value) in menuModel.ViewToDo.SetValue)
+            {
+                if (propName == "Placement" && Enum.TryParse(value.ToString(), out PlacementMode placementMode))
+                {
+                    menu.Placement = placementMode;
+                }
+            }
+            return menu;
+        }
 }
