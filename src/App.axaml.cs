@@ -139,7 +139,7 @@ namespace SourceGit
 
             if (data is Views.ChromelessWindow window)
             {
-                if (showAsDialog && current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } owner })
+                if (showAsDialog && current?.DesktopAppLifetime is { MainWindow: { } owner })
                     window.ShowDialog(owner);
                 else
                     window.Show();
@@ -180,7 +180,7 @@ namespace SourceGit
             if (window != null)
             {
                 window.DataContext = data;
-                if (showAsDialog && current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } owner })
+                if (showAsDialog && current?.DesktopAppLifetime is { MainWindow: { } owner })
                     window.ShowDialog(owner);
                 else
                     window.Show();
@@ -613,7 +613,7 @@ namespace SourceGit
                         ViewModels.Welcome.Instance.Refresh();
                         _launcher?.OpenRepositoryInTab(node, null);
 
-                        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: Views.Launcher wnd })
+                        if (DesktopAppLifetime is { MainWindow: Views.Launcher wnd })
                             wnd.BringToTop();
                     });
 
@@ -623,7 +623,7 @@ namespace SourceGit
 
             Dispatcher.UIThread.Invoke(() =>
             {
-                if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: Views.Launcher launcher })
+                if (DesktopAppLifetime is { MainWindow: Views.Launcher launcher })
                     launcher.BringToTop();
             });
         }
@@ -670,17 +670,15 @@ namespace SourceGit
         }
 
        [MaybeNull]
-        public  IClassicDesktopStyleApplicationLifetime DesktopAppLifetime =>
-                ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        public  IClassicDesktopStyleApplicationLifetime DesktopAppLifetime => Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
        [MaybeNull]
-       public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime => 
-                Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+       public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime => Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
 
         private void ShowSelfUpdateResult(object data)
         {
             Dispatcher.UIThread.Post(() =>
             {
-                if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } owner })
+                if (DesktopAppLifetime is { MainWindow: { } owner })
                 {
                     var dialog = new Views.SelfUpdate() { DataContext = new ViewModels.SelfUpdate() { Data = data } };
                     dialog.ShowDialog(owner);
