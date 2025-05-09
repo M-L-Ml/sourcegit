@@ -236,10 +236,10 @@ namespace SourceGit.ViewModels
     {
         //TODO: remove this operators in future
         // Implicit conversion from MyRecord to int
-        public static implicit operator string(StringResource r) => r.Text();
+        //public static implicit operator string(StringResource r) => r.Text();
 
         // Explicit conversion from int to MyRecord
-        public static implicit operator StringResource(string s) => new StringResource(s, string.Empty);
+        //public static implicit operator StringResource(string s) => new StringResource(s, string.Empty);
 
         public bool DontLookUpResource => Args?.Length == 1 && (Args[0] is string s && (s == string.Empty));
         public override string ToString() =>Key + (DontLookUpResource ? " |" : " (Key) ") + nameof(StringResource) + ". ";
