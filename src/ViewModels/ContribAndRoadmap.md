@@ -1,3 +1,23 @@
+
+# Contributing and Roadmap
+
+# Code of Conduct
+
+
+Embrace disscusing in Comments
+Comments should explain unobvious logic, and reasons behind design choices. Even if  those reasons are lazyness or lack of knowledge or time.
+So some common arguments against comments are :
+- Code should be self-explanatory instead
+ -- It's hard to do it in a way that it's self-explanatory. And no one like to discuss how to make e.g. method names self-explanatory and up-to-date. So there are tradeoffs always o make it self-explanatory. So all that tradeoffs should be alleviated by comments.
+- Comments are outdated
+-- Think about method names. They can become outdated  to. Or they can constrain your thinking hindering good changes. So comments should be treated seariously and updated and changed accordingly
+- Comments are a code smell
+-- That's right, it better to smell bad traits of code than to face their consequences in runtime. And yes: they sometimes should be deleted. And yes: it's an Art to write it in a way they are not smelly, i.e. not misleading or pulling too much attention, and at the same time concise, usefull, and not over-explaining. And this art is that same important universal skill of communication!
+- Disgusting work with code with such a small
+-- We should work on our communication issues with text. It's considered cringe and waste of time to disscuss our communiction issues. But it's in the world which fails communication in a miserable way.
+
+
+
 # ViewModel Refactor Roadmap
 
 ## Temporary Naming Strategy for Menu Items
