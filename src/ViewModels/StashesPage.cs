@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -137,139 +137,121 @@ namespace SourceGit.ViewModels
             _diffContext = null;
         }
 
-        public ContextMenu MakeContextMenu(Models.Stash stash)
+        public ContextMenuModel MakeContextMenuModel(Models.Stash stash)
         {
             if (stash == null)
                 return null;
 
-            var apply = new MenuItem();
-            apply.Header = App.Text("StashCM.Apply");
-            apply.Click += (_, ev) =>
+            var menu = new ContextMenuModel();
+
+            menu.Items.Add(new MenuItemModel
             {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new ApplyStash(_repo, stash));
-
-                ev.Handled = true;
-            };
-
-            var drop = new MenuItem();
-            drop.Header = App.Text("StashCM.Drop");
-            drop.Click += (_, ev) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new DropStash(_repo, stash));
-
-                ev.Handled = true;
-            };
-
-            var patch = new MenuItem();
-            patch.Header = App.Text("StashCM.SaveAsPatch");
-            patch.Icon = App.CreateMenuIcon("Icons.Diff");
-            patch.Click += async (_, e) =>
-            {
-                var storageProvider = App.GetStorageProvider();
-                if (storageProvider == null)
-                    return;
-
-                var options = new FilePickerSaveOptions();
-                options.Title = App.Text("StashCM.SaveAsPatch");
-                options.DefaultExtension = ".patch";
-                options.FileTypeChoices = [new FilePickerFileType("Patch File") { Patterns = ["*.patch"] }];
-
-                var storageFile = await storageProvider.SaveFilePickerAsync(options);
-                if (storageFile != null)
+                Header = App.ResText("StashCM.Apply"),
+                Command = new RelayCommand(() =>
                 {
-                    var opts = new List<Models.DiffOption>();
-                    foreach (var c in _changes)
+                    if (_repo.CanCreatePopup())
+                        _repo.ShowPopup(new ApplyStash(_repo, stash));
+                })
+            });
+            menu.Items.Add(new MenuItemModel
+            {
+                Header = App.ResText("StashCM.Drop"),
+                Command = new RelayCommand(() =>
+                {
+                    if (_repo.CanCreatePopup())
+                        _repo.ShowPopup(new DropStash(_repo, stash));
+                })
+            });
+            menu.Items.Add(MenuModel.Separator());
+            menu.Items.Add(new MenuItemModel
+            {
+                Header = App.ResText("StashCM.SaveAsPatch"),
+                IconKey = App.MenuIconKey("Icons.Diff"),
+                Command = new AsyncRelayCommand(async () =>
+                {
+                    var storageProvider = App.GetStorageProvider();
+                    if (storageProvider == null)
+                        return;
+
+                    var options = new FilePickerSaveOptions();
+                    options.Title = App.Text("StashCM.SaveAsPatch");
+                    options.DefaultExtension = ".patch";
+                    options.FileTypeChoices = [new FilePickerFileType("Patch File") { Patterns = ["*.patch"] }];
+
+                    var storageFile = await storageProvider.SaveFilePickerAsync(options);
+                    if (storageFile != null)
                     {
-                        if (c.Index == Models.ChangeState.Added && _selectedStash.Parents.Count == 3)
-                            opts.Add(new Models.DiffOption("4b825dc642cb6eb9a060e54bf8d69288fbee4904", _selectedStash.Parents[2], c));
-                        else
-                            opts.Add(new Models.DiffOption(_selectedStash.Parents[0], _selectedStash.SHA, c));
+                        var opts = new List<Models.DiffOption>();
+                        foreach (var c in _changes)
+                        {
+                            if (c.Index == Models.ChangeState.Added && _selectedStash.Parents.Count == 3)
+                                opts.Add(new Models.DiffOption("4b825dc642cb6eb9a060e54bf8d69288fbee4904", _selectedStash.Parents[2], c));
+                            else
+                                opts.Add(new Models.DiffOption(_selectedStash.Parents[0], _selectedStash.SHA, c));
+                        }
+
+                        var succ = await Task.Run(() => Commands.SaveChangesAsPatch.ProcessStashChanges(_repo.FullPath, opts, storageFile.Path.LocalPath));
+                        if (succ)
+                            App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
                     }
-
-                    var succ = await Task.Run(() => Commands.SaveChangesAsPatch.ProcessStashChanges(_repo.FullPath, opts, storageFile.Path.LocalPath));
-                    if (succ)
-                        App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
-                }
-
-                e.Handled = true;
-            };
-
-            var menu = new ContextMenu();
-            menu.Items.Add(apply);
-            menu.Items.Add(drop);
-            menu.Items.Add(new MenuItem { Header = "-" });
-            menu.Items.Add(patch);
+                })
+            });
             return menu;
         }
 
-        public ContextMenu MakeContextMenuForChange(Models.Change change)
+        public ContextMenuModel MakeContextMenuModelForChange(Models.Change change)
         {
             if (change == null)
                 return null;
 
-            var diffWithMerger = new MenuItem();
-            diffWithMerger.Header = App.Text("DiffWithMerger");
-            diffWithMerger.Icon = App.CreateMenuIcon("Icons.OpenWith");
-            diffWithMerger.Click += (_, ev) =>
-            {
-                var toolType = Preferences.Instance.ExternalMergeToolType;
-                var toolPath = Preferences.Instance.ExternalMergeToolPath;
-                var opt = new Models.DiffOption($"{_selectedStash.SHA}^", _selectedStash.SHA, change);
+            var menu = new ContextMenuModel();
 
-                Task.Run(() => Commands.MergeTool.OpenForDiff(_repo.FullPath, toolType, toolPath, opt));
-                ev.Handled = true;
-            };
+            menu.Items.Add(new MenuItemModel
+            {
+                Header = App.ResText("DiffWithMerger"),
+                IconKey = App.MenuIconKey("Icons.OpenWith"),
+                Command = new RelayCommand(() =>
+                {
+                    var toolType = Preferences.Instance.ExternalMergeToolType;
+                    var toolPath = Preferences.Instance.ExternalMergeToolPath;
+                    var opt = new Models.DiffOption($"{_selectedStash.SHA}^", _selectedStash.SHA, change);
+                    Task.Run(() => Commands.MergeTool.OpenForDiff(_repo.FullPath, toolType, toolPath, opt));
+                })
+            });
 
             var fullPath = Path.Combine(_repo.FullPath, change.Path);
-            var explore = new MenuItem();
-            explore.Header = App.Text("RevealFile");
-            explore.Icon = App.CreateMenuIcon("Icons.Explore");
-            explore.IsEnabled = File.Exists(fullPath);
-            explore.Click += (_, ev) =>
+            menu.Items.Add(new MenuItemModel
             {
-                Native.OS.OpenInFileManager(fullPath, true);
-                ev.Handled = true;
-            };
-
-            var resetToThisRevision = new MenuItem();
-            resetToThisRevision.Header = App.Text("ChangeCM.CheckoutThisRevision");
-            resetToThisRevision.Icon = App.CreateMenuIcon("Icons.File.Checkout");
-            resetToThisRevision.Click += (_, ev) =>
+                Header = App.ResText("RevealFile"),
+                IconKey = App.MenuIconKey("Icons.Explore"),
+                IsEnabled = File.Exists(fullPath),
+                Command = new RelayCommand(() => Native.OS.OpenInFileManager(fullPath, true))
+            });
+            menu.Items.Add(MenuModel.Separator());
+            menu.Items.Add(new MenuItemModel
             {
-                var log = _repo.CreateLog($"Reset File to '{_selectedStash.SHA}'");
-                new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(change.Path, $"{_selectedStash.SHA}");
-                log.Complete();
-                ev.Handled = true;
-            };
-
-            var copyPath = new MenuItem();
-            copyPath.Header = App.Text("CopyPath");
-            copyPath.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyPath.Click += (_, ev) =>
+                Header = App.ResText("ChangeCM.CheckoutThisRevision"),
+                IconKey = App.MenuIconKey("Icons.File.Checkout"),
+                Command = new RelayCommand(() =>
+                {
+                    var log = _repo.CreateLog($"Reset File to '{_selectedStash.SHA}'");
+                    new Commands.Checkout(_repo.FullPath).Use(log).FileWithRevision(change.Path, $"{_selectedStash.SHA}");
+                    log.Complete();
+                })
+            });
+            menu.Items.Add(MenuModel.Separator());
+            menu.Items.Add(new MenuItemModel
             {
-                App.CopyText(change.Path);
-                ev.Handled = true;
-            };
-
-            var copyFullPath = new MenuItem();
-            copyFullPath.Header = App.Text("CopyFullPath");
-            copyFullPath.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyFullPath.Click += (_, e) =>
+                Header = App.ResText("CopyPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(change.Path))
+            });
+            menu.Items.Add(new MenuItemModel
             {
-                App.CopyText(Native.OS.GetAbsPath(_repo.FullPath, change.Path));
-                e.Handled = true;
-            };
-
-            var menu = new ContextMenu();
-            menu.Items.Add(diffWithMerger);
-            menu.Items.Add(explore);
-            menu.Items.Add(new MenuItem { Header = "-" });
-            menu.Items.Add(resetToThisRevision);
-            menu.Items.Add(new MenuItem { Header = "-" });
-            menu.Items.Add(copyPath);
-            menu.Items.Add(copyFullPath);
+                Header = App.ResText("CopyFullPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(Native.OS.GetAbsPath(_repo.FullPath, change.Path)))
+            });
 
             return menu;
         }
