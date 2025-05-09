@@ -154,17 +154,34 @@ namespace SourceGit.ViewModels
             return AppDyn.GetLauncherI();// Application.Current is SourceGit.App app ? app._launcher : null;
         }
 
-        
+        public static bool GetCurrentDesktopAppLifetime(out IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop1)
+            {
+                desktop = desktop1;
+                return true;
+            }
+            Debug.Assert(false);
+            desktop = null;
+            return false;
+        }
         [MaybeNull]
-        public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime =>
-            Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-       // public static IClassicDesktopStyleApplicationLifetime GetDesktopApp()
-       // => GetCurrentDesktopAppLifetime(out var d) ? d : throw new Exception("Desktop app not found");
+        public static IClassicDesktopStyleApplicationLifetime CurrentDesktopAppLifetime
+        {
+            get
+            {
+                // Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+                if (GetCurrentDesktopAppLifetime(out var d))
+                {
+                     return d;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
-        //public static void Quit(int exitCode)
-        //{
-        //    AppDyn.Quit(exitCode);
-        //}
         public static void Quit(int exitCode)
         {
             if (CurrentDesktopAppLifetime is { } desktop)
