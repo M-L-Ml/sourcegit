@@ -1093,79 +1093,76 @@ namespace SourceGit.ViewModels
                 openWith.Icon = App.CreateMenuIcon("Icons.OpenWith");
                 openWith.IsEnabled = File.Exists(path);
                 openWith.Click += (_, e) =>
+
+                var unstage = new MenuItemModel
                 {
-                    Native.OS.OpenWithDefaultEditor(path);
-                    e.Handled = true;
+                    IconKey = App.MenuIconKey("Icons.File.Remove"),
+                    Header = App.ResText("FileCM.Unstage"),
+                    Command = new RelayCommand(() => UnstageChanges(_selectedStaged, null))
                 };
 
-                var unstage = new MenuItem();
-                unstage.Header = App.Text("FileCM.Unstage");
-                unstage.Icon = App.CreateMenuIcon("Icons.File.Remove");
-                unstage.Click += (_, e) =>
+                var stash = new MenuItemModel
                 {
-                    UnstageChanges(_selectedStaged, null);
-                    e.Handled = true;
-                };
-
-                var stash = new MenuItem();
-                stash.Header = App.Text("FileCM.Stash");
-                stash.Icon = App.CreateMenuIcon("Icons.Stashes.Add");
-                stash.Click += (_, e) =>
-                {
-                    if (_repo.CanCreatePopup())
-                        _repo.ShowPopup(new StashChanges(_repo, _selectedStaged, true));
-
-                    e.Handled = true;
-                };
-
-                var patch = new MenuItem();
-                patch.Header = App.Text("FileCM.SaveAsPatch");
-                patch.Icon = App.CreateMenuIcon("Icons.Diff");
-                patch.Click += async (_, e) =>
-                {
-                    var storageProvider = App.GetStorageProvider();
-                    if (storageProvider == null)
-                        return;
-
-                    var options = new FilePickerSaveOptions();
-                    options.Title = App.Text("FileCM.SaveAsPatch");
-                    options.DefaultExtension = ".patch";
-                    options.FileTypeChoices = [new FilePickerFileType("Patch File") { Patterns = ["*.patch"] }];
-
-                    var storageFile = await storageProvider.SaveFilePickerAsync(options);
-                    if (storageFile != null)
+                    IconKey = App.MenuIconKey("Icons.Stashes.Add"),
+                    Header = App.ResText("FileCM.Stash"),
+                    Command = new RelayCommand(() =>
                     {
-                        var succ = await Task.Run(() => Commands.SaveChangesAsPatch.ProcessLocalChanges(_repo.FullPath, _selectedStaged, false, storageFile.Path.LocalPath));
-                        if (succ)
-                            App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
-                    }
-
-                    e.Handled = true;
+                        if (_repo.CanCreatePopup())
+                            _repo.ShowPopup(new StashChanges(_repo, _selectedStaged, true));
+                    })
                 };
 
-                var history = new MenuItem();
-                history.Header = App.Text("FileHistory");
-                history.Icon = App.CreateMenuIcon("Icons.Histories");
-                history.Click += (_, e) =>
+                var patch = new MenuItemModel
                 {
-                    App.ShowWindow(new FileHistories(_repo, change.Path), false);
-                    e.Handled = true;
+                    IconKey = App.MenuIconKey("Icons.Diff"),
+                    Header = App.ResText("FileCM.SaveAsPatch"),
+                    Command = new RelayCommand(async () =>
+                    {
+                        var storageProvider = App.GetStorageProvider();
+                        if (storageProvider == null)
+                            return;
+
+                        var options = new FilePickerSaveOptions();
+                        options.Title = App.Text("FileCM.SaveAsPatch");
+                        options.DefaultExtension = ".patch";
+                        options.FileTypeChoices = [new FilePickerFileType("Patch File") { Patterns = ["*.patch"] }];
+
+                        var storageFile = await storageProvider.SaveFilePickerAsync(options);
+                        if (storageFile != null)
+                        {
+                            var succ = await Task.Run(() => Commands.SaveChangesAsPatch.ProcessLocalChanges(_repo.FullPath, _selectedStaged, false, storageFile.Path.LocalPath));
+                            if (succ)
+                                App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
+                        }
+                    })
+                };
+
+                var history = new MenuItemModel
+                {
+                    IconKey = App.MenuIconKey("Icons.Histories"),
+                    Header = App.ResText("FileHistory"),
+                    Command = new RelayCommand(() => App.ShowWindow(new FileHistories(_repo, change.Path), false))
                 };
 
                 menu.Items.Add(explore);
                 menu.Items.Add(openWith);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                menu.Items.Add(MenuModel.Separator());
                 menu.Items.Add(unstage);
                 menu.Items.Add(stash);
                 menu.Items.Add(patch);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                menu.Items.Add(MenuModel.Separator());
                 menu.Items.Add(history);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                menu.Items.Add(MenuModel.Separator());
 
                 var lfsEnabled = new Commands.LFS(_repo.FullPath).IsEnabled();
                 if (lfsEnabled)
                 {
-                    var lfs = new MenuItem();
+                    var lfs = new MenuItemModel
+                    {
+                        IconKey = App.MenuIconKey("Icons.LFS"),
+                        Header = App.ResText("GitLFS"),
+                        Items = new Avalonia.Collections.AvaloniaList<MenuItemModel>()
+                    };
                     lfs.Header = App.Text("GitLFS");
                     lfs.Icon = App.CreateMenuIcon("Icons.LFS");
 
