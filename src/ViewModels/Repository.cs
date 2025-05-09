@@ -626,7 +626,7 @@ namespace SourceGit.ViewModels
             RenderOptions.SetTextRenderingMode(menu, TextRenderingMode.Antialias);
 
             var explore = new MenuItem();
-            explore.Header = App.Text("Repository.Explore");
+            explore.Header = App.ResText("Repository.Explore");
             explore.Icon = App.CreateMenuIcon("Icons.Explore");
             explore.Click += (_, e) =>
             {
@@ -635,7 +635,7 @@ namespace SourceGit.ViewModels
             };
 
             var terminal = new MenuItem();
-            terminal.Header = App.Text("Repository.Terminal");
+            terminal.Header = App.ResText("Repository.Terminal");
             terminal.Icon = App.CreateMenuIcon("Icons.Terminal");
             terminal.Click += (_, e) =>
             {
@@ -656,7 +656,7 @@ namespace SourceGit.ViewModels
                     var dupTool = tool;
 
                     var item = new MenuItem();
-                    item.Header = App.Text("Repository.OpenIn", dupTool.Name);
+                    item.Header = App.ResText("Repository.OpenIn", dupTool.Name);
 
                     try
                     {
@@ -700,7 +700,7 @@ namespace SourceGit.ViewModels
                     var addr = url.Value;
 
                     var item = new MenuItem();
-                    item.Header = App.Text("Repository.Visit", name);
+                    item.Header = App.ResText("Repository.Visit", name);
                     item.Icon = App.CreateMenuIcon("Icons.Remotes");
                     item.Click += (_, e) =>
                     {
@@ -1474,7 +1474,7 @@ namespace SourceGit.ViewModels
             {
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("GitLFS.AddTrackPattern"),
+                    Header = App.ResText("GitLFS.AddTrackPattern"),
                     IconKey = App.MenuIconKey("Icons.File.Add"),
                     Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new LFSTrackCustomPattern(this)); })
                 });
@@ -1514,7 +1514,7 @@ namespace SourceGit.ViewModels
                 });
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("GitLFS.Push"),
+                    Header = App.ResText("GitLFS.Push"),
                     IconKey = App.MenuIconKey("Icons.Push"),
                     IsEnabled = _remotes.Count > 0,
                     Command = new RelayCommand(() =>
@@ -1531,14 +1531,14 @@ namespace SourceGit.ViewModels
                 items.Add(new MenuItemModel { Header = "-" });
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("GitLFS.Prune"),
+                    Header = App.ResText("GitLFS.Prune"),
                     IconKey = App.MenuIconKey("Icons.Clean"),
                     Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new LFSPrune(this)); })
                 });
                 // Use MenuModel for submenus (locks menu)
                 var locks = new MenuModel
                 {
-                    Header = App.Text("GitLFS.Locks"),
+                    Header = App.ResText("GitLFS.Locks"),
                     IconKey = App.MenuIconKey("Icons.Lock"),
                     IsEnabled = _remotes.Count > 0
                 };
@@ -1570,7 +1570,7 @@ namespace SourceGit.ViewModels
             {
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("GitLFS.Install"),
+                    Header = App.ResText("GitLFS.Install"),
                     IconKey = App.MenuIconKey("Icons.Init"),
                     Command = new RelayCommand(() =>
                     {
@@ -1639,12 +1639,12 @@ namespace SourceGit.ViewModels
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Repository.HistoriesOrder"),
+                Header = App.ResText("Repository.HistoriesOrder"),
                 IsEnabled = false
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Repository.HistoriesOrder.ByDate"),
+                Header = App.ResText("Repository.HistoriesOrder.ByDate"),
                 IconKey = !_settings.EnableTopoOrderInHistories ? App.MenuIconKey("Icons.Check") : null,
                 ViewToDo = new ViewModelInfo(new() { ("Views.MenuItemExtension.CommandProperty", "--date-order") }),
                 Command = new RelayCommand(() =>
@@ -1658,7 +1658,7 @@ namespace SourceGit.ViewModels
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Repository.HistoriesOrder.Topo"),
+                Header = App.ResText("Repository.HistoriesOrder.Topo"),
                 IconKey = _settings.EnableTopoOrderInHistories ? App.MenuIconKey("Icons.Check") : null,
                 ViewToDo = new ViewModelInfo(new() { ("Views.MenuItemExtension.CommandProperty", "--top-order") }),
                 Command = new RelayCommand(() =>
@@ -1681,7 +1681,7 @@ namespace SourceGit.ViewModels
             var items = menu.Items;
             var push = new MenuItemModel
             {
-                Header = App.Text("BranchCM.Push", branch.Name),
+                Header = App.ResText("BranchCM.Push", branch.Name),
                 IconKey = App.MenuIconKey("Icons.Push"),
                 IsEnabled = _remotes.Count > 0,
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Push(this, branch)); })
@@ -1693,7 +1693,7 @@ namespace SourceGit.ViewModels
                 {
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.DiscardAll"),
+                        Header = App.ResText("BranchCM.DiscardAll"),
                         IconKey = App.MenuIconKey("Icons.Undo"),
                         Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Discard(this)); })
                     });
@@ -1703,7 +1703,7 @@ namespace SourceGit.ViewModels
                         var upstream = branch.Upstream.Substring(13);
                         items.Add(new MenuItemModel
                         {
-                            Header = App.Text("BranchCM.FastForward", upstream),
+                            Header = App.ResText("BranchCM.FastForward", upstream),
                             IconKey = App.MenuIconKey("Icons.FastForward"),
                             IsEnabled = branch.TrackStatus.Ahead.Count == 0,
                             Command = new RelayCommand(() =>
@@ -1717,7 +1717,7 @@ namespace SourceGit.ViewModels
                         });
                         items.Add(new MenuItemModel
                         {
-                            Header = App.Text("BranchCM.Pull", upstream),
+                            Header = App.ResText("BranchCM.Pull", upstream),
                             IconKey = App.MenuIconKey("Icons.Pull"),
                             Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Pull(this, null)); })
                         });
@@ -1731,7 +1731,7 @@ namespace SourceGit.ViewModels
                 {
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.Checkout", branch.Name),
+                        Header = App.ResText("BranchCM.Checkout", branch.Name),
                         IconKey = App.MenuIconKey("Icons.Check"),
                         Command = new RelayCommand(() => CheckoutBranch(branch))
                     });
@@ -1743,7 +1743,7 @@ namespace SourceGit.ViewModels
                 {
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.FastForward", upstream.FriendlyName),
+                        Header = App.ResText("BranchCM.FastForward", upstream.FriendlyName),
                         IconKey = App.MenuIconKey("Icons.FastForward"),
                         IsEnabled = branch.TrackStatus.Ahead.Count == 0,
                         Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new FastForwardWithoutCheckout(this, branch, upstream)); })
@@ -1751,7 +1751,7 @@ namespace SourceGit.ViewModels
                     items.Add(new MenuItemModel { Header = "-" });
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.FetchInto", upstream.FriendlyName, branch.Name),
+                        Header = App.ResText("BranchCM.FetchInto", upstream.FriendlyName, branch.Name),
                         IconKey = App.MenuIconKey("Icons.Fetch"),
                         IsEnabled = branch.TrackStatus.Ahead.Count == 0,
                         Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new FetchInto(this, branch, upstream)); })
@@ -1762,20 +1762,20 @@ namespace SourceGit.ViewModels
                 {
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.Merge", branch.Name, _currentBranch.Name),
+                        Header = App.ResText("BranchCM.Merge", branch.Name, _currentBranch.Name),
                         IconKey = App.MenuIconKey("Icons.Merge"),
                         Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Merge(this, branch, _currentBranch.Name, false)); })
                     });
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.Rebase", _currentBranch.Name, branch.Name),
+                        Header = App.ResText("BranchCM.Rebase", _currentBranch.Name, branch.Name),
                         IconKey = App.MenuIconKey("Icons.Rebase"),
                         Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Rebase(this, _currentBranch, branch)); })
                     });
                 }
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("BranchCM.CompareWithHead"),
+                    Header = App.ResText("BranchCM.CompareWithHead"),
                     IconKey = App.MenuIconKey("Icons.Compare"),
                     Command = new RelayCommand(() => App.ShowWindow(new BranchCompare(_fullpath, branch, _currentBranch), false))
                 });
@@ -1784,7 +1784,7 @@ namespace SourceGit.ViewModels
                 {
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.CompareWithWorktree"),
+                        Header = App.ResText("BranchCM.CompareWithWorktree"),
                         IconKey = App.MenuIconKey("Icons.Compare"),
                         Command = new RelayCommand(() =>
                         {
@@ -1807,7 +1807,7 @@ namespace SourceGit.ViewModels
                     items.Add(new MenuItemModel { Header = "-" });
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.Finish", branch.Name),
+                        Header = App.ResText("BranchCM.Finish", branch.Name),
                         IconKey = App.MenuIconKey("Icons.GitFlow"),
                         Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new GitFlowFinish(this, branch, detect.Type, detect.Prefix)); })
                     });
@@ -1816,13 +1816,13 @@ namespace SourceGit.ViewModels
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("BranchCM.Rename", branch.Name),
+                Header = App.ResText("BranchCM.Rename", branch.Name),
                 IconKey = App.MenuIconKey("Icons.Rename"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new RenameBranch(this, branch)); })
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("BranchCM.Delete", branch.Name),
+                Header = App.ResText("BranchCM.Delete", branch.Name),
                 IconKey = App.MenuIconKey("Icons.Clear"),
                 IsEnabled = !branch.IsCurrent,
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteBranch(this, branch)); })
@@ -1830,13 +1830,13 @@ namespace SourceGit.ViewModels
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("CreateBranch"),
+                Header = App.ResText("CreateBranch"),
                 IconKey = App.MenuIconKey("Icons.Branch.Add"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateBranch(this, branch)); })
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("CreateTag"),
+                Header = App.ResText("CreateTag"),
                 IconKey = App.MenuIconKey("Icons.Tag.Add"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateTag(this, branch)); })
             });
@@ -1855,7 +1855,7 @@ namespace SourceGit.ViewModels
                 {
                     items.Add(new MenuItemModel
                     {
-                        Header = App.Text("BranchCM.Tracking"),
+                        Header = App.ResText("BranchCM.Tracking"),
                         IconKey = App.MenuIconKey("Icons.Track"),
                         Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new SetUpstream(this, branch, remoteBranches)); })
                     });
@@ -1863,14 +1863,14 @@ namespace SourceGit.ViewModels
             }
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Archive"),
+                Header = App.ResText("Archive"),
                 IconKey = App.MenuIconKey("Icons.Archive"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Archive(this, branch)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("BranchCM.CopyName"),
+                Header = App.ResText("BranchCM.CopyName"),
                 IconKey = App.MenuIconKey("Icons.Copy"),
                 Command = new RelayCommand(() => App.CopyText(branch.Name))
             });
@@ -1887,7 +1887,7 @@ namespace SourceGit.ViewModels
             {
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("RemoteCM.OpenInBrowser"),
+                    Header = App.ResText("RemoteCM.OpenInBrowser"),
                     IconKey = App.MenuIconKey("Icons.OpenWith"),
                     Command = new RelayCommand(() => Native.OS.OpenBrowser(visitURL))
                 });
@@ -1895,33 +1895,33 @@ namespace SourceGit.ViewModels
             }
             items.Add(new MenuItemModel
             {
-                Header = App.Text("RemoteCM.Fetch"),
+                Header = App.ResText("RemoteCM.Fetch"),
                 IconKey = App.MenuIconKey("Icons.Fetch"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new Fetch(this, remote)); })
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("RemoteCM.Prune"),
+                Header = App.ResText("RemoteCM.Prune"),
                 IconKey = App.MenuIconKey("Icons.Clean"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new PruneRemote(this, remote)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("RemoteCM.Edit"),
+                Header = App.ResText("RemoteCM.Edit"),
                 IconKey = App.MenuIconKey("Icons.Edit"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new EditRemote(this, remote)); })
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("RemoteCM.Delete"),
+                Header = App.ResText("RemoteCM.Delete"),
                 IconKey = App.MenuIconKey("Icons.Clear"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteRemote(this, remote)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("RemoteCM.CopyURL"),
+                Header = App.ResText("RemoteCM.CopyURL"),
                 IconKey = App.MenuIconKey("Icons.Copy"),
                 Command = new RelayCommand(() => App.CopyText(remote.URL))
             });
@@ -1937,7 +1937,7 @@ namespace SourceGit.ViewModels
             var name = branch.FriendlyName;
             items.Add(new MenuItemModel
             {
-                Header = App.Text("BranchCM.Checkout", name),
+                Header = App.ResText("BranchCM.Checkout", name),
                 IconKey = App.MenuIconKey("Icons.Check"),
                 Command = new RelayCommand(() => CheckoutBranch(branch))
             });
@@ -1946,19 +1946,19 @@ namespace SourceGit.ViewModels
             {
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("BranchCM.PullInto", name, _currentBranch.Name),
+                    Header = App.ResText("BranchCM.PullInto", name, _currentBranch.Name),
                     IconKey = App.MenuIconKey("Icons.Pull"),
                     Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Pull(this, branch)); })
                 });
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("BranchCM.Merge", name, _currentBranch.Name),
+                    Header = App.ResText("BranchCM.Merge", name, _currentBranch.Name),
                     IconKey = App.MenuIconKey("Icons.Merge"),
                     Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Merge(this, branch, _currentBranch.Name, false)); })
                 });
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("BranchCM.Rebase", _currentBranch.Name, name),
+                    Header = App.ResText("BranchCM.Rebase", _currentBranch.Name, name),
                     IconKey = App.MenuIconKey("Icons.Rebase"),
                     Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Rebase(this, _currentBranch, branch)); })
                 });
@@ -1966,7 +1966,7 @@ namespace SourceGit.ViewModels
             }
             items.Add(new MenuItemModel
             {
-                Header = App.Text("BranchCM.CompareWithHead"),
+                Header = App.ResText("BranchCM.CompareWithHead"),
                 IconKey = App.MenuIconKey("Icons.Compare"),
                 Command = new RelayCommand(() => App.ShowWindow(new BranchCompare(_fullpath, branch, _currentBranch), false))
             });
@@ -1974,7 +1974,7 @@ namespace SourceGit.ViewModels
             {
                 items.Add(new MenuItemModel
                 {
-                    Header = App.Text("BranchCM.CompareWithWorktree"),
+                    Header = App.ResText("BranchCM.CompareWithWorktree"),
                     IconKey = App.MenuIconKey("Icons.Compare"),
                     Command = new RelayCommand(() =>
                     {
@@ -1991,27 +1991,27 @@ namespace SourceGit.ViewModels
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("BranchCM.Delete", name),
+                Header = App.ResText("BranchCM.Delete", name),
                 IconKey = App.MenuIconKey("Icons.Clear"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteBranch(this, branch)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("CreateBranch"),
+                Header = App.ResText("CreateBranch"),
                 IconKey = App.MenuIconKey("Icons.Branch.Add"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateBranch(this, branch)); })
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("CreateTag"),
+                Header = App.ResText("CreateTag"),
                 IconKey = App.MenuIconKey("Icons.Tag.Add"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateTag(this, branch)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Archive"),
+                Header = App.ResText("Archive"),
                 IconKey = App.MenuIconKey("Icons.Archive"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Archive(this, branch)); })
             });
@@ -2019,7 +2019,7 @@ namespace SourceGit.ViewModels
             TryToAddCustomActionsToBranchContextMenu(menu, branch);
             items.Add(new MenuItemModel
             {
-                Header = App.Text("BranchCM.CopyName"),
+                Header = App.ResText("BranchCM.CopyName"),
                 IconKey = App.MenuIconKey("Icons.Copy"),
                 Command = new RelayCommand(() => App.CopyText(name))
             });
@@ -2035,41 +2035,41 @@ namespace SourceGit.ViewModels
             // [MenuItemModel] usage: Header via App.Text, IconKey via App.MenuIconKey, Command via RelayCommand
             items.Add(new MenuItemModel
             {
-                Header = App.Text("CreateBranch"),
+                Header = App.ResText("CreateBranch"),
                 IconKey = App.MenuIconKey("Icons.Branch.Add"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new CreateBranch(this, tag)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("TagCM.Push", tag.Name),
+                Header = App.ResText("TagCM.Push", tag.Name),
                 IconKey = App.MenuIconKey("Icons.Push"),
                 IsEnabled = _remotes.Count > 0,
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new PushTag(this, tag)); })
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("TagCM.Delete", tag.Name),
+                Header = App.ResText("TagCM.Delete", tag.Name),
                 IconKey = App.MenuIconKey("Icons.Clear"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteTag(this, tag)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("Archive"),
+                Header = App.ResText("Archive"),
                 IconKey = App.MenuIconKey("Icons.Archive"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new Archive(this, tag)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("TagCM.Copy"),
+                Header = App.ResText("TagCM.Copy"),
                 IconKey = App.MenuIconKey("Icons.Copy"),
                 Command = new RelayCommand(() => App.CopyText(tag.Name))
             });
             items.Add(new MenuItemModel
             {
-                Header = App.Text("TagCM.CopyMessage"),
+                Header = App.ResText("TagCM.CopyMessage"),
                 IconKey = App.MenuIconKey("Icons.Copy"),
                 IsEnabled = !string.IsNullOrEmpty(tag.Message),
                 Command = new RelayCommand(() => App.CopyText(tag.Message))
@@ -2095,12 +2095,12 @@ namespace SourceGit.ViewModels
             var menu = new ContextMenuModel();
             var items = menu.Items;
             items.Add(new MenuItemModel {
-                Header = App.Text("Repository.BranchSort.ByName"),
+                Header = App.ResText("Repository.BranchSort.ByName"),
                 IconKey = mode == Models.BranchSortMode.Name ? App.MenuIconKey("Icons.Check") : null,
                 Command = new RelayCommand(() => { if (mode != Models.BranchSortMode.Name) changeMode(Models.BranchSortMode.Name); })
             });
             items.Add(new MenuItemModel {
-                Header = App.Text("Repository.BranchSort.ByCommitterDate"),
+                Header = App.ResText("Repository.BranchSort.ByCommitterDate"),
                 IconKey = mode == Models.BranchSortMode.CommitterDate ? App.MenuIconKey("Icons.Check") : null,
                 Command = new RelayCommand(() => { if (mode != Models.BranchSortMode.CommitterDate) changeMode(Models.BranchSortMode.CommitterDate); })
             });
@@ -2122,17 +2122,17 @@ namespace SourceGit.ViewModels
             var menu = new ContextMenuModel();
             var items = menu.Items;
             items.Add(new MenuItemModel {
-                Header = App.Text("Repository.Tags.OrderByCreatorDate"),
+                Header = App.ResText("Repository.Tags.OrderByCreatorDate"),
                 IconKey = mode == Models.TagSortMode.CreatorDate ? App.MenuIconKey("Icons.Check") : null,
                 Command = new RelayCommand(() => changeMode(Models.TagSortMode.CreatorDate))
             });
             items.Add(new MenuItemModel {
-                Header = App.Text("Repository.Tags.OrderByNameAsc"),
+                Header = App.ResText("Repository.Tags.OrderByNameAsc"),
                 IconKey = mode == Models.TagSortMode.NameInAscending ? App.MenuIconKey("Icons.Check") : null,
                 Command = new RelayCommand(() => changeMode(Models.TagSortMode.NameInAscending))
             });
             items.Add(new MenuItemModel {
-                Header = App.Text("Repository.Tags.OrderByNameDes"),
+                Header = App.ResText("Repository.Tags.OrderByNameDes"),
                 IconKey = mode == Models.TagSortMode.NameInDescending ? App.MenuIconKey("Icons.Check") : null,
                 Command = new RelayCommand(() => changeMode(Models.TagSortMode.NameInDescending))
             });
@@ -2146,17 +2146,17 @@ namespace SourceGit.ViewModels
             var menu = new ContextMenuModel();
             var items = menu.Items;
             items.Add(new MenuItemModel {
-                Header = App.Text("Submodule.Open"),
+                Header = App.ResText("Submodule.Open"),
                 IconKey = App.MenuIconKey("Icons.Folder.Open"),
                 Command = new RelayCommand(() => OpenSubmodule(submodule))
             });
             items.Add(new MenuItemModel {
-                Header = App.Text("Submodule.CopyPath"),
+                Header = App.ResText("Submodule.CopyPath"),
                 IconKey = App.MenuIconKey("Icons.Copy"),
                 Command = new RelayCommand(() => App.CopyText(submodule))
             });
             items.Add(new MenuItemModel {
-                Header = App.Text("Submodule.Remove"),
+                Header = App.ResText("Submodule.Remove"),
                 IconKey = App.MenuIconKey("Icons.Clear"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteSubmodule(this, submodule)); })
             });
@@ -2172,7 +2172,7 @@ namespace SourceGit.ViewModels
             if (worktree.IsLocked)
             {
                 items.Add(new MenuItemModel {
-                    Header = App.Text("Worktree.Unlock"),
+                    Header = App.ResText("Worktree.Unlock"),
                     IconKey = App.MenuIconKey("Icons.Unlock"),
                     Command = new RelayCommand(() => {
                         SetWatcherEnabled(false);
@@ -2188,7 +2188,7 @@ namespace SourceGit.ViewModels
             else
             {
                 items.Add(new MenuItemModel {
-                    Header = App.Text("Worktree.Lock"),
+                    Header = App.ResText("Worktree.Lock"),
                     IconKey = App.MenuIconKey("Icons.Lock"),
                     Command = new RelayCommand(() => {
                         SetWatcherEnabled(false);
@@ -2202,13 +2202,13 @@ namespace SourceGit.ViewModels
                 });
             }
             items.Add(new MenuItemModel {
-                Header = App.Text("Worktree.Remove"),
+                Header = App.ResText("Worktree.Remove"),
                 IconKey = App.MenuIconKey("Icons.Clear"),
                 Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new RemoveWorktree(this, worktree)); })
             });
             items.Add(new MenuItemModel { Header = "-" });
             items.Add(new MenuItemModel {
-                Header = App.Text("Worktree.CopyPath"),
+                Header = App.ResText("Worktree.CopyPath"),
                 IconKey = App.MenuIconKey("Icons.Copy"),
                 Command = new RelayCommand(() => App.CopyText(worktree.FullPath))
             });
@@ -2398,7 +2398,7 @@ namespace SourceGit.ViewModels
         return;
 
     menu.Items.Add(new MenuItemModel {
-        Header = App.Text("BranchCM.CustomAction"),
+        Header = App.ResText("BranchCM.CustomAction"),
         IconKey = App.MenuIconKey("Icons.Action"),
         IsEnabled = false
     });
