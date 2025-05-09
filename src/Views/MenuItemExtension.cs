@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -19,7 +19,7 @@ namespace SourceGit.Views
         {
             var menu = new MenuItem()
             {
-                Header = App.Text(x.Header),
+                Header = x.Header.Text(),
                 DataContext = x,
                 Command = x.Command,
                 Icon = App.CreateMenuIcon(x.IconKey),

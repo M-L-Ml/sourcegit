@@ -429,13 +429,13 @@ namespace SourceGit.Views
             {
                 var menuModel = new ViewModels.ContextMenuModel();
                 menuModel.Items.Add(new ViewModels.MenuItemModel {
-                    Header = App.Text("BranchCM.MergeMultiBranches", branches.Count),
+                    Header = App.ResText("BranchCM.MergeMultiBranches", branches.Count),
                     IconKey = App.MenuIconKey("Icons.Merge"),
                     Command = new CommunityToolkit.Mvvm.Input.RelayCommand(() => repo.MergeMultipleBranches(branches))
                 });
                 menuModel.Items.Add(new ViewModels.MenuItemModel { Header = "-" });
                 menuModel.Items.Add(new ViewModels.MenuItemModel {
-                    Header = App.Text("BranchCM.DeleteMultiBranches", branches.Count),
+                    Header = App.ResText("BranchCM.DeleteMultiBranches", branches.Count),
                     IconKey = App.MenuIconKey("Icons.Clear"),
                     Command = new CommunityToolkit.Mvvm.Input.RelayCommand(() => repo.DeleteMultipleBranches(branches, branches[0].IsLocal))
                 });
