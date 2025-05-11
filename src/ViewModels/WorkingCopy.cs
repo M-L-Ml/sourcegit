@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -588,11 +589,6 @@ namespace SourceGit.ViewModels
                     IsEnabled = File.Exists(path),
                     Command = new RelayCommand(() => Native.OS.OpenWithDefaultEditor(path))
                 };
-                {
-                    Native.OS.OpenWithDefaultEditor(path);
-                    e.Handled = true;
-                };
-                openWith.IsEnabled = File.Exists(path);
                 menu.Items.Add(openWith);
                 menu.Items.Add(MenuModel.Separator());
 
