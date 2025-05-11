@@ -572,14 +572,11 @@ namespace SourceGit.ViewModels
                 var change = _selectedUnstaged[0];
                 var path = Path.GetFullPath(Path.Combine(_repo.FullPath, change.Path));
 
-                var explore = new MenuItem();
-                explore.Header = App.Text("RevealFile");
-                explore.Icon = App.CreateMenuIcon("Icons.Explore");
-                explore.IsEnabled = File.Exists(path) || Directory.Exists(path);
-                explore.Click += (_, e) =>
-                {
-                    Native.OS.OpenInFileManager(path, true);
-                    e.Handled = true;
+                var explore = new MenuItemModel {
+                    IconKey = App.MenuIconKey("Icons.Explore"),
+                    Header = App.ResText("RevealFile"),
+                    IsEnabled = File.Exists(path) || Directory.Exists(path),
+                    Command = new RelayCommand(() => Native.OS.OpenInFileManager(path, true))
                 };
                 menu.Items.Add(explore);
 
