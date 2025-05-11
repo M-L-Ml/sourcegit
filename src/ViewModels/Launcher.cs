@@ -348,116 +348,119 @@ namespace SourceGit.ViewModels
                 _activePage.Notifications.Add(notification);
         }
 
-        public ContextMenu CreateContextForWorkspace()
+        public ContextMenuModel CreateContextForWorkspace()
         {
             var pref = Preferences.Instance;
-            var menu = new ContextMenu();
+            var menu = new ContextMenuModel();
 
             for (var i = 0; i < pref.Workspaces.Count; i++)
             {
                 var workspace = pref.Workspaces[i];
 
-                var icon = App.CreateMenuIcon(workspace.IsActive ? "Icons.Check" : "Icons.Workspace");
-                icon.Fill = workspace.Brush;
-
-                var item = new MenuItem();
-                item.Header = workspace.Name;
-                item.Icon = icon;
-                item.Click += (_, e) =>
+                var item = new MenuItemModel
                 {
-                    if (!workspace.IsActive)
-                        SwitchWorkspace(workspace);
-
-                    e.Handled = true;
+                    Header = workspace.Name,
+                    IconKey = workspace.IsActive ? App.MenuIconKey("Icons.Check") : App.MenuIconKey("Icons.Workspace"),
+                    Command = new RelayCommand(() =>
+                    {
+                        if (!workspace.IsActive)
+                            SwitchWorkspace(workspace);
+                    }),
                 };
 
                 menu.Items.Add(item);
             }
 
-            menu.Items.Add(new MenuItem() { Header = "-" });
+            menu.Items.Add(MenuModel.Separator());
 
-            var configure = new MenuItem();
-            configure.Header = App.Text("Workspace.Configure");
-            configure.Click += (_, e) =>
+            menu.Items.Add(new MenuItemModel
             {
-                App.ShowWindow(new ConfigureWorkspace(), true);
-                e.Handled = true;
-            };
-            menu.Items.Add(configure);
+                Header = App.Text("Workspace.Configure"),
+                Command = new RelayCommand(() => App.ShowWindow(new ConfigureWorkspace(), true)),
+            });
 
             return menu;
         }
 
-        public ContextMenu CreateContextForPageTab(LauncherPage page)
+        public ContextMenuModel CreateContextForPageTab(LauncherPage page)
         {
             if (page == null)
                 return null;
 
-            var menu = new ContextMenu();
-            var close = new MenuItem();
-            close.Header = App.Text("PageTabBar.Tab.Close");
-            close.InputGesture = KeyGesture.Parse(OperatingSystem.IsMacOS() ? "⌘+W" : "Ctrl+W");
-            close.Click += (_, e) =>
+            var menu = new ContextMenuModel();
+            // Close tab
+            menu.Items.Add(new MenuItemModel
             {
-                CloseTab(page);
-                e.Handled = true;
-            };
-            menu.Items.Add(close);
+                ViewToDo =
+                new(new()
+                {
+                    ("InputGesture", 
+                     //TODO: implement interpreting this in View
+                    "KeyGesture.Parse("
+                    +(OperatingSystem.IsMacOS() ? "⌘+W" : "Ctrl+W") +")")
 
-            var closeOthers = new MenuItem();
-            closeOthers.Header = App.Text("PageTabBar.Tab.CloseOther");
-            closeOthers.Click += (_, e) =>
-            {
-                CloseOtherTabs();
-                e.Handled = true;
-            };
-            menu.Items.Add(closeOthers);
+                }),
+                Header = App.ResText("PageTabBar.Tab.Close"),
+                Command = new RelayCommand(() => CloseTab(page)),
+            });
+            // KeyGesture not supported in MenuItemModel, can be handled in View
 
-            var closeRight = new MenuItem();
-            closeRight.Header = App.Text("PageTabBar.Tab.CloseRight");
-            closeRight.Click += (_, e) =>
+            // Close others
+            menu.Items.Add(new MenuItemModel
             {
-                CloseRightTabs();
-                e.Handled = true;
-            };
-            menu.Items.Add(closeRight);
+                Header = App.ResText("PageTabBar.Tab.CloseOther"),
+                Command = new RelayCommand(() => CloseOtherTabs()),
+            });
+            // Close right
+            menu.Items.Add(new MenuItemModel
+            {
+                Header = App.ResText("PageTabBar.Tab.CloseRight"),
+                Command = new RelayCommand(() => CloseRightTabs()),
+            });
 
             if (page.Node.IsRepository)
             {
-                var bookmark = new MenuItem();
-                bookmark.Header = App.Text("PageTabBar.Tab.Bookmark");
-                bookmark.Icon = App.CreateMenuIcon("Icons.Bookmark");
-
+                // Bookmark submenu
+                var bookmarkMenu = new MenuModel
+                {
+                    Header = App.Text("PageTabBar.Tab.Bookmark"),
+                    IconKey = App.MenuIconKey("Icons.Bookmark")
+                };
                 for (int i = 0; i < Models.Bookmarks.Supported.Count; i++)
                 {
-                    var icon = App.CreateMenuIcon("Icons.Bookmark");
-
+                    var iconKey = App.MenuIconKey("Icons.Bookmark");
+                    // Color/Fill can be handled in View
+                    ViewModelInfo vmi = new(default);
+                    //   icon.Fill = Models.Bookmarks.Brushes[i];
                     if (i != 0)
-                        icon.Fill = Models.Bookmarks.Brushes[i];
+                        vmi = new ViewModelInfo(new()
+                            {
+                                //TODO: implement interpreting this in View
+                                ("icon.Fill", Models.Bookmarks.Brushes[i])
+                            });
+
 
                     var dupIdx = i;
-                    var setter = new MenuItem();
-                    setter.Header = icon;
-                    setter.Click += (_, e) =>
+                    bookmarkMenu.Items.Add(new MenuItemModel
                     {
-                        page.Node.Bookmark = dupIdx;
-                        e.Handled = true;
-                    };
-                    bookmark.Items.Add(setter);
+                        Header = $"Bookmark {i}", // Optionally localize
+                        IconKey = iconKey,
+                        Command = new RelayCommand(() => page.Node.Bookmark = dupIdx)
+                    ,
+                        ViewToDo = vmi
+                    });
                 }
-                menu.Items.Add(new MenuItem() { Header = "-" });
-                menu.Items.Add(bookmark);
+                menu.Items.Add(MenuModel.Separator());
+                menu.Items.Add(bookmarkMenu);
 
-                var copyPath = new MenuItem();
-                copyPath.Header = App.Text("PageTabBar.Tab.CopyPath");
-                copyPath.Icon = App.CreateMenuIcon("Icons.Copy");
-                copyPath.Click += (_, e) =>
+                // Copy path
+                menu.Items.Add(MenuModel.Separator());
+                menu.Items.Add(new MenuItemModel
                 {
-                    page.CopyPath();
-                    e.Handled = true;
-                };
-                menu.Items.Add(new MenuItem() { Header = "-" });
-                menu.Items.Add(copyPath);
+                    Header = App.Text("PageTabBar.Tab.CopyPath"),
+                    IconKey = App.MenuIconKey("Icons.Copy"),
+                    Command = new RelayCommand(() => page.CopyPath()),
+                });
             }
 
             return menu;
