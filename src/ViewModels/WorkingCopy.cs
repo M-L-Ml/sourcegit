@@ -582,11 +582,12 @@ namespace SourceGit.ViewModels
                 };
                 menu.Items.Add(explore);
 
-                var openWith = new MenuItem();
-                openWith.Header = App.Text("OpenWith");
-                openWith.Icon = App.CreateMenuIcon("Icons.OpenWith");
-                openWith.IsEnabled = File.Exists(path);
-                openWith.Click += (_, e) =>
+                var openWith = new MenuItemModel {
+                    IconKey = App.MenuIconKey("Icons.OpenWith"),
+                    Header = App.ResText("OpenWith"),
+                    IsEnabled = File.Exists(path),
+                    Command = new RelayCommand(() => Native.OS.OpenWithDefaultEditor(path))
+                };
                 {
                     Native.OS.OpenWithDefaultEditor(path);
                     e.Handled = true;
@@ -1088,11 +1089,12 @@ namespace SourceGit.ViewModels
                     e.Handled = true;
                 };
 
-                var openWith = new MenuItem();
-                openWith.Header = App.Text("OpenWith");
-                openWith.Icon = App.CreateMenuIcon("Icons.OpenWith");
-                openWith.IsEnabled = File.Exists(path);
-                openWith.Click += (_, e) =>
+                var openWith = new MenuItemModel {
+                    IconKey = App.MenuIconKey("Icons.OpenWith"),
+                    Header = App.ResText("OpenWith"),
+                    IsEnabled = File.Exists(path),
+                    Command = new RelayCommand(() => Native.OS.OpenWithDefaultEditor(path))
+                };
 
                 var unstage = new MenuItemModel
                 {
