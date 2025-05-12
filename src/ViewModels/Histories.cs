@@ -828,51 +828,43 @@ menu.Items.Add(copy);
             submenu.Items.Add(MenuModel.Separator());
         }
 
-        private void FillTagVisibilityMenu(MenuItem submenu, Models.Tag tag)
-        {
-            var visibility = new MenuItem();
-            visibility.Icon = App.CreateMenuIcon("Icons.Eye");
-            visibility.Header = App.Text("Repository.FilterCommits");
+        private void FillTagVisibilityMenu(MenuModel submenu, Models.Tag tag)
+{
+    var visibility = new MenuModel {
+        IconKey = App.MenuIconKey("Icons.Eye"),
+        Header = App.ResText("Repository.FilterCommits")
+    };
 
-            var exclude = new MenuItem();
-            exclude.Icon = App.CreateMenuIcon("Icons.EyeClose");
-            exclude.Header = App.Text("Repository.FilterCommits.Exclude");
-            exclude.Click += (_, e) =>
-            {
-                _repo.SetTagFilterMode(tag, Models.FilterMode.Excluded);
-                e.Handled = true;
-            };
+    var exclude = new MenuItemModel {
+        IconKey = App.MenuIconKey("Icons.EyeClose"),
+        Header = App.ResText("Repository.FilterCommits.Exclude"),
+        Command = new RelayCommand(() => _repo.SetTagFilterMode(tag, Models.FilterMode.Excluded))
+    };
 
-            var filterMode = GetFilterMode(tag.Name);
-            if (filterMode == Models.FilterMode.None)
-            {
-                var include = new MenuItem();
-                include.Icon = App.CreateMenuIcon("Icons.Filter");
-                include.Header = App.Text("Repository.FilterCommits.Include");
-                include.Click += (_, e) =>
-                {
-                    _repo.SetTagFilterMode(tag, Models.FilterMode.Included);
-                    e.Handled = true;
-                };
-                visibility.Items.Add(include);
-                visibility.Items.Add(exclude);
-            }
-            else
-            {
-                var unset = new MenuItem();
-                unset.Header = App.Text("Repository.FilterCommits.Default");
-                unset.Click += (_, e) =>
-                {
-                    _repo.SetTagFilterMode(tag, Models.FilterMode.None);
-                    e.Handled = true;
-                };
-                visibility.Items.Add(exclude);
-                visibility.Items.Add(unset);
-            }
+    var filterMode = GetFilterMode(tag.Name);
+    if (filterMode == Models.FilterMode.None)
+    {
+        var include = new MenuItemModel {
+            IconKey = App.MenuIconKey("Icons.Filter"),
+            Header = App.ResText("Repository.FilterCommits.Include"),
+            Command = new RelayCommand(() => _repo.SetTagFilterMode(tag, Models.FilterMode.Included))
+        };
+        visibility.Items.Add(include);
+        visibility.Items.Add(exclude);
+    }
+    else
+    {
+        var unset = new MenuItemModel {
+            Header = App.ResText("Repository.FilterCommits.Default"),
+            Command = new RelayCommand(() => _repo.SetTagFilterMode(tag, Models.FilterMode.None))
+        };
+        visibility.Items.Add(exclude);
+        visibility.Items.Add(unset);
+    }
 
-            submenu.Items.Add(visibility);
-            submenu.Items.Add(MenuModel.Separator());
-        }
+    submenu.Items.Add(visibility);
+    submenu.Items.Add(MenuModel.Separator());
+}
 
         private void FillCurrentBranchMenu(ContextMenuModel menu, Models.Branch current)
         {
@@ -961,7 +953,7 @@ submenu.Items.Add(copy);
             menu.Items.Add(submenu);
         }
 
-        private void FillOtherLocalBranchMenu(ContextMenu menu, Models.Branch branch, Models.Branch current, bool merged)
+        private void FillOtherLocalBranchMenu(MenuModel menu, Models.Branch branch, Models.Branch current, bool merged)
         {
             var submenu = new MenuModel {
     IconKey = App.MenuIconKey("Icons.Branch"),
@@ -1041,7 +1033,7 @@ submenu.Items.Add(copy);
             menu.Items.Add(submenu);
         }
 
-        private void FillRemoteBranchMenu(ContextMenu menu, Models.Branch branch, Models.Branch current, bool merged)
+        private void FillRemoteBranchMenu(MenuModel menu, Models.Branch branch, Models.Branch current, bool merged)
         {
             var name = branch.FriendlyName;
 
@@ -1091,7 +1083,7 @@ submenu.Items.Add(copy);
             menu.Items.Add(submenu);
         }
 
-        private void FillTagMenu(ContextMenu menu, Models.Tag tag, Models.Branch current, bool merged)
+        private void FillTagMenu(MenuModel menu, Models.Tag tag, Models.Branch current, bool merged)
         {
             var submenu = new MenuModel {
     Header = tag.Name,
