@@ -22,7 +22,8 @@ namespace SourceGit.ViewModels
         icon_Fill,
         Placement,
         Views_MenuItemExtension_CommandProperty,
-        InputGesture
+        InputGesture,
+        MinWidth
     }
 
     /// <summary>

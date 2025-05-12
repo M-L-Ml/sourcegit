@@ -25,7 +25,7 @@ namespace PSGit.Views
 
         public static MenuItem CreateMenuItemFromModel(this MenuItemModel x)
         {
-            if (x is ContextMenuModel )
+            if (x is ContextMenuModel)
                 throw new InvalidOperationException("Use CreateContextMenuFromModel");
             var menu = new MenuItem()
             {
@@ -99,6 +99,13 @@ namespace PSGit.Views
 
                             var m = ((MenuItem)menu);
                             m.InputGesture = KeyGesture.Parse(value.ToString());
+                            break;
+                        }
+                    case ViewPropertySetting.MinWidth:
+                        {
+
+                            var m = ((MenuItem)menu);
+                            m.MinWidth = (int)value;
                         }
                         break;
                 }

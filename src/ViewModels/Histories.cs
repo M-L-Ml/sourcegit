@@ -1093,60 +1093,55 @@ submenu.Items.Add(copy);
 
         private void FillTagMenu(ContextMenu menu, Models.Tag tag, Models.Branch current, bool merged)
         {
-            var submenu = new MenuItem();
-            submenu.Header = tag.Name;
-            submenu.Icon = App.CreateMenuIcon("Icons.Tag");
-            submenu.MinWidth = 200;
+            var submenu = new MenuModel {
+    Header = tag.Name,
+    ViewToDo=new (){[ViewPropertySetting.MinWidth]=200},
+    IconKey = App.MenuIconKey("Icons.Tag")
+};
 
-            FillTagVisibilityMenu(submenu, tag);
+FillTagVisibilityMenu(submenu, tag);
 
-            var push = new MenuItem();
-            push.Header = App.Text("TagCM.Push", tag.Name);
-            push.Icon = App.CreateMenuIcon("Icons.Push");
-            push.IsEnabled = _repo.Remotes.Count > 0;
-            push.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new PushTag(_repo, tag));
-                e.Handled = true;
-            };
-            submenu.Items.Add(push);
+var push = new MenuItemModel {
+    Header = App.ResText("TagCM.Push", tag.Name),
+    IconKey = App.MenuIconKey("Icons.Push"),
+    IsEnabled = _repo.Remotes.Count > 0,
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new PushTag(_repo, tag));
+    })
+};
+submenu.Items.Add(push);
 
-            if (!_repo.IsBare && !merged)
-            {
-                var merge = new MenuItem();
-                merge.Header = App.Text("TagCM.Merge", tag.Name, current.Name);
-                merge.Icon = App.CreateMenuIcon("Icons.Merge");
-                merge.Click += (_, e) =>
-                {
-                    if (_repo.CanCreatePopup())
-                        _repo.ShowPopup(new Merge(_repo, tag, current.Name));
-                    e.Handled = true;
-                };
-                submenu.Items.Add(merge);
+if (!_repo.IsBare && !merged)
+{
+    var merge = new MenuItemModel {
+        Header = App.ResText("TagCM.Merge", tag.Name, current.Name),
+        IconKey = App.MenuIconKey("Icons.Merge"),
+        Command = new RelayCommand(() => {
+            if (_repo.CanCreatePopup())
+                _repo.ShowPopup(new Merge(_repo, tag, current.Name));
+        })
+    };
+    submenu.Items.Add(merge);
             }
 
-            var delete = new MenuItem();
-            delete.Header = App.Text("TagCM.Delete", tag.Name);
-            delete.Icon = App.CreateMenuIcon("Icons.Clear");
-            delete.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new DeleteTag(_repo, tag));
-                e.Handled = true;
-            };
-            submenu.Items.Add(delete);
-            submenu.Items.Add(MenuModel.Separator());
+            var delete = new MenuItemModel {
+    Header = App.ResText("TagCM.Delete", tag.Name),
+    IconKey = App.MenuIconKey("Icons.Clear"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new DeleteTag(_repo, tag));
+    })
+};
+submenu.Items.Add(delete);
+submenu.Items.Add(MenuModel.Separator());
 
-            var copy = new MenuItem();
-            copy.Header = App.Text("TagCM.Copy");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, e) =>
-            {
-                App.CopyText(tag.Name);
-                e.Handled = true;
-            };
-            submenu.Items.Add(copy);
+var copy = new MenuItemModel {
+    Header = App.ResText("TagCM.CopyName"),
+    IconKey = App.MenuIconKey("Icons.Copy"),
+    Command = new RelayCommand(() => App.CopyText(tag.Name))
+};
+submenu.Items.Add(copy);
 
             menu.Items.Add(submenu);
         }
