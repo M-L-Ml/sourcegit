@@ -20,6 +20,10 @@
 completed. Consider applying the 'await' operator to the result of the call. -->
    <!-- warning CS8767: Nullability of reference types in type of parameter 'parameter' of 'object FormatByResourceKeyConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)' doesn't match implicitly implemented member 'object? IValueConverter.ConvertBack(object? 
 value, Type targetType, object? parameter, CultureInfo culture)' (possibly because of nullability attributes). -->
-    <NoWarn>CS8600;CS8601;CS8602;CS8603;CS8604,CS8618,CS8625,CS8765;CS8767;CS4014</NoWarn>
+
+    <!--warning CS8622: Nullability of reference types in type of parameter 'sender' of 'void SingleSideTextDiffPresenter.OnTextViewScrollChanged(object sender, ScrollChangedEventArgs e)' doesn't match the target delegate 'EventHandler<ScrollChangedEventArgs>
+      ' (possibly because of nullability attributes).-->
+      
+      <NoWarn>CS8600,CS8601,CS8602,CS8603,CS8604,CS8618,CS8622,CS8625,CS8765,CS8767,CS4014</NoWarn>
   </PropertyGroup>
 </Project>
