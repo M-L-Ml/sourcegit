@@ -14,7 +14,6 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.TextMate;
 using AvaloniaEdit.Utils;
-using SourceGit.ViewModels;
 
 namespace SourceGit.Views
 {

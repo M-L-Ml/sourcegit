@@ -8,9 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Avalonia.Collections;
-using Avalonia.Controls;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 
 using CommunityToolkit.Mvvm.ComponentModel;

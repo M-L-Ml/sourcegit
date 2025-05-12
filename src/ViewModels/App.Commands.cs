@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Windows.Input;
 using Avalonia.Controls;
-using Avalonia.Utilities;
 
 namespace SourceGit.ViewModels
 {

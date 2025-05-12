@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 
 using Avalonia.Collections;
-using Avalonia.Controls;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;

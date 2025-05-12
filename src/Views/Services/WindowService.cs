@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using SourceGit.ViewModels.Services;
 
 namespace SourceGit.Views.Services

@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-
-using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 

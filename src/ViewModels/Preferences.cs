@@ -10,7 +10,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Avalonia.Data.Converters;
 using System.Diagnostics;
-using Avalonia.Controls;
 using Avalonia;
 
 namespace SourceGit.ViewModels

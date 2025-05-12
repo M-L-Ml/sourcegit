@@ -21,7 +21,6 @@ using Avalonia.Media.Fonts;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using JsonCodeGen = SourceGit.ViewModels.JsonCodeGen;
 namespace SourceGit
 {
     public partial class App : Application
