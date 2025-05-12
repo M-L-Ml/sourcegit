@@ -1191,7 +1191,7 @@ namespace SourceGit.ViewModels
                     }
                     lfs.Items.Add(lfsLock);
 
-                    var lfsUnlock = new MenuItem();
+                    var lfsUnlock = new MenuItemModel();
                     lfsUnlock.Header = App.Text("GitLFS.Locks.Unlock");
                     lfsUnlock.Icon = App.CreateMenuIcon("Icons.Unlock");
                     lfsUnlock.IsEnabled = _repo.Remotes.Count > 0;
@@ -1232,19 +1232,18 @@ namespace SourceGit.ViewModels
             }
             return menu;
         }
-
-        public ContextMenu CreateContextMenuForCommitMessages()
+        public ContextMenuModel CreateContextMenuForCommitMessages()
         {
-            var menu = new ContextMenu();
+            var menu = new ContextMenuModel();
 
             var gitTemplate = new Commands.Config(_repo.FullPath).Get("commit.template");
             var templateCount = _repo.Settings.CommitTemplates.Count;
             if (templateCount == 0 && string.IsNullOrEmpty(gitTemplate))
             {
-                menu.Items.Add(new MenuItem()
+                menu.Items.Add(new MenuItemModel
                 {
-                    Header = App.Text("WorkingCopy.NoCommitTemplates"),
-                    Icon = App.CreateMenuIcon("Icons.Code"),
+                    Header = App.ResText("WorkingCopy.NoCommitTemplates"),
+                    IconKey = App.MenuIconKey("Icons.Code"),
                     IsEnabled = false
                 });
             }
@@ -1253,15 +1252,12 @@ namespace SourceGit.ViewModels
                 for (int i = 0; i < templateCount; i++)
                 {
                     var template = _repo.Settings.CommitTemplates[i];
-                    var item = new MenuItem();
-                    item.Header = App.Text("WorkingCopy.UseCommitTemplate", template.Name);
-                    item.Icon = App.CreateMenuIcon("Icons.Code");
-                    item.Click += (_, e) =>
+                    menu.Items.Add(new MenuItemModel
                     {
-                        CommitMessage = template.Apply(_repo.CurrentBranch, _staged);
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(item);
+                        Header = App.ResText("WorkingCopy.UseCommitTemplate", template.Name),
+                        IconKey = App.MenuIconKey("Icons.Code"),
+                        Command = new RelayCommand(() => { CommitMessage = template.Apply(_repo.CurrentBranch, _staged); })
+                    });
                 }
 
                 if (!string.IsNullOrEmpty(gitTemplate))
@@ -1274,29 +1270,27 @@ namespace SourceGit.ViewModels
                         if (gitTemplate.StartsWith(home, StringComparison.Ordinal))
                             friendlyName = $"~{gitTemplate.AsSpan(prefixLen)}";
                     }
-
-                    var gitTemplateItem = new MenuItem();
-                    gitTemplateItem.Header = App.Text("WorkingCopy.UseCommitTemplate", friendlyName);
-                    gitTemplateItem.Icon = App.CreateMenuIcon("Icons.Code");
-                    gitTemplateItem.Click += (_, e) =>
+                    menu.Items.Add(new MenuItemModel
                     {
-                        if (File.Exists(gitTemplate))
-                            CommitMessage = File.ReadAllText(gitTemplate);
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(gitTemplateItem);
+                        Header = App.ResText("WorkingCopy.UseCommitTemplate", friendlyName),
+                        IconKey = App.MenuIconKey("Icons.Code"),
+                        Command = new RelayCommand(() => {
+                            if (File.Exists(gitTemplate))
+                                CommitMessage = File.ReadAllText(gitTemplate);
+                        })
+                    });
                 }
             }
 
-            menu.Items.Add(new MenuItem() { Header = "-" });
+            menu.Items.Add(MenuModel.Separator());
 
             var historiesCount = _repo.Settings.CommitMessages.Count;
             if (historiesCount == 0)
             {
-                menu.Items.Add(new MenuItem()
+                menu.Items.Add(new MenuItemModel
                 {
-                    Header = App.Text("WorkingCopy.NoCommitHistories"),
-                    Icon = App.CreateMenuIcon("Icons.Histories"),
+                    Header = App.ResText("WorkingCopy.NoCommitHistories"),
+                    IconKey = App.MenuIconKey("Icons.Histories"),
                     IsEnabled = false
                 });
             }
@@ -1307,16 +1301,12 @@ namespace SourceGit.ViewModels
                     var message = _repo.Settings.CommitMessages[i].Trim().ReplaceLineEndings("\n");
                     var subjectEndIdx = message.IndexOf('\n');
                     var subject = subjectEndIdx > 0 ? message.Substring(0, subjectEndIdx) : message;
-                    var item = new MenuItem();
-                    item.Header = subject;
-                    item.Icon = App.CreateMenuIcon("Icons.Histories");
-                    item.Click += (_, e) =>
+                    menu.Items.Add(new MenuItemModel
                     {
-                        CommitMessage = message;
-                        e.Handled = true;
-                    };
-
-                    menu.Items.Add(item);
+                        Header = subject,
+                        IconKey = App.MenuIconKey("Icons.Histories"),
+                        Command = new RelayCommand(() => { CommitMessage = message; })
+                    });
                 }
             }
 

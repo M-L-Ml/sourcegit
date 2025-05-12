@@ -137,7 +137,7 @@ namespace SourceGit.ViewModels
             SearchFilter = string.Empty;
         }
 
-        public ContextMenu CreateChangeContextMenu()
+        public ContextMenuModel CreateChangeContextMenu()
         {
             if (_selectedChanges == null || _selectedChanges.Count != 1)
                 return null;
