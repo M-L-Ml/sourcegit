@@ -435,383 +435,341 @@ namespace SourceGit.ViewModels
                 }
 
                 if (menu.Items.Count > 0)
-                    menu.Items.Add(new MenuItem() { Header = "-" });
+                    menu.Items.Add(MenuModel.Separator());
             }
 
             if (tags.Count > 0)
             {
                 foreach (var tag in tags)
                     FillTagMenu(menu, tag, current, commit.IsMerged);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                menu.Items.Add(MenuModel.Separator());
             }
 
             if (!_repo.IsBare)
             {
                 if (current.Head != commit.SHA)
                 {
-                    var reset = new MenuItem();
-                    reset.Header = App.Text("CommitCM.Reset", current.Name);
-                    reset.Icon = App.CreateMenuIcon("Icons.Reset");
-                    reset.Click += (_, e) =>
-                    {
-                        if (_repo.CanCreatePopup())
-                            _repo.ShowPopup(new Reset(_repo, current, commit));
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(reset);
+                    var reset = new MenuItemModel {
+    Header = App.ResText("CommitCM.Reset", current.Name),
+    IconKey = App.MenuIconKey("Icons.Reset"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Reset(_repo, current, commit));
+    })
+};
+menu.Items.Add(reset);
 
                     if (commit.IsMerged)
                     {
-                        var squash = new MenuItem();
-                        squash.Header = App.Text("CommitCM.SquashCommitsSinceThis");
-                        squash.Icon = App.CreateMenuIcon("Icons.SquashIntoParent");
-                        squash.Click += (_, e) =>
-                        {
-                            if (_repo.CanCreatePopup())
-                                _repo.ShowPopup(new Squash(_repo, commit, commit.SHA));
-
-                            e.Handled = true;
-                        };
-                        menu.Items.Add(squash);
+                        var squash = new MenuItemModel {
+    Header = App.ResText("CommitCM.SquashCommitsSinceThis"),
+    IconKey = App.MenuIconKey("Icons.SquashIntoParent"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Squash(_repo, commit, commit.SHA));
+    })
+};
+menu.Items.Add(squash);
                     }
                 }
                 else
                 {
-                    var reword = new MenuItem();
-                    reword.Header = App.Text("CommitCM.Reword");
-                    reword.Icon = App.CreateMenuIcon("Icons.Edit");
-                    reword.Click += (_, e) =>
-                    {
-                        if (_repo.LocalChangesCount > 0)
-                        {
-                            App.RaiseException(_repo.FullPath, "You have local changes. Please run stash or discard first.");
-                            return;
-                        }
+                    var reword = new MenuItemModel {
+    Header = App.ResText("CommitCM.Reword"),
+    IconKey = App.MenuIconKey("Icons.Edit"),
+    Command = new RelayCommand(() => {
+        if (_repo.LocalChangesCount > 0)
+        {
+            App.RaiseException(_repo.FullPath, "You have local changes. Please run stash or discard first.");
+            return;
+        }
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Reword(_repo, commit));
+    })
+};
+menu.Items.Add(reword);
 
-                        if (_repo.CanCreatePopup())
-                            _repo.ShowPopup(new Reword(_repo, commit));
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(reword);
-
-                    var squash = new MenuItem();
-                    squash.Header = App.Text("CommitCM.Squash");
-                    squash.Icon = App.CreateMenuIcon("Icons.SquashIntoParent");
-                    squash.IsEnabled = commit.Parents.Count == 1;
-                    squash.Click += (_, e) =>
-                    {
-                        if (commit.Parents.Count == 1)
-                        {
-                            var parent = _commits.Find(x => x.SHA == commit.Parents[0]);
-                            if (parent != null && _repo.CanCreatePopup())
-                                _repo.ShowPopup(new Squash(_repo, parent, commit.SHA));
-                        }
-
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(squash);
+                    var squash = new MenuItemModel {
+    Header = App.ResText("CommitCM.Squash"),
+    IconKey = App.MenuIconKey("Icons.SquashIntoParent"),
+    IsEnabled = commit.Parents.Count == 1,
+    Command = new RelayCommand(() => {
+        if (commit.Parents.Count == 1)
+        {
+            var parent = _commits.Find(x => x.SHA == commit.Parents[0]);
+            if (parent != null && _repo.CanCreatePopup())
+                _repo.ShowPopup(new Squash(_repo, parent, commit.SHA));
+        }
+    })
+};
+menu.Items.Add(squash);
                 }
 
                 if (!commit.IsMerged)
                 {
-                    var rebase = new MenuItem();
-                    rebase.Header = App.Text("CommitCM.Rebase", current.Name);
-                    rebase.Icon = App.CreateMenuIcon("Icons.Rebase");
-                    rebase.Click += (_, e) =>
-                    {
-                        if (_repo.CanCreatePopup())
-                            _repo.ShowPopup(new Rebase(_repo, current, commit));
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(rebase);
+                    var rebase = new MenuItemModel {
+    Header = App.ResText("CommitCM.Rebase", current.Name),
+    IconKey = App.MenuIconKey("Icons.Rebase"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Rebase(_repo, current, commit));
+    })
+};
+menu.Items.Add(rebase);
 
                     if (!commit.HasDecorators)
                     {
-                        var merge = new MenuItem();
-                        merge.Header = App.Text("CommitCM.Merge", current.Name);
-                        merge.Icon = App.CreateMenuIcon("Icons.Merge");
-                        merge.Click += (_, e) =>
-                        {
-                            if (_repo.CanCreatePopup())
-                                _repo.ShowPopup(new Merge(_repo, commit, current.Name));
-
-                            e.Handled = true;
-                        };
-                        menu.Items.Add(merge);
+                        var merge = new MenuItemModel {
+    Header = App.ResText("CommitCM.Merge", current.Name),
+    IconKey = App.MenuIconKey("Icons.Merge"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Merge(_repo, commit, current.Name));
+    })
+};
+menu.Items.Add(merge);
                     }
 
-                    var cherryPick = new MenuItem();
-                    cherryPick.Header = App.Text("CommitCM.CherryPick");
-                    cherryPick.Icon = App.CreateMenuIcon("Icons.CherryPick");
-                    cherryPick.Click += (_, e) =>
-                    {
-                        if (_repo.CanCreatePopup())
-                        {
-                            if (commit.Parents.Count <= 1)
-                            {
-                                _repo.ShowPopup(new CherryPick(_repo, [commit]));
-                            }
-                            else
-                            {
-                                var parents = new List<Models.Commit>();
-                                foreach (var sha in commit.Parents)
-                                {
-                                    var parent = _commits.Find(x => x.SHA == sha);
-                                    if (parent == null)
-                                        parent = new Commands.QuerySingleCommit(_repo.FullPath, sha).Result();
-
-                                    if (parent != null)
-                                        parents.Add(parent);
-                                }
-
-                                _repo.ShowPopup(new CherryPick(_repo, commit, parents));
-                            }
-                        }
-
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(cherryPick);
+                    var cherryPick = new MenuItemModel {
+    Header = App.ResText("CommitCM.CherryPick"),
+    IconKey = App.MenuIconKey("Icons.CherryPick"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+        {
+            if (commit.Parents.Count <= 1)
+            {
+                _repo.ShowPopup(new CherryPick(_repo, new List<Models.Commit> { commit }));
+            }
+            else
+            {
+                var parents = new List<Models.Commit>();
+                foreach (var sha in commit.Parents)
+                {
+                    var parent = _commits.Find(x => x.SHA == sha);
+                    if (parent == null)
+                        parent = new Commands.QuerySingleCommit(_repo.FullPath, sha).Result();
+                    if (parent != null)
+                        parents.Add(parent);
+                }
+                _repo.ShowPopup(new CherryPick(_repo, commit, parents));
+            }
+        }
+    })
+};
+menu.Items.Add(cherryPick);
                 }
                 else
                 {
-                    var revert = new MenuItem();
-                    revert.Header = App.Text("CommitCM.Revert");
-                    revert.Icon = App.CreateMenuIcon("Icons.Undo");
-                    revert.Click += (_, e) =>
-                    {
-                        if (_repo.CanCreatePopup())
-                            _repo.ShowPopup(new Revert(_repo, commit));
-                        e.Handled = true;
-                    };
-                    menu.Items.Add(revert);
+                    var revert = new MenuItemModel {
+    Header = App.ResText("CommitCM.Revert"),
+    IconKey = App.MenuIconKey("Icons.Undo"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Revert(_repo, commit));
+    })
+};
+menu.Items.Add(revert);
                 }
 
                 if (current.Head != commit.SHA)
                 {
-                    var checkoutCommit = new MenuItem();
-                    checkoutCommit.Header = App.Text("CommitCM.Checkout");
-                    checkoutCommit.Icon = App.CreateMenuIcon("Icons.Detached");
-                    checkoutCommit.Click += (_, e) =>
-                    {
-                        if (_repo.CanCreatePopup())
-                            _repo.ShowPopup(new CheckoutCommit(_repo, commit));
-                        e.Handled = true;
-                    };
+                    var checkoutCommit = new MenuItemModel {
+    Header = App.ResText("CommitCM.Checkout"),
+    IconKey = App.MenuIconKey("Icons.Detached"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new CheckoutCommit(_repo, commit));
+    })
+};
 
-                    var interactiveRebase = new MenuItem();
-                    interactiveRebase.Header = App.Text("CommitCM.InteractiveRebase", current.Name);
-                    interactiveRebase.Icon = App.CreateMenuIcon("Icons.InteractiveRebase");
-                    interactiveRebase.Click += (_, e) =>
-                    {
-                        if (_repo.LocalChangesCount > 0)
-                        {
-                            App.RaiseException(_repo.FullPath, "You have local changes. Please run stash or discard first.");
-                            return;
-                        }
-
-                        App.ShowWindow(new InteractiveRebase(_repo, current, commit), true);
-                        e.Handled = true;
-                    };
+                    var interactiveRebase = new MenuItemModel {
+    Header = App.ResText("CommitCM.InteractiveRebase", current.Name),
+    IconKey = App.MenuIconKey("Icons.InteractiveRebase"),
+    Command = new RelayCommand(() => {
+        if (_repo.LocalChangesCount > 0)
+        {
+            App.RaiseException(_repo.FullPath, "You have local changes. Please run stash or discard first.");
+            return;
+        }
+        App.ShowWindow(new InteractiveRebase(_repo, current, commit), true);
+    })
+};
 
                     menu.Items.Add(checkoutCommit);
-                    menu.Items.Add(new MenuItem() { Header = "-" });
+                    menu.Items.Add(MenuModel.Separator());
                     menu.Items.Add(interactiveRebase);
                 }
 
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                menu.Items.Add(MenuModel.Separator());
             }
 
             if (current.Head != commit.SHA)
             {
-                var compareWithHead = new MenuItem();
-                compareWithHead.Header = App.Text("CommitCM.CompareWithHead");
-                compareWithHead.Icon = App.CreateMenuIcon("Icons.Compare");
-                compareWithHead.Click += (_, e) =>
-                {
-                    var head = _commits.Find(x => x.SHA == current.Head);
-                    if (head == null)
-                    {
-                        _repo.SelectedSearchedCommit = null;
-                        head = new Commands.QuerySingleCommit(_repo.FullPath, current.Head).Result();
-                        if (head != null)
-                            DetailContext = new RevisionCompare(_repo.FullPath, commit, head);
-                    }
-                    else
-                    {
-                        list.SelectedItems.Add(head);
-                    }
-
-                    e.Handled = true;
-                };
+                var compareWithHead = new MenuItemModel {
+    Header = App.ResText("CommitCM.CompareWithHead"),
+    IconKey = App.MenuIconKey("Icons.Compare"),
+    Command = new RelayCommand(() => {
+        var head = _commits.Find(x => x.SHA == current.Head);
+        if (head == null)
+        {
+            _repo.SelectedSearchedCommit = null;
+            head = new Commands.QuerySingleCommit(_repo.FullPath, current.Head).Result();
+            if (head != null)
+                DetailContext = new RevisionCompare(_repo.FullPath, commit, head);
+        }
+        else
+        {
+            list.SelectedItems.Add(head);
+        }
+    })
+};
                 menu.Items.Add(compareWithHead);
 
                 if (_repo.LocalChangesCount > 0)
                 {
-                    var compareWithWorktree = new MenuItem();
-                    compareWithWorktree.Header = App.Text("CommitCM.CompareWithWorktree");
-                    compareWithWorktree.Icon = App.CreateMenuIcon("Icons.Compare");
-                    compareWithWorktree.Click += (_, e) =>
-                    {
-                        DetailContext = new RevisionCompare(_repo.FullPath, commit, null);
-                        e.Handled = true;
-                    };
+                    var compareWithWorktree = new MenuItemModel {
+    Header = App.ResText("CommitCM.CompareWithWorktree"),
+    IconKey = App.MenuIconKey("Icons.Compare"),
+    Command = new RelayCommand(() => {
+        DetailContext = new RevisionCompare(_repo.FullPath, commit, null);
+    })
+};
                     menu.Items.Add(compareWithWorktree);
                 }
 
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                menu.Items.Add(MenuModel.Separator());
             }
 
-            var createBranch = new MenuItem();
-            createBranch.Icon = App.CreateMenuIcon("Icons.Branch.Add");
-            createBranch.Header = App.Text("CreateBranch");
-            createBranch.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new CreateBranch(_repo, commit));
-                e.Handled = true;
-            };
+            var createBranch = new MenuItemModel {
+    IconKey = App.MenuIconKey("Icons.Branch.Add"),
+    Header = App.ResText("CreateBranch"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new CreateBranch(_repo, commit));
+    })
+};
             menu.Items.Add(createBranch);
 
-            var createTag = new MenuItem();
-            createTag.Icon = App.CreateMenuIcon("Icons.Tag.Add");
-            createTag.Header = App.Text("CreateTag");
-            createTag.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new CreateTag(_repo, commit));
-                e.Handled = true;
-            };
+            var createTag = new MenuItemModel {
+    IconKey = App.MenuIconKey("Icons.Tag.Add"),
+    Header = App.ResText("CreateTag"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new CreateTag(_repo, commit));
+    })
+};
             menu.Items.Add(createTag);
-            menu.Items.Add(new MenuItem() { Header = "-" });
+            menu.Items.Add(MenuModel.Separator());
 
-            var saveToPatch = new MenuItem();
-            saveToPatch.Icon = App.CreateMenuIcon("Icons.Diff");
-            saveToPatch.Header = App.Text("CommitCM.SaveAsPatch");
-            saveToPatch.Click += async (_, e) =>
+            var saveToPatch = new MenuItemModel {
+    IconKey = App.MenuIconKey("Icons.Diff"),
+    Header = App.ResText("CommitCM.SaveAsPatch"),
+    Command = new AsyncRelayCommand(async () => {
+        var storageProvider = App.GetStorageProvider();
+        if (storageProvider == null)
+            return;
+
+        var options = new FolderPickerOpenOptions() { AllowMultiple = false };
+        var log = null as CommandLog;
+        try
+        {
+            var selected = await storageProvider.OpenFolderPickerAsync(options);
+            if (selected.Count == 1)
             {
-                var storageProvider = App.GetStorageProvider();
-                if (storageProvider == null)
-                    return;
-
-                var options = new FolderPickerOpenOptions() { AllowMultiple = false };
-                var log = null as CommandLog;
-                try
-                {
-                    var selected = await storageProvider.OpenFolderPickerAsync(options);
-                    if (selected.Count == 1)
-                    {
-                        log = _repo.CreateLog("Save as Patch");
-
-                        var saveTo = GetPatchFileName(selected[0].Path.LocalPath, commit);
-                        var succ = new Commands.FormatPatch(_repo.FullPath, commit.SHA, saveTo).Use(log).Exec();
-                        if (succ)
-                            App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
-                    }
-                }
-                catch (Exception exception)
-                {
-                    App.RaiseException(_repo.FullPath, $"Failed to save as patch: {exception.Message}");
-                }
-
-                log?.Complete();
-                e.Handled = true;
-            };
+                log = _repo.CreateLog("Save as Patch");
+                var saveTo = GetPatchFileName(selected[0].Path.LocalPath, commit);
+                var succ = new Commands.FormatPatch(_repo.FullPath, commit.SHA, saveTo).Use(log).Exec();
+                if (succ)
+                    App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
+            }
+        }
+        catch (Exception exception)
+        {
+            App.RaiseException(_repo.FullPath, $"Failed to save as patch: {exception.Message}");
+        }
+        log?.Complete();
+    })
+};
             menu.Items.Add(saveToPatch);
 
-            var archive = new MenuItem();
-            archive.Icon = App.CreateMenuIcon("Icons.Archive");
-            archive.Header = App.Text("Archive");
-            archive.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new Archive(_repo, commit));
-                e.Handled = true;
-            };
+            var archive = new MenuItemModel {
+    IconKey = App.MenuIconKey("Icons.Archive"),
+    Header = App.ResText("Archive"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Archive(_repo, commit));
+    })
+};
             menu.Items.Add(archive);
-            menu.Items.Add(new MenuItem() { Header = "-" });
+            menu.Items.Add(MenuModel.Separator());
 
             var actions = _repo.GetCustomActions(Models.CustomActionScope.Commit);
             if (actions.Count > 0)
             {
-                var custom = new MenuItem();
-                custom.Header = App.Text("CommitCM.CustomAction");
-                custom.Icon = App.CreateMenuIcon("Icons.Action");
+                var custom = new MenuModel {
+    Header = App.ResText("CommitCM.CustomAction"),
+    IconKey = App.MenuIconKey("Icons.Action")
+};
 
                 foreach (var action in actions)
                 {
                     var dup = action;
-                    var item = new MenuItem();
-                    item.Icon = App.CreateMenuIcon("Icons.Action");
-                    item.Header = dup.Name;
-                    item.Click += (_, e) =>
-                    {
-                        if (_repo.CanCreatePopup())
-                            _repo.ShowAndStartPopup(new ExecuteCustomAction(_repo, dup, commit));
-
-                        e.Handled = true;
-                    };
+                    var item = new MenuItemModel {
+    IconKey = App.MenuIconKey("Icons.Action"),
+    Header = dup.Name,
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowAndStartPopup(new ExecuteCustomAction(_repo, dup, commit));
+    })
+};
 
                     custom.Items.Add(item);
                 }
 
                 menu.Items.Add(custom);
-                menu.Items.Add(new MenuItem() { Header = "-" });
+                menu.Items.Add(MenuModel.Separator());
             }
 
-            var copySHA = new MenuItem();
-            copySHA.Header = App.Text("CommitCM.CopySHA");
-            copySHA.Icon = App.CreateMenuIcon("Icons.Fingerprint");
-            copySHA.Click += (_, e) =>
-            {
-                App.CopyText(commit.SHA);
-                e.Handled = true;
-            };
+            var copySHA = new MenuItemModel {
+    Header = App.ResText("CommitCM.CopySHA"),
+    IconKey = App.MenuIconKey("Icons.Fingerprint"),
+    Command = new RelayCommand(() => App.CopyText(commit.SHA))
+};
 
-            var copySubject = new MenuItem();
-            copySubject.Header = App.Text("CommitCM.CopySubject");
-            copySubject.Icon = App.CreateMenuIcon("Icons.Subject");
-            copySubject.Click += (_, e) =>
-            {
-                App.CopyText(commit.Subject);
-                e.Handled = true;
-            };
+            var copySubject = new MenuItemModel {
+    Header = App.ResText("CommitCM.CopySubject"),
+    IconKey = App.MenuIconKey("Icons.Subject"),
+    Command = new RelayCommand(() => App.CopyText(commit.Subject))
+};
 
-            var copyInfo = new MenuItem();
-            copyInfo.Header = App.Text("CommitCM.CopyInfo");
-            copyInfo.Icon = App.CreateMenuIcon("Icons.Info");
-            copyInfo.Click += (_, e) =>
-            {
-                App.CopyText($"{commit.SHA.Substring(0, 10)} - {commit.Subject}");
-                e.Handled = true;
-            };
+            var copyInfo = new MenuItemModel {
+    Header = App.ResText("CommitCM.CopyInfo"),
+    IconKey = App.MenuIconKey("Icons.Info"),
+    Command = new RelayCommand(() => App.CopyText($"{commit.SHA.Substring(0, 10)} - {commit.Subject}"))
+};
 
-            var copyAuthor = new MenuItem();
-            copyAuthor.Header = App.Text("CommitCM.CopyAuthor");
-            copyAuthor.Icon = App.CreateMenuIcon("Icons.User");
-            copyAuthor.Click += (_, e) =>
-            {
-                App.CopyText(commit.Author.ToString());
-                e.Handled = true;
-            };
+            var copyAuthor = new MenuItemModel {
+    Header = App.ResText("CommitCM.CopyAuthor"),
+    IconKey = App.MenuIconKey("Icons.User"),
+    Command = new RelayCommand(() => App.CopyText(commit.Author.ToString()))
+};
 
-            var copyCommitter = new MenuItem();
-            copyCommitter.Header = App.Text("CommitCM.CopyCommitter");
-            copyCommitter.Icon = App.CreateMenuIcon("Icons.User");
-            copyCommitter.Click += (_, e) =>
-            {
-                App.CopyText(commit.Committer.ToString());
-                e.Handled = true;
-            };
+            var copyCommitter = new MenuItemModel {
+    Header = App.ResText("CommitCM.CopyCommitter"),
+    IconKey = App.MenuIconKey("Icons.User"),
+    Command = new RelayCommand(() => App.CopyText(commit.Committer.ToString()))
+};
 
-            var copy = new MenuItem();
-            copy.Header = App.Text("Copy");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Items.Add(copySHA);
-            copy.Items.Add(copySubject);
-            copy.Items.Add(copyInfo);
-            copy.Items.Add(copyAuthor);
-            copy.Items.Add(copyCommitter);
-            menu.Items.Add(copy);
+            var copy = new MenuModel {
+    Header = App.ResText("Copy"),
+    IconKey = App.MenuIconKey("Icons.Copy")
+};
+copy.Items.Add(copySHA);
+copy.Items.Add(copySubject);
+copy.Items.Add(copyInfo);
+copy.Items.Add(copyAuthor);
+copy.Items.Add(copyCommitter);
+menu.Items.Add(copy);
 
             return menu;
         }
@@ -913,7 +871,7 @@ namespace SourceGit.ViewModels
             }
 
             submenu.Items.Add(visibility);
-            submenu.Items.Add(new MenuItem() { Header = "-" });
+            submenu.Items.Add(MenuModel.Separator());
         }
 
         private void FillCurrentBranchMenu(ContextMenuModel menu, Models.Branch current)
@@ -928,175 +886,157 @@ namespace SourceGit.ViewModels
             {
                 var upstream = current.Upstream.Substring(13);
 
-                var fastForward = new MenuItem();
-                fastForward.Header = App.Text("BranchCM.FastForward", upstream);
-                fastForward.Icon = App.CreateMenuIcon("Icons.FastForward");
-                fastForward.IsEnabled = current.TrackStatus.Ahead.Count == 0;
-                fastForward.Click += (_, e) =>
-                {
-                    var b = _repo.Branches.Find(x => x.FriendlyName == upstream);
-                    if (b == null)
-                        return;
+                var fastForward = new MenuItemModel {
+    Header = App.ResText("BranchCM.FastForward", upstream),
+    IconKey = App.MenuIconKey("Icons.FastForward"),
+    IsEnabled = current.TrackStatus.Ahead.Count == 0,
+    Command = new RelayCommand(() => {
+        var b = _repo.Branches.Find(x => x.FriendlyName == upstream);
+        if (b == null)
+            return;
+        if (_repo.CanCreatePopup())
+            _repo.ShowAndStartPopup(new Merge(_repo, b, current.Name, true));
+    })
+};
+submenu.Items.Add(fastForward);
 
-                    if (_repo.CanCreatePopup())
-                        _repo.ShowAndStartPopup(new Merge(_repo, b, current.Name, true));
-
-                    e.Handled = true;
-                };
-                submenu.Items.Add(fastForward);
-
-                var pull = new MenuItem();
-                pull.Header = App.Text("BranchCM.Pull", upstream);
-                pull.Icon = App.CreateMenuIcon("Icons.Pull");
-                pull.Click += (_, e) =>
-                {
-                    if (_repo.CanCreatePopup())
-                        _repo.ShowPopup(new Pull(_repo, null));
-                    e.Handled = true;
-                };
-                submenu.Items.Add(pull);
+                var pull = new MenuItemModel {
+    Header = App.ResText("BranchCM.Pull", upstream),
+    IconKey = App.MenuIconKey("Icons.Pull"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Pull(_repo, null));
+    })
+};
+submenu.Items.Add(pull);
             }
 
-            var push = new MenuItem();
-            push.Header = App.Text("BranchCM.Push", current.Name);
-            push.Icon = App.CreateMenuIcon("Icons.Push");
-            push.IsEnabled = _repo.Remotes.Count > 0;
-            push.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new Push(_repo, current));
-                e.Handled = true;
-            };
-            submenu.Items.Add(push);
+            var push = new MenuItemModel {
+    Header = App.ResText("BranchCM.Push", current.Name),
+    IconKey = App.MenuIconKey("Icons.Push"),
+    IsEnabled = _repo.Remotes.Count > 0,
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Push(_repo, current));
+    })
+};
+submenu.Items.Add(push);
 
-            var rename = new MenuItem();
-            rename.Header = App.Text("BranchCM.Rename", current.Name);
-            rename.Icon = App.CreateMenuIcon("Icons.Rename");
-            rename.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new RenameBranch(_repo, current));
-                e.Handled = true;
-            };
-            submenu.Items.Add(rename);
-            submenu.Items.Add(new MenuItem() { Header = "-" });
+            var rename = new MenuItemModel {
+    Header = App.ResText("BranchCM.Rename", current.Name),
+    IconKey = App.MenuIconKey("Icons.Rename"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new RenameBranch(_repo, current));
+    })
+};
+submenu.Items.Add(rename);
+            submenu.Items.Add(MenuModel.Separator());
 
             if (!_repo.IsBare)
             {
                 var detect = Commands.GitFlow.DetectType(_repo.FullPath, _repo.Branches, current.Name);
                 if (detect.IsGitFlowBranch)
                 {
-                    var finish = new MenuItem();
-                    finish.Header = App.Text("BranchCM.Finish", current.Name);
-                    finish.Icon = App.CreateMenuIcon("Icons.GitFlow");
-                    finish.Click += (_, e) =>
-                    {
-                        if (_repo.CanCreatePopup())
-                            _repo.ShowPopup(new GitFlowFinish(_repo, current, detect.Type, detect.Prefix));
-                        e.Handled = true;
-                    };
-                    submenu.Items.Add(finish);
-                    submenu.Items.Add(new MenuItem() { Header = "-" });
+                    var finish = new MenuItemModel {
+    Header = App.ResText("BranchCM.Finish", current.Name),
+    IconKey = App.MenuIconKey("Icons.GitFlow"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new GitFlowFinish(_repo, current, detect.Type, detect.Prefix));
+    })
+};
+submenu.Items.Add(finish);
+                    submenu.Items.Add(MenuModel.Separator());
                 }
             }
 
-            var copy = new MenuItem();
-            copy.Header = App.Text("BranchCM.CopyName");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, e) =>
-            {
-                App.CopyText(current.Name);
-                e.Handled = true;
-            };
-            submenu.Items.Add(copy);
+            var copy = new MenuItemModel {
+    Header = App.ResText("BranchCM.CopyName"),
+    IconKey = App.MenuIconKey("Icons.Copy"),
+    Command = new RelayCommand(() => App.CopyText(current.Name))
+};
+submenu.Items.Add(copy);
 
             menu.Items.Add(submenu);
         }
 
         private void FillOtherLocalBranchMenu(ContextMenu menu, Models.Branch branch, Models.Branch current, bool merged)
         {
-            var submenu = new MenuItem();
-            submenu.Icon = App.CreateMenuIcon("Icons.Branch");
-            submenu.Header = branch.Name;
+            var submenu = new MenuModel {
+    IconKey = App.MenuIconKey("Icons.Branch"),
+    Header = branch.Name
+};
 
             FillBranchVisibilityMenu(submenu, branch);
 
             if (!_repo.IsBare)
             {
-                var checkout = new MenuItem();
-                checkout.Header = App.Text("BranchCM.Checkout", branch.Name);
-                checkout.Icon = App.CreateMenuIcon("Icons.Check");
-                checkout.Click += (_, e) =>
-                {
-                    _repo.CheckoutBranch(branch);
-                    e.Handled = true;
-                };
-                submenu.Items.Add(checkout);
+                var checkout = new MenuItemModel {
+    Header = App.ResText("BranchCM.Checkout", branch.Name),
+    IconKey = App.MenuIconKey("Icons.Check"),
+    Command = new RelayCommand(() => _repo.CheckoutBranch(branch))
+};
+submenu.Items.Add(checkout);
 
-                var merge = new MenuItem();
-                merge.Header = App.Text("BranchCM.Merge", branch.Name, current.Name);
-                merge.Icon = App.CreateMenuIcon("Icons.Merge");
-                merge.IsEnabled = !merged;
-                merge.Click += (_, e) =>
-                {
-                    if (_repo.CanCreatePopup())
-                        _repo.ShowPopup(new Merge(_repo, branch, current.Name, false));
-                    e.Handled = true;
-                };
-                submenu.Items.Add(merge);
+                var merge = new MenuItemModel {
+    Header = App.ResText("BranchCM.Merge", branch.Name, current.Name),
+    IconKey = App.MenuIconKey("Icons.Merge"),
+    IsEnabled = !merged,
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Merge(_repo, branch, current.Name, false));
+    })
+};
+submenu.Items.Add(merge);
             }
 
-            var rename = new MenuItem();
-            rename.Header = App.Text("BranchCM.Rename", branch.Name);
-            rename.Icon = App.CreateMenuIcon("Icons.Rename");
-            rename.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new RenameBranch(_repo, branch));
-                e.Handled = true;
-            };
-            submenu.Items.Add(rename);
+            var rename = new MenuItemModel {
+    Header = App.ResText("BranchCM.Rename", branch.Name),
+    IconKey = App.MenuIconKey("Icons.Rename"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new RenameBranch(_repo, branch));
+    })
+};
+submenu.Items.Add(rename);
+submenu.Items.Add(MenuModel.Separator());
 
-            var delete = new MenuItem();
-            delete.Header = App.Text("BranchCM.Delete", branch.Name);
-            delete.Icon = App.CreateMenuIcon("Icons.Clear");
-            delete.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new DeleteBranch(_repo, branch));
-                e.Handled = true;
-            };
-            submenu.Items.Add(delete);
-            submenu.Items.Add(new MenuItem() { Header = "-" });
+            var delete = new MenuItemModel {
+    Header = App.ResText("BranchCM.Delete", branch.Name),
+    IconKey = App.MenuIconKey("Icons.Clear"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new DeleteBranch(_repo, branch));
+    })
+};
+submenu.Items.Add(delete);
+submenu.Items.Add(MenuModel.Separator());
 
             if (!_repo.IsBare)
             {
                 var detect = Commands.GitFlow.DetectType(_repo.FullPath, _repo.Branches, branch.Name);
                 if (detect.IsGitFlowBranch)
                 {
-                    var finish = new MenuItem();
-                    finish.Header = App.Text("BranchCM.Finish", branch.Name);
-                    finish.Icon = App.CreateMenuIcon("Icons.GitFlow");
-                    finish.Click += (_, e) =>
-                    {
-                        if (_repo.CanCreatePopup())
-                            _repo.ShowPopup(new GitFlowFinish(_repo, branch, detect.Type, detect.Prefix));
-                        e.Handled = true;
-                    };
-                    submenu.Items.Add(finish);
-                    submenu.Items.Add(new MenuItem() { Header = "-" });
+                    var finish = new MenuItemModel {
+    Header = App.ResText("BranchCM.Finish", branch.Name),
+    IconKey = App.MenuIconKey("Icons.GitFlow"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new GitFlowFinish(_repo, branch, detect.Type, detect.Prefix));
+    })
+};
+submenu.Items.Add(finish);
+submenu.Items.Add(MenuModel.Separator());
                 }
             }
 
-            var copy = new MenuItem();
-            copy.Header = App.Text("BranchCM.CopyName");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, e) =>
-            {
-                App.CopyText(branch.Name);
-                e.Handled = true;
-            };
-            submenu.Items.Add(copy);
+            var copy = new MenuItemModel {
+    Header = App.ResText("BranchCM.CopyName"),
+    IconKey = App.MenuIconKey("Icons.Copy"),
+    Command = new RelayCommand(() => App.CopyText(branch.Name))
+};
+submenu.Items.Add(copy);
 
             menu.Items.Add(submenu);
         }
@@ -1105,56 +1045,48 @@ namespace SourceGit.ViewModels
         {
             var name = branch.FriendlyName;
 
-            var submenu = new MenuItem();
-            submenu.Icon = App.CreateMenuIcon("Icons.Branch");
-            submenu.Header = name;
+            var submenu = new MenuModel {
+    IconKey = App.MenuIconKey("Icons.Branch"),
+    Header = name
+};
 
-            FillBranchVisibilityMenu(submenu, branch);
+FillBranchVisibilityMenu(submenu, branch);
 
-            var checkout = new MenuItem();
-            checkout.Header = App.Text("BranchCM.Checkout", name);
-            checkout.Icon = App.CreateMenuIcon("Icons.Check");
-            checkout.Click += (_, e) =>
-            {
-                _repo.CheckoutBranch(branch);
-                e.Handled = true;
-            };
-            submenu.Items.Add(checkout);
+var checkout = new MenuItemModel {
+    Header = App.ResText("BranchCM.Checkout", name),
+    IconKey = App.MenuIconKey("Icons.Check"),
+    Command = new RelayCommand(() => _repo.CheckoutBranch(branch))
+};
+submenu.Items.Add(checkout);
 
-            var merge = new MenuItem();
-            merge.Header = App.Text("BranchCM.Merge", name, current.Name);
-            merge.Icon = App.CreateMenuIcon("Icons.Merge");
-            merge.IsEnabled = !merged;
-            merge.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new Merge(_repo, branch, current.Name, false));
-                e.Handled = true;
-            };
+var merge = new MenuItemModel {
+    Header = App.ResText("BranchCM.Merge", name, current.Name),
+    IconKey = App.MenuIconKey("Icons.Merge"),
+    IsEnabled = !merged,
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new Merge(_repo, branch, current.Name, false));
+    })
+};
+submenu.Items.Add(merge);
 
-            submenu.Items.Add(merge);
+var delete = new MenuItemModel {
+    Header = App.ResText("BranchCM.Delete", name),
+    IconKey = App.MenuIconKey("Icons.Clear"),
+    Command = new RelayCommand(() => {
+        if (_repo.CanCreatePopup())
+            _repo.ShowPopup(new DeleteBranch(_repo, branch));
+    })
+};
+submenu.Items.Add(delete);
+submenu.Items.Add(MenuModel.Separator());
 
-            var delete = new MenuItem();
-            delete.Header = App.Text("BranchCM.Delete", name);
-            delete.Icon = App.CreateMenuIcon("Icons.Clear");
-            delete.Click += (_, e) =>
-            {
-                if (_repo.CanCreatePopup())
-                    _repo.ShowPopup(new DeleteBranch(_repo, branch));
-                e.Handled = true;
-            };
-            submenu.Items.Add(delete);
-            submenu.Items.Add(new MenuItem() { Header = "-" });
-
-            var copy = new MenuItem();
-            copy.Header = App.Text("BranchCM.CopyName");
-            copy.Icon = App.CreateMenuIcon("Icons.Copy");
-            copy.Click += (_, e) =>
-            {
-                App.CopyText(name);
-                e.Handled = true;
-            };
-            submenu.Items.Add(copy);
+var copy = new MenuItemModel {
+    Header = App.ResText("BranchCM.CopyName"),
+    IconKey = App.MenuIconKey("Icons.Copy"),
+    Command = new RelayCommand(() => App.CopyText(name))
+};
+submenu.Items.Add(copy);
 
             menu.Items.Add(submenu);
         }
@@ -1204,7 +1136,7 @@ namespace SourceGit.ViewModels
                 e.Handled = true;
             };
             submenu.Items.Add(delete);
-            submenu.Items.Add(new MenuItem() { Header = "-" });
+            submenu.Items.Add(MenuModel.Separator());
 
             var copy = new MenuItem();
             copy.Header = App.Text("TagCM.Copy");
