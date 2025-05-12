@@ -25,7 +25,8 @@ namespace SourceGit.Views
         {
             if (DataContext is ViewModels.CommitDetail detail && sender is Grid grid && grid.DataContext is Models.Change change)
             {
-                var menu = detail.CreateChangeContextMenu(change);
+                var menuModel = detail.CreateChangeContextMenu(change);
+                var menu = menuModel?.CreateContextMenuFromModel();
                 menu?.Open(grid);
             }
 

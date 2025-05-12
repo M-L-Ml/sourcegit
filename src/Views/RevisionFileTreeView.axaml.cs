@@ -291,7 +291,8 @@ namespace SourceGit.Views
             {
                 if (obj.Type != Models.ObjectType.Tree)
                 {
-                    var menu = vm.CreateRevisionFileContextMenu(obj);
+                    var menuModel = vm.CreateRevisionFileContextMenu(obj);
+                    var menu = menuModel?.CreateContextMenuFromModel();
                     menu?.Open(grid);
                 }
             }

@@ -15,7 +15,8 @@ namespace SourceGit.Views
                 selected.Count == 1 &&
                 DataContext is ViewModels.CommitDetail vm)
             {
-                var menu = vm.CreateChangeContextMenu(selected[0]);
+                var menuModel = vm.CreateChangeContextMenu(selected[0]);
+                var menu = menuModel?.CreateContextMenuFromModel();
                 menu?.Open(view);
             }
 
