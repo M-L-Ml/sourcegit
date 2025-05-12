@@ -234,7 +234,8 @@ namespace SourceGit.Views
             if (sender is Border border && DataContext is ViewModels.Launcher vm)
             {
                 var menu = vm.CreateContextForPageTab(border.DataContext as ViewModels.LauncherPage);
-                menu?.Open(border);
+                var realMenu = menu?.CreateContextMenuFromModel();
+                realMenu?.Open(border);
             }
 
             e.Handled = true;

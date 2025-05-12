@@ -17,7 +17,8 @@ namespace SourceGit.Views
         {
             if (sender is Button button && DataContext is ViewModels.Repository repo)
             {
-                var menu = repo.CreateContextMenuForExternalTools();
+                var menuModel = repo.CreateContextMenuForExternalTools();
+                var menu = menuModel?.CreateContextMenuFromModel();
                 menu?.Open(button);
                 e.Handled = true;
             }
