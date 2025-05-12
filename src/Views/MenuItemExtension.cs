@@ -19,6 +19,8 @@ namespace PSGit.Views
 {
     using SourceGit.Views;
     using SourceGit.ViewModels;
+    using System.Diagnostics;
+
     public static class MenuItemModelExtension
     {
 
@@ -71,7 +73,8 @@ namespace PSGit.Views
         public static void SetViewSettingsFromModel(this MenuItemModel menuModel, object menu)
         {
             var item = menu as MenuItem;
-            if (menuModel.ViewToDo != null)
+            if (menuModel.ViewToDo == null)
+                return;
             foreach (var (propName, value) in menuModel.ViewToDo)
             {
                 switch (propName)
@@ -81,6 +84,8 @@ namespace PSGit.Views
                         {
                             ((ContextMenu)menu).Placement = placementMode;
                         }
+                        else
+                                Debug.Assert(false);
                         break;
 
                     case ViewPropertySetting.Views_MenuItemExtension_CommandProperty:

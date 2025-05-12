@@ -639,17 +639,13 @@ namespace SourceGit.ViewModels
 
                     var item = new MenuItemModel();
                     item.Header = App.ResText("Repository.OpenIn", dupTool.Name);
-                    //  var asset = Avalonia.Platform.AssetLoader.Open(new Uri($"avares://Resources/Images/ExternalToolIcons/{dupTool.IconName}.png", UriKind.RelativeOrAbsolute));
-                    // item.Icon = new Image { Width = 16, Height = 16, Source = new Bitmap(asset) };
+
                     item.ViewToDo = new()
                     {
-
                         [ViewPropertySetting.IconCreate] = new IconCreationOptions(new Uri($"avares://Resources/Images/ExternalToolIcons/{dupTool.IconName}.png", UriKind.RelativeOrAbsolute), 16, 16)
                     };
 
 
-
-                    // TODO: External tool icons are not supported directly, set ViewToDo for custom icon if needed
                     item.Command = new RelayCommand(() => dupTool.Open(_fullpath));
                     menu.Items.Add(item);
                 }
@@ -1354,7 +1350,7 @@ namespace SourceGit.ViewModels
             return all;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForGitFlow()
         {
             var menu = new ContextMenuModel();
@@ -1432,7 +1428,7 @@ namespace SourceGit.ViewModels
         }
 
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForGitLFS()
         {
             var menu = new ContextMenuModel();
@@ -1553,7 +1549,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForCustomAction()
         {
             var menu = new ContextMenuModel();
@@ -1579,7 +1575,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForHistoriesPage()
         {
             var menu = new ContextMenuModel();
@@ -1639,7 +1635,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForLocalBranch(Models.Branch branch)
         {
             var menu = new ContextMenuModel();
@@ -1842,7 +1838,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForRemote(Models.Remote remote)
         {
             var menu = new ContextMenuModel();
@@ -1892,7 +1888,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForRemoteBranch(Models.Branch branch)
         {
             var menu = new ContextMenuModel();
@@ -1989,7 +1985,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForTag(Models.Tag tag)
         {
             var menu = new ContextMenuModel();
@@ -2106,7 +2102,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForSubmodule(string submodule)
         {
             var menu = new ContextMenuModel();
@@ -2132,7 +2128,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        // Refactored from Avalonia.Controls.ContextMenu/MenuItem usage to ViewModel POCO MenuItem for MVVM compliance
+
         public ContextMenuModel CreateContextMenuForWorktree(Models.Worktree worktree)
         {
             var menu = new ContextMenuModel();
