@@ -1,7 +1,6 @@
 ﻿using System.IO;
 
 using Avalonia.Threading;
-using App = SourceGit.Models.App;
 
 namespace SourceGit.Commands
 {

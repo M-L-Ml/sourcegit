@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading;
 
 using Avalonia.Threading;
-using  App = SourceGit.Models.App;
 
 namespace SourceGit.Commands
 {
