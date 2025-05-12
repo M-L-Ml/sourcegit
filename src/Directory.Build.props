@@ -16,6 +16,10 @@
  </ItemGroup>  
   <PropertyGroup>
     <!--suppress null related warnings-->
-    <NoWarn>CS8600;CS8601;CS8602;CS8603;CS8604,CS8618,CS8625,CS8765</NoWarn>
+    <!-- warning CS4014: Because this call is not awaited, execution of the current method continues before the call is 
+completed. Consider applying the 'await' operator to the result of the call. -->
+   <!-- warning CS8767: Nullability of reference types in type of parameter 'parameter' of 'object FormatByResourceKeyConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)' doesn't match implicitly implemented member 'object? IValueConverter.ConvertBack(object? 
+value, Type targetType, object? parameter, CultureInfo culture)' (possibly because of nullability attributes). -->
+    <NoWarn>CS8600;CS8601;CS8602;CS8603;CS8604,CS8618,CS8625,CS8765;CS8767;CS4014</NoWarn>
   </PropertyGroup>
 </Project>
