@@ -32,9 +32,10 @@ namespace PSGit.Views
                 Header = x.Header.Text(),
                 DataContext = x,
                 Command = x.Command,
-                Icon = App.CreateMenuIcon(x.IconKey),
                 IsEnabled = x.IsEnabled
             };
+            if (x.IconKey != null)
+                menu.Icon = App.CreateMenuIcon(x.IconKey);
             x.SetViewSettingsFromModel(menu);
             if (x is MenuModel y)
                 y.CreateSubItemsFromModel(menu);
@@ -71,7 +72,7 @@ namespace PSGit.Views
         public static void SetViewSettingsFromModel(this MenuItemModel menuModel, object menu)
         {
             var item = menu as MenuItem;
-            // Implement assigning menuModel.ViewToDo
+            if (menuModel.ViewToDo != null)
             foreach (var (propName, value) in menuModel.ViewToDo)
             {
                 switch (propName)
