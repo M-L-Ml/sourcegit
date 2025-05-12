@@ -1191,29 +1191,27 @@ namespace SourceGit.ViewModels
                     }
                     lfs.Items.Add(lfsLock);
 
-                    var lfsUnlock = new MenuItemModel();
+                    var lfsUnlock = _repo.Remotes.Count > 1 ? new MenuModel() : new MenuItemModel();
                     lfsUnlock.Header = App.Text("GitLFS.Locks.Unlock");
-                    lfsUnlock.Icon = App.CreateMenuIcon("Icons.Unlock");
+                    lfsUnlock.IconKey = App.MenuIconKey("Icons.Unlock");
                     lfsUnlock.IsEnabled = _repo.Remotes.Count > 0;
                     if (_repo.Remotes.Count == 1)
                     {
-                        lfsUnlock.Click += async (_, e) =>
+                        lfsUnlock.Command = new AsyncRelayCommand(async () =>
                         {
                             var log = _repo.CreateLog("Unlock LFS File");
                             var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Unlock(_repo.Remotes[0].Name, change.Path, false, log));
                             if (succ)
                                 App.SendNotification(_repo.FullPath, $"Unlock file \"{change.Path}\" successfully!");
-
                             log.Complete();
-                            e.Handled = true;
-                        };
+                        });
                     }
-                    else
+                    else if (lfsUnlock is MenuModel unlockMenu)
                     {
                         foreach (var remote in _repo.Remotes)
                         {
                             var remoteName = remote.Name;
-                            lfsUnlock.Items.Add(new MenuItemModel
+                            unlockMenu.Items.Add(new MenuItemModel
                             {
                                 Header = remoteName,
                                 Command = new AsyncRelayCommand(async () =>
