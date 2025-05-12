@@ -325,7 +325,7 @@ namespace SourceGit.ViewModels
             {
                 Header = App.ResText("FileCM.SaveAsPatch"),
                 IconKey = App.MenuIconKey("Icons.Diff"),
-                Command = new RelayCommand(async () =>
+                Command = new AsyncRelayCommand(async () =>
                 {
                     var storageProvider = App.GetStorageProvider();
                     if (storageProvider == null)
@@ -428,7 +428,7 @@ namespace SourceGit.ViewModels
                 Header = App.ResText("SaveAs"),
                 IconKey = App.MenuIconKey("Icons.Save"),
                 IsEnabled = file.Type == Models.ObjectType.Blob,
-                Command = new RelayCommand(async () =>
+                Command = new AsyncRelayCommand(async () =>
                 {
                     var storageProvider = App.GetStorageProvider();
                     if (storageProvider == null)
@@ -476,7 +476,7 @@ namespace SourceGit.ViewModels
                 Header = App.ResText("ChangeCM.CheckoutThisRevision"),
                 IconKey = App.MenuIconKey("Icons.File.Checkout"),
               
-                Command = new RelayCommand(async () =>
+                Command = new AsyncRelayCommand(async () =>
                 {
                     await ResetToThisRevision(file.Path);
                 })
@@ -713,7 +713,7 @@ namespace SourceGit.ViewModels
                 lfsLock.Items.Add(new MenuItemModel
                 {
                     Header = _repo.Remotes[0].Name,
-                    Command = new RelayCommand(async () =>
+                    Command = new AsyncRelayCommand(async () =>
                     {
                         var log = _repo.CreateLog("Lock LFS file");
                         var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Lock(_repo.Remotes[0].Name, path, log));
@@ -732,7 +732,7 @@ namespace SourceGit.ViewModels
                     lfsLock.Items.Add(new MenuItemModel
                     {
                         Header = remoteName,
-                        Command = new RelayCommand(async () =>
+                        Command = new AsyncRelayCommand(async () =>
                         {
                             var log = _repo.CreateLog("Lock LFS file");
                             var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Lock(remoteName, path, log));
@@ -757,7 +757,7 @@ namespace SourceGit.ViewModels
                 lfsUnlock.Items.Add(new MenuItemModel
                 {
                     Header = _repo.Remotes[0].Name,
-                    Command = new RelayCommand(async () =>
+                    Command = new AsyncRelayCommand(async () =>
                     {
                         var log = _repo.CreateLog("Unlock LFS file");
                         var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Unlock(_repo.Remotes[0].Name, path, false, log));
@@ -776,7 +776,7 @@ namespace SourceGit.ViewModels
                     lfsUnlock.Items.Add(new MenuItemModel
                     {
                         Header = remoteName,
-                        Command = new RelayCommand(async () =>
+                        Command = new AsyncRelayCommand(async () =>
                         {
                             var log = _repo.CreateLog("Unlock LFS file");
                             var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Unlock(remoteName, path, false, log));

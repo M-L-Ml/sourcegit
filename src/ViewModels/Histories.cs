@@ -331,7 +331,7 @@ namespace SourceGit.ViewModels
                 {
                     Header = App.ResText("CommitCM.SaveAsPatch"),
                     IconKey = App.MenuIconKey("Icons.Diff"),
-                    Command = new RelayCommand(async () =>
+                    Command = new AsyncRelayCommand(async () =>
                     {
                         var storageProvider = App.GetStorageProvider();
                         if (storageProvider == null)
