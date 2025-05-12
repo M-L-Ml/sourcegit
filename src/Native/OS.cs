@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Avalonia;
+using Avalonia.Controls;
 using SourceGit.Models;
 
 namespace SourceGit.Native
@@ -15,6 +16,7 @@ namespace SourceGit.Native
         public interface IBackend
         {
             void SetupApp(AppBuilder builder);
+            void SetupWindow(Window window);
 
             string FindGitExecutable();
             string FindTerminal(Models.ShellOrTerminal shell);
@@ -69,6 +71,12 @@ namespace SourceGit.Native
             set;
         } = [];
 
+        public static bool UseSystemWindowFrame
+        {
+            get => OperatingSystem.IsLinux() && _enableSystemWindowFrame;
+            set => _enableSystemWindowFrame = value;
+        }
+
         static OS()
         {
             if (OperatingSystem.IsWindows())
@@ -120,6 +128,11 @@ namespace SourceGit.Native
         public static void SetupEnternalTools()
         {
             ExternalTools = _backend.FindExternalTools().ToList();
+        }
+
+        public static void SetupForWindow(Window window)
+        {
+            _backend.SetupWindow(window);
         }
 
         public static string FindGitExecutable()
@@ -226,5 +239,6 @@ namespace SourceGit.Native
 
         private static IBackend _backend = null;
         private static string _gitExecutable = string.Empty;
+        private static bool _enableSystemWindowFrame = false;
     }
 }
