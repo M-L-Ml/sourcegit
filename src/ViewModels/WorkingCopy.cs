@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -725,7 +726,7 @@ namespace SourceGit.ViewModels
                     if (change.WorkTree == Models.ChangeState.Untracked)
                     {
                         var isRooted = change.Path.IndexOf('/', StringComparison.Ordinal) <= 0;
-                        var addToIgnore = new MenuItemModel
+                        var addToIgnore = new MenuModel
                         {
                             IconKey = App.MenuIconKey("Icons.GitIgnore"),
                             Header = App.ResText("WorkingCopy.AddToGitIgnore")
@@ -785,7 +786,7 @@ namespace SourceGit.ViewModels
                     var lfsEnabled = new Commands.LFS(_repo.FullPath).IsEnabled();
                     if (lfsEnabled)
                     {
-                        var lfs = new MenuItemModel
+                        var lfs = new MenuModel
                         {
                             IconKey = App.MenuIconKey("Icons.LFS"),
                             Header = App.ResText("GitLFS")
@@ -826,12 +827,12 @@ namespace SourceGit.ViewModels
 
                         lfs.Items.Add(MenuModel.Separator());
 
-                        var lfsLock = new MenuItemModel
+                        var lfsLock = new MenuModel
                         {
                             IconKey = App.MenuIconKey("Icons.Lock"),
-                            Header = App.ResText("GitLFS.Locks.Lock")
+                            Header = App.ResText("GitLFS.Locks.Lock"),
+                            IsEnabled = _repo.Remotes.Count > 0
                         };
-                        lfsLock.IsEnabled = _repo.Remotes.Count > 0;
                         if (_repo.Remotes.Count == 1)
                         {
                             lfsLock.Command = new AsyncRelayCommand(async () =>
@@ -849,7 +850,7 @@ namespace SourceGit.ViewModels
                             foreach (var remote in _repo.Remotes)
                             {
                                 var remoteName = remote.Name;
-                                var lockRemote = new MenuItemModel
+                                lfsLock.Items.Add(new MenuItemModel
                                 {
                                     Header = remoteName,
                                     Command = new AsyncRelayCommand(async () =>
@@ -861,18 +862,17 @@ namespace SourceGit.ViewModels
 
                                         log.Complete();
                                     })
-                                };
-                                lfsLock.Items.Add(lockRemote);
+                                });
                             }
                         }
                         lfs.Items.Add(lfsLock);
 
-                        var lfsUnlock = new MenuItemModel
+                        var lfsUnlock = new MenuModel
                         {
                             IconKey = App.MenuIconKey("Icons.Unlock"),
-                            Header = App.ResText("GitLFS.Locks.Unlock")
+                            Header = App.ResText("GitLFS.Locks.Unlock"),
+                            IsEnabled = _repo.Remotes.Count > 0
                         };
-                        lfsUnlock.IsEnabled = _repo.Remotes.Count > 0;
                         if (_repo.Remotes.Count == 1)
                         {
                             lfsUnlock.Command = new AsyncRelayCommand(async () =>
@@ -890,7 +890,7 @@ namespace SourceGit.ViewModels
                             foreach (var remote in _repo.Remotes)
                             {
                                 var remoteName = remote.Name;
-                                var unlockRemote = new MenuItemModel
+                                lfsUnlock.Items.Add(new MenuItemModel
                                 {
                                     Header = remoteName,
                                     Command = new AsyncRelayCommand(async () =>
@@ -902,8 +902,7 @@ namespace SourceGit.ViewModels
 
                                         log.Complete();
                                     })
-                                };
-                                lfsUnlock.Items.Add(unlockRemote);
+                                });
                             }
                         }
                         lfs.Items.Add(lfsUnlock);
@@ -1039,11 +1038,10 @@ namespace SourceGit.ViewModels
             var services = _repo.GetPreferedOpenAIServices();
             if (services.Count > 0)
             {
-                ai = new MenuItemModel
+                ai = new MenuModel
                 {
                     IconKey = App.MenuIconKey("Icons.AIAssist"),
-                    Header = App.ResText("ChangeCM.GenerateCommitMessage"),
-                    Items = new Avalonia.Collections.AvaloniaList<MenuItemModel>()
+                    Header = App.ResText("ChangeCM.GenerateCommitMessage")
                 };
                 if (services.Count == 1)
                 {
@@ -1056,7 +1054,7 @@ namespace SourceGit.ViewModels
                     foreach (var service in services)
                     {
                         var dup = service;
-                        ai.Items.Add(new MenuItemModel
+                        ((MenuModel)ai).Items.Add(new MenuItemModel
                         {
                             Header = service.Name,
                             Command = new RelayCommand(() =>
@@ -1072,14 +1070,11 @@ namespace SourceGit.ViewModels
                 var change = _selectedStaged[0];
                 var path = Path.GetFullPath(Path.Combine(_repo.FullPath, change.Path));
 
-                var explore = new MenuItem();
-                explore.IsEnabled = File.Exists(path) || Directory.Exists(path);
-                explore.Header = App.Text("RevealFile");
-                explore.Icon = App.CreateMenuIcon("Icons.Explore");
-                explore.Click += (_, e) =>
-                {
-                    Native.OS.OpenInFileManager(path, true);
-                    e.Handled = true;
+                var explore = new MenuItemModel {
+                    IconKey = App.MenuIconKey("Icons.Explore"),
+                    Header = App.ResText("RevealFile"),
+                    IsEnabled = File.Exists(path) || Directory.Exists(path),
+                    Command = new RelayCommand(() => Native.OS.OpenInFileManager(path, true))
                 };
 
                 var openWith = new MenuItemModel {
@@ -1152,50 +1147,46 @@ namespace SourceGit.ViewModels
                 var lfsEnabled = new Commands.LFS(_repo.FullPath).IsEnabled();
                 if (lfsEnabled)
                 {
-                    var lfs = new MenuItemModel
+                    var lfs = new MenuModel
                     {
                         IconKey = App.MenuIconKey("Icons.LFS"),
-                        Header = App.ResText("GitLFS"),
-                        Items = new Avalonia.Collections.AvaloniaList<MenuItemModel>()
+                        Header = App.ResText("GitLFS")
                     };
-                    lfs.Header = App.Text("GitLFS");
-                    lfs.Icon = App.CreateMenuIcon("Icons.LFS");
 
-                    var lfsLock = new MenuItem();
-                    lfsLock.Header = App.Text("GitLFS.Locks.Lock");
-                    lfsLock.Icon = App.CreateMenuIcon("Icons.Lock");
-                    lfsLock.IsEnabled = _repo.Remotes.Count > 0;
+                    var lfsLock = new MenuModel
+                    {
+                        Header = App.ResText("GitLFS.Locks.Lock"),
+                        IconKey = App.MenuIconKey("Icons.Lock"),
+                        IsEnabled = _repo.Remotes.Count > 0
+                    };
                     if (_repo.Remotes.Count == 1)
                     {
-                        lfsLock.Click += async (_, e) =>
+                        lfsLock.Command = new AsyncRelayCommand(async () =>
                         {
                             var log = _repo.CreateLog("Lock LFS File");
                             var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Lock(_repo.Remotes[0].Name, change.Path, log));
                             if (succ)
                                 App.SendNotification(_repo.FullPath, $"Lock file \"{change.Path}\" successfully!");
-
                             log.Complete();
-                            e.Handled = true;
-                        };
+                        });
                     }
                     else
                     {
                         foreach (var remote in _repo.Remotes)
                         {
                             var remoteName = remote.Name;
-                            var lockRemote = new MenuItem();
-                            lockRemote.Header = remoteName;
-                            lockRemote.Click += async (_, e) =>
+                            lfsLock.Items.Add(new MenuItemModel
                             {
-                                var log = _repo.CreateLog("Lock LFS File");
-                                var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Lock(remoteName, change.Path, log));
-                                if (succ)
-                                    App.SendNotification(_repo.FullPath, $"Lock file \"{change.Path}\" successfully!");
-
-                                log.Complete();
-                                e.Handled = true;
-                            };
-                            lfsLock.Items.Add(lockRemote);
+                                Header = remoteName,
+                                Command = new AsyncRelayCommand(async () =>
+                                {
+                                    var log = _repo.CreateLog("Lock LFS File");
+                                    var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Lock(remoteName, change.Path, log));
+                                    if (succ)
+                                        App.SendNotification(_repo.FullPath, $"Lock file \"{change.Path}\" successfully!");
+                                    log.Complete();
+                                })
+                            });
                         }
                     }
                     lfs.Items.Add(lfsLock);
@@ -1222,112 +1213,23 @@ namespace SourceGit.ViewModels
                         foreach (var remote in _repo.Remotes)
                         {
                             var remoteName = remote.Name;
-                            var unlockRemote = new MenuItem();
-                            unlockRemote.Header = remoteName;
-                            unlockRemote.Click += async (_, e) =>
+                            lfsUnlock.Items.Add(new MenuItemModel
                             {
-                                var log = _repo.CreateLog("Unlock LFS File");
-                                var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Unlock(remoteName, change.Path, false, log));
-                                if (succ)
-                                    App.SendNotification(_repo.FullPath, $"Unlock file \"{change.Path}\" successfully!");
-
-                                log.Complete();
-                                e.Handled = true;
-                            };
-                            lfsUnlock.Items.Add(unlockRemote);
+                                Header = remoteName,
+                                Command = new AsyncRelayCommand(async () =>
+                                {
+                                    var log = _repo.CreateLog("Unlock LFS File");
+                                    var succ = await Task.Run(() => new Commands.LFS(_repo.FullPath).Unlock(remoteName, change.Path, false, log));
+                                    if (succ)
+                                        App.SendNotification(_repo.FullPath, $"Unlock file \"{change.Path}\" successfully!");
+                                    log.Complete();
+                                })
+                            });
                         }
                     }
                     lfs.Items.Add(lfsUnlock);
-
-                    menu.Items.Add(lfs);
-                    menu.Items.Add(new MenuItem() { Header = "-" });
-                }
-
-                if (ai != null)
-                {
-                    menu.Items.Add(ai);
-                    menu.Items.Add(new MenuItem() { Header = "-" });
-                }
-
-                var copyPath = new MenuItem();
-                copyPath.Header = App.Text("CopyPath");
-                copyPath.Icon = App.CreateMenuIcon("Icons.Copy");
-                copyPath.Click += (_, e) =>
-                {
-                    App.CopyText(change.Path);
-                    e.Handled = true;
-                };
-
-                var copyFullPath = new MenuItem();
-                copyFullPath.Header = App.Text("CopyFullPath");
-                copyFullPath.Icon = App.CreateMenuIcon("Icons.Copy");
-                copyFullPath.Click += (_, e) =>
-                {
-                    App.CopyText(Native.OS.GetAbsPath(_repo.FullPath, change.Path));
-                    e.Handled = true;
-                };
-
-                menu.Items.Add(copyPath);
-                menu.Items.Add(copyFullPath);
-            }
-            else
-            {
-                var unstage = new MenuItem();
-                unstage.Header = App.Text("FileCM.UnstageMulti", _selectedStaged.Count);
-                unstage.Icon = App.CreateMenuIcon("Icons.File.Remove");
-                unstage.Click += (_, e) =>
-                {
-                    UnstageChanges(_selectedStaged, null);
-                    e.Handled = true;
-                };
-
-                var stash = new MenuItem();
-                stash.Header = App.Text("FileCM.StashMulti", _selectedStaged.Count);
-                stash.Icon = App.CreateMenuIcon("Icons.Stashes.Add");
-                stash.Click += (_, e) =>
-                {
-                    if (_repo.CanCreatePopup())
-                        _repo.ShowPopup(new StashChanges(_repo, _selectedStaged, true));
-
-                    e.Handled = true;
-                };
-
-                var patch = new MenuItem();
-                patch.Header = App.Text("FileCM.SaveAsPatch");
-                patch.Icon = App.CreateMenuIcon("Icons.Diff");
-                patch.Click += async (_, e) =>
-                {
-                    var storageProvider = App.GetStorageProvider();
-                    if (storageProvider == null)
-                        return;
-
-                    var options = new FilePickerSaveOptions();
-                    options.Title = App.Text("FileCM.SaveAsPatch");
-                    options.DefaultExtension = ".patch";
-                    options.FileTypeChoices = [new FilePickerFileType("Patch File") { Patterns = ["*.patch"] }];
-
-                    var storageFile = await storageProvider.SaveFilePickerAsync(options);
-                    if (storageFile != null)
-                    {
-                        var succ = await Task.Run(() => Commands.SaveChangesAsPatch.ProcessLocalChanges(_repo.FullPath, _selectedStaged, false, storageFile.Path.LocalPath));
-                        if (succ)
-                            App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
-                    }
-
-                    e.Handled = true;
-                };
-
-                menu.Items.Add(unstage);
-                menu.Items.Add(stash);
-                menu.Items.Add(patch);
-
-                if (ai != null)
-                {
-                    menu.Items.Add(new MenuItem() { Header = "-" });
-                    menu.Items.Add(ai);
                 }
             }
-
             return menu;
         }
 

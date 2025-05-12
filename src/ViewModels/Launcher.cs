@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace SourceGit.ViewModels
 {
@@ -392,18 +393,15 @@ namespace SourceGit.ViewModels
             menu.Items.Add(new MenuItemModel
             {
                 ViewToDo =
-                new(new()
+                new()
                 {
-                    ("InputGesture", 
-                     //TODO: implement interpreting this in View
-                    "KeyGesture.Parse("
-                    +(OperatingSystem.IsMacOS() ? "⌘+W" : "Ctrl+W") +")")
+                   [ViewPropertySetting.InputGesture ]=
+                    (OperatingSystem.IsMacOS() ? "⌘+W" : "Ctrl+W")
 
-                }),
+                },
                 Header = App.ResText("PageTabBar.Tab.Close"),
                 Command = new RelayCommand(() => CloseTab(page)),
             });
-            // KeyGesture not supported in MenuItemModel, can be handled in View
 
             // Close others
             menu.Items.Add(new MenuItemModel
@@ -430,14 +428,14 @@ namespace SourceGit.ViewModels
                 {
                     var iconKey = App.MenuIconKey("Icons.Bookmark");
                     // Color/Fill can be handled in View
-                    ViewModelInfo vmi = new(default);
-                    //   icon.Fill = Models.Bookmarks.Brushes[i];
+                    ViewModelInfo vmi = new();
+//   icon.Fill = Models.Bookmarks.Brushes[i];
                     if (i != 0)
-                        vmi = new ViewModelInfo(new()
+                        vmi = new ViewModelInfo()
                             {
                                 //TODO: implement interpreting this in View
-                                ("icon.Fill", Models.Bookmarks.Brushes[i])
-                            });
+                                [ ViewPropertySetting.icon_Fill]= Models.Bookmarks.Brushes[i]
+                            };
 
 
                     var dupIdx = i;
@@ -457,7 +455,7 @@ namespace SourceGit.ViewModels
                 menu.Items.Add(MenuModel.Separator());
                 menu.Items.Add(new MenuItemModel
                 {
-                    Header = App.Text("PageTabBar.Tab.CopyPath"),
+                    Header = App.ResText("PageTabBar.Tab.CopyPath"),
                     IconKey = App.MenuIconKey("Icons.Copy"),
                     Command = new RelayCommand(() => page.CopyPath()),
                 });

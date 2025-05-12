@@ -405,7 +405,7 @@ namespace SourceGit.ViewModels
             }
 
             var commit = (list.SelectedItem as Models.Commit)!;
-            var menu = new ContextMenu();
+            var menu = new ContextMenuModel();
             var tags = new List<Models.Tag>();
 
             if (commit.HasDecorators)
@@ -827,25 +827,25 @@ namespace SourceGit.ViewModels
             return Models.FilterMode.None;
         }
 
-        private void FillBranchVisibilityMenu(MenuItem submenu, Models.Branch branch)
+        private void FillBranchVisibilityMenu(MenuModel submenu, Models.Branch branch)
         {
-            var visibility = new MenuItem();
-            visibility.Icon = App.CreateMenuIcon("Icons.Eye");
-            visibility.Header = App.Text("Repository.FilterCommits");
+            var visibility = new MenuModel();
+            visibility.IconKey = App.MenuIconKey("Icons.Eye");
+            visibility.Header = App.ResText("Repository.FilterCommits");
 
-            var exclude = new MenuItem();
-            exclude.Icon = App.CreateMenuIcon("Icons.EyeClose");
-            exclude.Header = App.Text("Repository.FilterCommits.Exclude");
-            exclude.Click += (_, e) =>
+            var exclude = new MenuItemModel();
+            exclude.IconKey = App.MenuIconKey("Icons.EyeClose");
+            exclude.Header = App.ResText("Repository.FilterCommits.Exclude");
+            exclude.Command = new RelayCommand(() =>
             {
                 _repo.SetBranchFilterMode(branch, Models.FilterMode.Excluded, false, true);
-                e.Handled = true;
+             
             };
 
             var filterMode = GetFilterMode(branch.FullName);
             if (filterMode == Models.FilterMode.None)
             {
-                var include = new MenuItem();
+                var include = new MenuItemModel();
                 include.Icon = App.CreateMenuIcon("Icons.Filter");
                 include.Header = App.Text("Repository.FilterCommits.Include");
                 include.Click += (_, e) =>
@@ -870,7 +870,7 @@ namespace SourceGit.ViewModels
             }
 
             submenu.Items.Add(visibility);
-            submenu.Items.Add(new MenuItem() { Header = "-" });
+            submenu.Items.Add(MenuItem.Separator());
         }
 
         private void FillTagVisibilityMenu(MenuItem submenu, Models.Tag tag)
@@ -919,10 +919,10 @@ namespace SourceGit.ViewModels
             submenu.Items.Add(new MenuItem() { Header = "-" });
         }
 
-        private void FillCurrentBranchMenu(ContextMenu menu, Models.Branch current)
+        private void FillCurrentBranchMenu(ContextMenuModel menu, Models.Branch current)
         {
-            var submenu = new MenuItem();
-            submenu.Icon = App.CreateMenuIcon("Icons.Branch");
+            var submenu = new MenuModel();
+            submenu.IconKey = App.MenuIconKey("Icons.Branch");
             submenu.Header = current.Name;
 
             FillBranchVisibilityMenu(submenu, current);

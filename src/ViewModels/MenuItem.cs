@@ -4,14 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-/// <summary>
-/// This is POCO  
-/// and maybe better named MenuAction 
-/// But temporary called MenuItem to minimize merge conflicts with upstream SourceGit (see roadmap.md)
-/// </summary>
+
 namespace SourceGit.ViewModels
 {
-    public class MenuItemModel
+    /// <summary>
+    /// This is POCO  
+    /// and maybe better named MenuAction 
+    /// But temporary called MenuItem to minimize merge conflicts with upstream SourceGit (see roadmap.md)
+    /// </summary>  
+   public class MenuItemModel
     {
         /// <summary>
         /// Should be set using App.ResText 
@@ -31,6 +32,7 @@ namespace SourceGit.ViewModels
         /// ToDo: implement setting the properties
         /// </summary>
         public ViewModelInfo ViewToDo { get; internal set; }
+        public bool IsVisible { get; internal set; } = true;
     }
     public class MenuModel : MenuItemModel
     {

@@ -1387,12 +1387,11 @@ namespace SourceGit.ViewModels
         {
             var menu = new ContextMenuModel();
             var items = menu.Items;
-            // TODO: apply menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
-            menu.ViewToDo = new ViewModelInfo(new()
+            menu.ViewToDo = new ViewModelInfo()
             {
-                ( "Placement" , "PlacementMode.BottomEdgeAlignedLeft" )
+                [ ViewPropertySetting.Placement] = "PlacementMode.BottomEdgeAlignedLeft" 
             }
-             );
+             ;
             var isGitFlowEnabled = Commands.GitFlow.IsEnabled(_fullpath, _branches);
             if (isGitFlowEnabled)
             {
@@ -1641,7 +1640,7 @@ namespace SourceGit.ViewModels
             {
                 Header = App.ResText("Repository.HistoriesOrder.ByDate"),
                 IconKey = !_settings.EnableTopoOrderInHistories ? App.MenuIconKey("Icons.Check") : null,
-                ViewToDo = new ViewModelInfo(new() { ("Views.MenuItemExtension.CommandProperty", "--date-order") }),
+                ViewToDo = new ViewModelInfo() { [ViewPropertySetting.Views_MenuItemExtension_CommandProperty]= "--date-order" },
                 Command = new RelayCommand(() =>
                 {
                     if (_settings.EnableTopoOrderInHistories)
@@ -1655,7 +1654,7 @@ namespace SourceGit.ViewModels
             {
                 Header = App.ResText("Repository.HistoriesOrder.Topo"),
                 IconKey = _settings.EnableTopoOrderInHistories ? App.MenuIconKey("Icons.Check") : null,
-                ViewToDo = new ViewModelInfo(new() { ("Views.MenuItemExtension.CommandProperty", "--top-order") }),
+                ViewToDo = new ViewModelInfo() { [ViewPropertySetting.Views_MenuItemExtension_CommandProperty] = "--top-order" },
                 Command = new RelayCommand(() =>
                 {
                     if (!_settings.EnableTopoOrderInHistories)

@@ -3,6 +3,8 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Input;
+using SourceGit.ViewModels;
 
 namespace SourceGit.Views
 {
@@ -12,11 +14,19 @@ namespace SourceGit.Views
             AvaloniaProperty.RegisterAttached<MenuItemExtension, MenuItem, string>("Command", string.Empty, false, BindingMode.OneWay);
     }
 
+}
+
+namespace PSGit.Views
+{
+    using SourceGit.Views;
+    using SourceGit.ViewModels;
     public static class MenuItemModelExtension
     {
 
-        public static MenuItem CreateMenuItemFromModel(this ViewModels.MenuItemModel x)
+        public static MenuItem CreateMenuItemFromModel(this MenuItemModel x)
         {
+            if (x is ContextMenuModel )
+                throw new InvalidOperationException("Use CreateContextMenuFromModel");
             var menu = new MenuItem()
             {
                 Header = x.Header.Text(),
@@ -25,21 +35,22 @@ namespace SourceGit.Views
                 Icon = App.CreateMenuIcon(x.IconKey),
                 IsEnabled = x.IsEnabled
             };
-            if (x is ViewModels.MenuModel y)
+            x.SetViewSettingsFromModel(menu);
+            if (x is MenuModel y)
                 y.CreateSubItemsFromModel(menu);
             return menu;
         }
-        public static MenuItem CreateMenuFromModel(this ViewModels.MenuModel menuModel)
+        public static MenuItem CreateMenuFromModel(this MenuModel menuModel)
              => menuModel.CreateMenuItemFromModel();
 
-        public static MenuDeriv CreateMenuFromModelInternal<MenuDeriv>(this ViewModels.MenuModel menuModel)
+        public static MenuDeriv CreateMenuFromModelInternal<MenuDeriv>(this MenuModel menuModel)
             where MenuDeriv : ItemsControl, new()
         {
             var menu = new MenuDeriv() { DataContext = menuModel };
             CreateSubItemsFromModel(menuModel, menu);
             return menu;
         }
-        public static void CreateSubItemsFromModel<MenuDeriv>(this ViewModels.MenuModel menuModel, MenuDeriv menu)
+        public static void CreateSubItemsFromModel<MenuDeriv>(this MenuModel menuModel, MenuDeriv menu)
               where MenuDeriv : ItemsControl, new()
         {
             foreach (var item
@@ -50,18 +61,56 @@ namespace SourceGit.Views
                 menu.Items.Add(item);
         }
 
-        public static ContextMenu CreateContextMenuFromModel(this ViewModels.ContextMenuModel menuModel)
+        public static ContextMenu CreateContextMenuFromModel(this ContextMenuModel menuModel)
         {
             var menu = menuModel.CreateMenuFromModelInternal<ContextMenu>();
-            // Implement assigning menuModel.ViewToDo
-            foreach (var (propName, value) in menuModel.ViewToDo.SetValue)
-            {
-                if (propName == "Placement" && Enum.TryParse(value.ToString(), out PlacementMode placementMode))
-                {
-                    menu.Placement = placementMode;
-                }
-            }
+            menuModel.SetViewSettingsFromModel(menu);
             return menu;
+
         }
+        public static void SetViewSettingsFromModel(this MenuItemModel menuModel, object menu)
+        {
+            // Implement assigning menuModel.ViewToDo
+            foreach (var (propName, value) in menuModel.ViewToDo)
+            {
+                switch (propName)
+                {
+                    case ViewPropertySetting.Placement:
+                        if (Enum.TryParse(value.ToString(), out PlacementMode placementMode))
+                        {
+                            ((ContextMenu)menu).Placement = placementMode;
+                        }
+                        break;
+
+                    case ViewPropertySetting.Views_MenuItemExtension_CommandProperty:
+                        ((AvaloniaObject)menu).SetValue(MenuItemExtension.CommandProperty, value.ToString());
+                        // menu.HorizontalOffset = (double)value;
+                        break;
+                    case ViewPropertySetting.icon_Fill:
+                        {
+
+                            var m = ((MenuItem)menu);
+                            var icon = (AvaloniaObject)m.Icon;
+                            icon.SetValue(Avalonia.Controls.Shapes.Shape.FillProperty, value);
+                        }
+                        break;
+                    case ViewPropertySetting.InputGesture:
+                        {
+
+                            var m = ((MenuItem)menu);
+                            m.InputGesture = KeyGesture.Parse(value.ToString());
+                        }
+                        break;
+                }
+
+
+
+                //    == "Placement" && Enum.TryParse(value.ToString(), out PlacementMode placementMode))
+                //{
+                //    menu.Placement = placementMode;
+                //}
+            }
+        }
+
     }
 }
