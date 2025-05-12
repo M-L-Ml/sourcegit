@@ -180,9 +180,10 @@ namespace SourceGit.Views
         {
             if (sender is Button button && DataContext is ViewModels.WorkingCopy vm)
             {
-                var menu = vm.CreateContextMenuForCommitMessages();
+                var menuModel = vm.CreateContextMenuForCommitMessages();
+                var menu = menuModel.CreateContextMenuFromModel();
                 menu.Placement = PlacementMode.TopEdgeAlignedLeft;
-                menu?.Open(button);
+                menu.Open(button);
             }
 
             e.Handled = true;
@@ -192,8 +193,9 @@ namespace SourceGit.Views
         {
             if (DataContext is ViewModels.WorkingCopy vm && sender is Control control)
             {
-                var menu = vm.CreateContextForOpenAI();
-                menu?.Open(control);
+                var menuModel = vm.CreateContextMenuForOpenAI();
+                var menu = menuModel.CreateContextMenuFromModel();
+                menu.Open(control);
             }
 
             e.Handled = true;

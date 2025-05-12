@@ -29,7 +29,8 @@ namespace SourceGit.Views
         {
             if (DataContext is ViewModels.WorkingCopy vm && sender is Control control)
             {
-                var menu = vm.CreateContextMenuForUnstagedChanges();
+                var menuModel = vm.CreateContextMenuModelForUnstagedChanges();
+                var menu = menuModel?.CreateContextMenuFromModel();
                 menu?.Open(control);
                 e.Handled = true;
             }
@@ -39,7 +40,8 @@ namespace SourceGit.Views
         {
             if (DataContext is ViewModels.WorkingCopy vm && sender is Control control)
             {
-                var menu = vm.CreateContextMenuForStagedChanges();
+                var menuModel = vm.CreateContextMenuModelForStagedChanges();
+                var menu = menuModel?.CreateContextMenuFromModel();
                 menu?.Open(control);
                 e.Handled = true;
             }

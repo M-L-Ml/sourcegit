@@ -91,6 +91,7 @@ namespace SourceGit.Views
             }
         }
 
+        // TODO: Move context menu logic to ViewModel for full MVVM compliance.
         private void OnTextViewContextRequested(object sender, ContextRequestedEventArgs e)
         {
             var selected = SelectedText;

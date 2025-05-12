@@ -69,6 +69,7 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
+        // TODO: Move context menu logic to ViewModel for full MVVM compliance.
         private void OnOpenWebLink(object sender, RoutedEventArgs e)
         {
             if (DataContext is ViewModels.CommitDetail detail && sender is Control control)
