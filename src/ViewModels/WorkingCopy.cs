@@ -1311,7 +1311,7 @@ namespace SourceGit.ViewModels
             return menu;
         }
 
-        public ContextMenu CreateContextForOpenAI()
+        public ContextMenuModel CreateContextMenuForOpenAI()
         {
             if (_staged == null || _staged.Count == 0)
             {
@@ -1332,21 +1332,19 @@ namespace SourceGit.ViewModels
                 return null;
             }
 
-            var menu = new ContextMenu() { Placement = PlacementMode.TopEdgeAlignedLeft };
+            var menu = new ContextMenuModel();
             foreach (var service in services)
             {
                 var dup = service;
-                var item = new MenuItem();
-                item.Header = service.Name;
-                item.Click += (_, e) =>
+                menu.Items.Add(new MenuItemModel
                 {
-                    App.ShowWindow(new AIAssistant(_repo, dup, _staged, t => CommitMessage = t), true);
-                    e.Handled = true;
-                };
-
-                menu.Items.Add(item);
+                    Header = service.Name,
+                    Command = new RelayCommand(() =>
+                    {
+                        App.ShowWindow(new AIAssistant(_repo, dup, _staged, t => CommitMessage = t), true);
+                    })
+                });
             }
-
             return menu;
         }
 

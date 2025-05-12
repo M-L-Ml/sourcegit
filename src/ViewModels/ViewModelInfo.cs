@@ -23,9 +23,10 @@ namespace SourceGit.ViewModels
         Placement,
         Views_MenuItemExtension_CommandProperty,
         InputGesture,
-        MinWidth
+        MinWidth,
+        IconCreate
     }
-
+public record IconCreationOptions (Uri uri, int width, int h){};
     /// <summary>
     /// see <see cref="SourceGit.ViewModels.MenuItemModelExtension.SetViewSettingsFromModel"/>
     public class ViewModelInfo : Dictionary<ViewPropertySetting, object>

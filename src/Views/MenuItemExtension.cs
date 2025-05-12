@@ -70,6 +70,7 @@ namespace PSGit.Views
         }
         public static void SetViewSettingsFromModel(this MenuItemModel menuModel, object menu)
         {
+            var item = menu as MenuItem;
             // Implement assigning menuModel.ViewToDo
             foreach (var (propName, value) in menuModel.ViewToDo)
             {
@@ -84,12 +85,11 @@ namespace PSGit.Views
 
                     case ViewPropertySetting.Views_MenuItemExtension_CommandProperty:
                         ((AvaloniaObject)menu).SetValue(MenuItemExtension.CommandProperty, value.ToString());
-                        // menu.HorizontalOffset = (double)value;
                         break;
                     case ViewPropertySetting.icon_Fill:
                         {
 
-                            var m = ((MenuItem)menu);
+                            var m = item!;
                             var icon = (AvaloniaObject)m.Icon;
                             icon.SetValue(Avalonia.Controls.Shapes.Shape.FillProperty, value);
                         }
@@ -106,6 +106,17 @@ namespace PSGit.Views
 
                             var m = ((MenuItem)menu);
                             m.MinWidth = (int)value;
+                        }
+                        break;
+                    case ViewPropertySetting.IconCreate:
+                        {
+
+                            (Uri uri, int width, int h) =
+                            (IconCreationOptions)value;
+                            var asset = Avalonia.Platform.AssetLoader.Open(uri);
+                            item.Icon = new Image { Width = width, Height = h, Source = new Avalonia.Media.Imaging.Bitmap(asset) };
+
+
                         }
                         break;
                 }
