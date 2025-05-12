@@ -839,38 +839,35 @@ namespace SourceGit.ViewModels
             exclude.Command = new RelayCommand(() =>
             {
                 _repo.SetBranchFilterMode(branch, Models.FilterMode.Excluded, false, true);
-             
-            };
+            });
 
             var filterMode = GetFilterMode(branch.FullName);
             if (filterMode == Models.FilterMode.None)
             {
                 var include = new MenuItemModel();
-                include.Icon = App.CreateMenuIcon("Icons.Filter");
+                include.IconKey = App.MenuIconKey("Icons.Filter");
                 include.Header = App.Text("Repository.FilterCommits.Include");
-                include.Click += (_, e) =>
+                include.Command = new RelayCommand(() =>
                 {
                     _repo.SetBranchFilterMode(branch, Models.FilterMode.Included, false, true);
-                    e.Handled = true;
-                };
+                });
                 visibility.Items.Add(include);
                 visibility.Items.Add(exclude);
             }
             else
             {
-                var unset = new MenuItem();
+                var unset = new MenuItemModel();
                 unset.Header = App.Text("Repository.FilterCommits.Default");
-                unset.Click += (_, e) =>
+                unset.Command = new RelayCommand(() =>
                 {
                     _repo.SetBranchFilterMode(branch, Models.FilterMode.None, false, true);
-                    e.Handled = true;
-                };
+                });
                 visibility.Items.Add(exclude);
                 visibility.Items.Add(unset);
             }
 
             submenu.Items.Add(visibility);
-            submenu.Items.Add(MenuItem.Separator());
+            submenu.Items.Add(MenuModel.Separator());
         }
 
         private void FillTagVisibilityMenu(MenuItem submenu, Models.Tag tag)

@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Input;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -142,56 +143,41 @@ namespace SourceGit.ViewModels
                 return null;
 
             var change = _selectedChanges[0];
-            var menu = new ContextMenu();
+            var menu = new ContextMenuModel();
 
-            var diffWithMerger = new MenuItem();
-            diffWithMerger.Header = App.Text("DiffWithMerger");
-            diffWithMerger.Icon = App.CreateMenuIcon("Icons.OpenWith");
-            diffWithMerger.Click += (_, ev) =>
-            {
-                var opt = new Models.DiffOption(GetSHA(_startPoint), GetSHA(_endPoint), change);
-                var toolType = Preferences.Instance.ExternalMergeToolType;
-                var toolPath = Preferences.Instance.ExternalMergeToolPath;
-
-                Task.Run(() => Commands.MergeTool.OpenForDiff(_repo, toolType, toolPath, opt));
-                ev.Handled = true;
-            };
-            menu.Items.Add(diffWithMerger);
+            menu.Items.Add(new MenuItemModel {
+                Header = App.ResText("DiffWithMerger"),
+                IconKey = App.MenuIconKey("Icons.OpenWith"),
+                Command = new RelayCommand(() => {
+                    var opt = new Models.DiffOption(GetSHA(_startPoint), GetSHA(_endPoint), change);
+                    var toolType = Preferences.Instance.ExternalMergeToolType;
+                    var toolPath = Preferences.Instance.ExternalMergeToolPath;
+                    Task.Run(() => Commands.MergeTool.OpenForDiff(_repo, toolType, toolPath, opt));
+                })
+            });
 
             if (change.Index != Models.ChangeState.Deleted)
             {
                 var full = Path.GetFullPath(Path.Combine(_repo, change.Path));
-                var explore = new MenuItem();
-                explore.Header = App.Text("RevealFile");
-                explore.Icon = App.CreateMenuIcon("Icons.Explore");
-                explore.IsEnabled = File.Exists(full);
-                explore.Click += (_, ev) =>
-                {
-                    Native.OS.OpenInFileManager(full, true);
-                    ev.Handled = true;
-                };
-                menu.Items.Add(explore);
+                menu.Items.Add(new MenuItemModel {
+                    Header = App.ResText("RevealFile"),
+                    IconKey = App.MenuIconKey("Icons.Explore"),
+                    IsEnabled = File.Exists(full),
+                    Command = new RelayCommand(() => Native.OS.OpenInFileManager(full, true))
+                });
             }
 
-            var copyPath = new MenuItem();
-            copyPath.Header = App.Text("CopyPath");
-            copyPath.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyPath.Click += (_, ev) =>
-            {
-                App.CopyText(change.Path);
-                ev.Handled = true;
-            };
-            menu.Items.Add(copyPath);
+            menu.Items.Add(new MenuItemModel {
+                Header = App.ResText("CopyPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(change.Path))
+            });
 
-            var copyFullPath = new MenuItem();
-            copyFullPath.Header = App.Text("CopyFullPath");
-            copyFullPath.Icon = App.CreateMenuIcon("Icons.Copy");
-            copyFullPath.Click += (_, e) =>
-            {
-                App.CopyText(Native.OS.GetAbsPath(_repo, change.Path));
-                e.Handled = true;
-            };
-            menu.Items.Add(copyFullPath);
+            menu.Items.Add(new MenuItemModel {
+                Header = App.ResText("CopyFullPath"),
+                IconKey = App.MenuIconKey("Icons.Copy"),
+                Command = new RelayCommand(() => App.CopyText(Native.OS.GetAbsPath(_repo, change.Path)))
+            });
 
             return menu;
         }
