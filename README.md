@@ -1,4 +1,4 @@
-# SausaGit  Opensource Git GUI client. Work in progress. Not ready.
+# SausaGit - Opensource Git GUI client. Work in progress. Not ready.
 It's a fork of [SourceGit](https://github.com/sourcegit-scm/sourcegit)
 
 TODO: update readme.
