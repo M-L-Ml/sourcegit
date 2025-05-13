@@ -1,4 +1,6 @@
-# SourceGit - Opensource Git GUI client.
+# SausaGit  Opensource Git GUI client. Work in progress. Not ready.
+It's a fork of [SourceGit](https://github.com/sourcegit-scm/sourcegit)
+TODO: improve readme.
 
 [![stars](https://img.shields.io/github/stars/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/stargazers)
 [![forks](https://img.shields.io/github/forks/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/forks)
