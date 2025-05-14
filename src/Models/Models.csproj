@@ -6,14 +6,11 @@
   <ItemGroup>
    <PackageReference Include="Avalonia">
      <TreatAsUsed>true</TreatAsUsed>
-   </PackageReference>  
+   </PackageReference>
    <PackageReference Include="AvaloniaEdit.TextMate" />  
    <PackageReference Include="Azure.AI.OpenAI" />  
    <PackageReference Include="CommunityToolkit.Mvvm" />  
    <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" />  
-   <PackageReference Include="TextMateSharp.Grammars">
-     <TreatAsUsed>true</TreatAsUsed>
-   </PackageReference>  
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="App.cs" />
