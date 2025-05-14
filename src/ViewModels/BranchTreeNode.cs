@@ -56,7 +56,16 @@ namespace SourceGit.ViewModels
 
         public string Tooltip
         {
-            get => Backend is Models.Branch b ? b.FriendlyName : null;
+            get
+            {
+                if (Backend is Models.Branch b)
+                    return b.FriendlyName;
+
+                if (Backend is Models.Remote r)
+                    return r.URL;
+
+                return null;
+            }
         }
 
         private Models.FilterMode _filterMode = Models.FilterMode.None;

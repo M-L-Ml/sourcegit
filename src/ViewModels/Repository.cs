@@ -2110,7 +2110,7 @@ namespace SourceGit.ViewModels
         }
 
 
-        public ContextMenuModel CreateContextMenuForSubmodule(string submodule)
+        public ContextMenuModel CreateContextMenuForSubmodule(Models.Submodule submodule)
         {
             var menu = new ContextMenuModel();
             var items = menu.Items;
@@ -2118,19 +2118,20 @@ namespace SourceGit.ViewModels
             {
                 Header = App.ResText("Submodule.Open"),
                 IconKey = App.MenuIconKey("Icons.Folder.Open"),
-                Command = new RelayCommand(() => OpenSubmodule(submodule))
+                IsEnabled = submodule.Status != Models.SubmoduleStatus.NotInited,
+                Command = new RelayCommand(() => OpenSubmodule(submodule.Path))
             });
             items.Add(new MenuItemModel
             {
                 Header = App.ResText("Submodule.CopyPath"),
                 IconKey = App.MenuIconKey("Icons.Copy"),
-                Command = new RelayCommand(() => App.CopyText(submodule))
+                Command = new RelayCommand(() => App.CopyText(submodule.Path))
             });
             items.Add(new MenuItemModel
             {
                 Header = App.ResText("Submodule.Remove"),
                 IconKey = App.MenuIconKey("Icons.Clear"),
-                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteSubmodule(this, submodule)); })
+                Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new DeleteSubmodule(this, submodule.Path)); })
             });
             return menu;
         }
