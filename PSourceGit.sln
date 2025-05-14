@@ -15,9 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\ci.yml = .github\workflows\ci.yml
+		.github\workflows\localization-check.yml = .github\workflows\localization-check.yml
 		.github\workflows\package.yml = .github\workflows\package.yml
 		.github\workflows\release.yml = .github\workflows\release.yml
-		.github\workflows\localization-check.yml = .github\workflows\localization-check.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}"
@@ -102,7 +102,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModels", "src\ViewModel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Views", "src\Views\Views.csproj", "{301FB1F0-4E9C-92FD-BDA7-3B2745EC5C91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models.Native", "src\SG_Models_Native\Models.Native.csproj", "{6C20058A-DC39-A038-9F5E-92822D2F138C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SG_Models_Native", "src\SG_Models_Native\SG_Models_Native.csproj", "{6C20058A-DC39-A038-9F5E-92822D2F138C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
@@ -152,6 +152,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{8D5A7957-E8A5-7338-41DC-A8E40ACE0528} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}
 		{FD384607-ED99-47B7-AF31-FB245841BC92} = {773082AC-D9C8-4186-8521-4B6A7BEE6158}
 		{67B6D05F-A000-40BA-ADB4-C9065F880D7B} = {F45A9D95-AF25-42D8-BBAC-8259C9EEE820}
 		{ABC98884-F023-4EF4-A9C9-5DE9452BE955} = {FD384607-ED99-47B7-AF31-FB245841BC92}
@@ -166,7 +167,6 @@ Global
 		{7802CD7A-591B-4EDD-96F8-9BF3F61692E4} = {9BA0B044-0CC9-46F8-B551-204F149BF45D}
 		{5D125DD9-B48A-491F-B2FB-D7830D74C4DC} = {FD384607-ED99-47B7-AF31-FB245841BC92}
 		{C54D4001-9940-477C-A0B6-E795ED0A3209} = {773082AC-D9C8-4186-8521-4B6A7BEE6158}
-		{8D5A7957-E8A5-7338-41DC-A8E40ACE0528} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}
 		{D10E3813-156D-A7C8-5B7A-41AB033165DA} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}
 		{638CFAF2-A405-2070-E40E-CF10126C572C} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}
 		{F3A04B43-1D75-88B5-9C16-96CB104459EE} = {49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}

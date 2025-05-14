@@ -7,7 +7,7 @@
     <ProjectReference Include="..\SG_Models\Models.csproj" />
     <ProjectReference Include="..\Commands\Commands.csproj" />
     <ProjectReference Include="..\Converters\Converters.csproj" />
-    <ProjectReference Include="..\SG_Models_Native\Models.Native.csproj" />
+    <ProjectReference Include="..\SG_Models_Native\SG_Models_Native.csproj" />
     <PackageReference Include="CommunityToolkit.Mvvm">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>

@@ -19,6 +19,6 @@
     <Compile Remove="InteractiveRebase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SG_Models_Native\Models.Native.csproj" />
+    <ProjectReference Include="..\SG_Models_Native\SG_Models_Native.csproj" />
   </ItemGroup>
 </Project>
