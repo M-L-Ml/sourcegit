@@ -96,13 +96,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "src\Resources\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converters", "src\Converters\Converters.csproj", "{F3A04B43-1D75-88B5-9C16-96CB104459EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "src\Models\Models.csproj", "{DEFD1C79-7087-7395-A31C-34B394F456FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "src\SG_Models\Models.csproj", "{DEFD1C79-7087-7395-A31C-34B394F456FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModels", "src\ViewModels\ViewModels.csproj", "{D701BDC8-F309-C05D-9A76-CAD39266CDA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Views", "src\Views\Views.csproj", "{301FB1F0-4E9C-92FD-BDA7-3B2745EC5C91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models.Native", "src\Models.Native\Models.Native.csproj", "{6C20058A-DC39-A038-9F5E-92822D2F138C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models.Native", "src\SG_Models_Native\Models.Native.csproj", "{6C20058A-DC39-A038-9F5E-92822D2F138C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
