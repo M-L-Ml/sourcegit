@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismalonS", "src\PrismalonS.csproj", "{8D5A7957-E8A5-7338-41DC-A8E40ACE0528}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{773082AC-D9C8-4186-8521-4B6A7BEE6158}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{FD384607-ED99-47B7-AF31-FB245841BC92}"
@@ -13,9 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\ci.yml = .github\workflows\ci.yml
-		.github\workflows\localization-check.yml = .github\workflows\localization-check.yml
 		.github\workflows\package.yml = .github\workflows\package.yml
 		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\localization-check.yml = .github\workflows\localization-check.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{49A7C2D6-558C-4FAA-8F5D-EEE81497AED7}"
@@ -87,8 +89,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{C54D
 		build\scripts\package.osx-app.sh = build\scripts\package.osx-app.sh
 		build\scripts\package.windows.sh = build\scripts\package.windows.sh
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismalonS", "src\PrismalonS.csproj", "{8D5A7957-E8A5-7338-41DC-A8E40ACE0528}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commands", "src\Commands\Commands.csproj", "{D10E3813-156D-A7C8-5B7A-41AB033165DA}"
 EndProject
