@@ -10,10 +10,7 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
-  <!-- TODO del this line ? -->
-    <Compile Include="..\SG_Models_Native\**\*.cs" />
     <AvaloniaXaml Remove="obj\**" />
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
