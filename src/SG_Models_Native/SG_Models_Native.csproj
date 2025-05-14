@@ -19,5 +19,8 @@
     <Compile Remove="..\SG_Models_Native\obj\Debug\net8.0\Native.AssemblyInfo.cs" />
 
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Models1\Models1.csproj" />
+  </ItemGroup>
 
 </Project>

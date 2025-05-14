@@ -43,7 +43,8 @@
   <ItemGroup>
     <AvaloniaXaml Remove="Commands\**" />
     <AvaloniaXaml Remove="Converters\**" />
-	<AvaloniaXaml Remove="SG_Models_Native\**" />
+    <AvaloniaXaml Remove="Models1\**" />
+    <AvaloniaXaml Remove="SG_Models_Native\**" />
     <AvaloniaXaml Remove="SG_Models\**" />
     <AvaloniaXaml Remove="Native\obj\**" />
     <AvaloniaXaml Remove="NativeModels\**" />
@@ -52,7 +53,8 @@
     <AvaloniaXaml Remove="Resources\**" />
     <AvaloniaXaml Remove="ViewModels\**" />
     <AvaloniaXaml Remove="Views\**" />
-	<Compile Remove="SG_Models_Native\**" />
+    <Compile Remove="Models1\**" />
+    <Compile Remove="SG_Models_Native\**" />
     <Compile Remove="SG_Models\**" />
     <Compile Remove="Commands\**" />
     <Compile Remove="Converters\**" />
@@ -64,7 +66,8 @@
     <Compile Remove="Resources\**" />
     <Compile Remove="ViewModels\**" />
     <Compile Remove="Views\**" />
-	<EmbeddedResource Remove="SG_Models_Native\**" />
+    <EmbeddedResource Remove="Models1\**" />
+    <EmbeddedResource Remove="SG_Models_Native\**" />
     <EmbeddedResource Remove="SG_Models\**" />
     <EmbeddedResource Remove="Commands\**" />
     <EmbeddedResource Remove="Converters\**" />
@@ -75,7 +78,8 @@
     <EmbeddedResource Remove="Resources\**" />
     <EmbeddedResource Remove="ViewModels\**" />
     <EmbeddedResource Remove="Views\**" />
-	<None Remove="SG_Models_Native\**" />
+    <None Remove="Models1\**" />
+    <None Remove="SG_Models_Native\**" />
     <None Remove="SG_Models\**" />
     <None Remove="Commands\**" />
     <None Remove="Converters\**" />
