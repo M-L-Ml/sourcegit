@@ -11,10 +11,6 @@
    <PackageReference Include="Azure.AI.OpenAI" />  
    <PackageReference Include="CommunityToolkit.Mvvm" />  
    <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" />  
-   <PackageReference Include="OpenAI">
-     <TreatAsUsed>true</TreatAsUsed>
-   </PackageReference>  
-   <PackageReference Include="TextMateSharp" />  
    <PackageReference Include="TextMateSharp.Grammars">
      <TreatAsUsed>true</TreatAsUsed>
    </PackageReference>  
