@@ -9,13 +9,13 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
 
-    <Product>SourceGit</Product>
+    <Product>SausaGit</Product>
     <Description>OpenSource GIT client</Description>
-    <Company>sourcegit-scm</Company>
-    <Copyright>Copyright © $([System.DateTime]::Now.Year) sourcegit-scm.</Copyright>
+    <Company>sausagit-scm</Company>
+    <Copyright>Copyright © $([System.DateTime]::Now.Year) sausagit-scm.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/sourcegit-scm/sourcegit.git</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/sourcegit-scm/sourcegit.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/M-L-Ml/sausagit.git</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/M-L-Ml/sausagit.git</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
     <ApplicationIcon>Views\App.ico</ApplicationIcon>
   </PropertyGroup>

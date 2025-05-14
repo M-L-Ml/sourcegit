@@ -3,11 +3,11 @@ It's a fork of [SourceGit](https://github.com/sourcegit-scm/sourcegit)
 
 TODO: update readme.
 
-[![stars](https://img.shields.io/github/stars/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/stargazers)
-[![forks](https://img.shields.io/github/forks/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/forks)
-[![license](https://img.shields.io/github/license/sourcegit-scm/sourcegit.svg)](LICENSE)
-[![latest](https://img.shields.io/github/v/release/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/releases/latest)
-[![downloads](https://img.shields.io/github/downloads/sourcegit-scm/sourcegit/total)](https://github.com/sourcegit-scm/sourcegit/releases)
+[![stars](https://img.shields.io/github/stars/M-L-Ml/sausagit.svg)](https://github.com/M-L-Ml/sausagit/stargazers)
+[![forks](https://img.shields.io/github/forks/M-L-Ml/sausagit.svg)](https://github.com/M-L-Ml/sausagit/forks)
+[![license](https://img.shields.io/github/license/M-L-Ml/sausagit.svg)](LICENSE)
+[![latest](https://img.shields.io/github/v/release/M-L-Ml/sausagit.svg)](https://github.com/M-L-Ml/sausagit/releases/latest)
+[![downloads](https://img.shields.io/github/downloads/M-L-Ml/sausagit/total)](https://github.com/M-L-Ml/sausagit/releases)
 
 ## Highlights
 
@@ -59,8 +59,9 @@ You can find the current translation status in [TRANSLATION.md](https://github.c
 
 **To use this tool, you need to install Git(>=2.23.0) first.**
 
-You can download the latest stable from [Releases](https://github.com/sourcegit-scm/sourcegit/releases/latest) or download workflow artifacts from [Github Actions](https://github.com/sourcegit-scm/sourcegit/actions) to try this app based on latest commits.
+You cannot download a release of Sausagit yet. You can use SourceGit instead for now : : the latest stable from [Releases](https://github.com/sourcegit-scm/sourcegit/releases/latest) or download workflow artifacts from [Github Actions](https://github.com/sourcegit-scm/sourcegit/actions) to try this app based on latest commits.
 
+TODO: update folder name to sausagit
 This software creates a folder `$"{System.Environment.SpecialFolder.ApplicationData}/SourceGit"`, which is platform-dependent, to store user settings, downloaded avatars and crash logs.
 
 | OS      | PATH                                                |
