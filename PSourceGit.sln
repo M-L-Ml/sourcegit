@@ -96,7 +96,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "src\Resources\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Converters", "src\Converters\Converters.csproj", "{F3A04B43-1D75-88B5-9C16-96CB104459EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "src\SG_Models\Models.csproj", "{DEFD1C79-7087-7395-A31C-34B394F456FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SG_Models", "src\SG_Models\SG_Models.csproj", "{DEFD1C79-7087-7395-A31C-34B394F456FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModels", "src\ViewModels\ViewModels.csproj", "{D701BDC8-F309-C05D-9A76-CAD39266CDA1}"
 EndProject

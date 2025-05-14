@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SG_Models\Models.csproj" />
+    <ProjectReference Include="..\SG_Models\SG_Models.csproj" />
     <ProjectReference Include="..\Commands\Commands.csproj" />
     <ProjectReference Include="..\Converters\Converters.csproj" />
     <ProjectReference Include="..\SG_Models_Native\SG_Models_Native.csproj" />

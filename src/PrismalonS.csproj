@@ -33,8 +33,8 @@
   <ItemGroup>
     <ProjectReference Include="Commands\Commands.csproj" />
     <ProjectReference Include="Converters\Converters.csproj" />
-    <ProjectReference Include="SG_Models_Native\Models.Native.csproj" />
-    <ProjectReference Include="SG_Models\Models.csproj" />
+    <ProjectReference Include="SG_Models_Native\SG_Models_Native.csproj" />
+    <ProjectReference Include="SG_Models\SG_Models.csproj" />
     <ProjectReference Include="Resources\Resources.csproj" />
     <ProjectReference Include="ViewModels\ViewModels.csproj" />
     <ProjectReference Include="Views\Views.csproj" />
