@@ -98,7 +98,7 @@
 
 
   <ItemGroup>
-    <TrimmerRootAssembly Include="SourceGit" />
+    <TrimmerRootAssembly Include="SausaGit" />
     <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
   </ItemGroup>
 
