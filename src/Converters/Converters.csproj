@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../Models/Models.csproj" />
+    <ProjectReference Include="../SG_Models/Models.csproj" />
     <PackageReference Include="CommunityToolkit.Mvvm">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>

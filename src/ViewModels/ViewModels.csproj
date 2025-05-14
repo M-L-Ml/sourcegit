@@ -4,10 +4,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../Models/Models.csproj" />
+    <ProjectReference Include="..\SG_Models\Models.csproj" />
     <ProjectReference Include="..\Commands\Commands.csproj" />
     <ProjectReference Include="..\Converters\Converters.csproj" />
-    <ProjectReference Include="..\Models.Native\Models.Native.csproj" />
+    <ProjectReference Include="..\SG_Models_Native\Models.Native.csproj" />
     <PackageReference Include="CommunityToolkit.Mvvm">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>

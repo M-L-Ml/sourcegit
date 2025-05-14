@@ -3,8 +3,8 @@
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Models.Native\Models.Native.csproj" />
-    <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\SG_Models_Native\Models.Native.csproj" />
+    <ProjectReference Include="..\SG_Models\Models.csproj" />
     <PackageReference Include="CommunityToolkit.Mvvm">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>

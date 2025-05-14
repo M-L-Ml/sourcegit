@@ -12,13 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Native\**\*.cs" />
+  <!-- TODO del this line ? -->
+    <Compile Include="..\SG_Models_Native\**\*.cs" />
     <AvaloniaXaml Remove="obj\**" />
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
-    <Compile Remove="..\Native\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
-    <Compile Remove="..\Native\obj\Debug\net8.0\Native.AssemblyInfo.cs" />
+    <Compile Remove="..\SG_Models_Native\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
+    <Compile Remove="..\SG_Models_Native\obj\Debug\net8.0\Native.AssemblyInfo.cs" />
 
   </ItemGroup>
 
