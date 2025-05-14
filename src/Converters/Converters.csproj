@@ -5,8 +5,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Models/Models.csproj" />
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Avalonia" />
-    <PackageReference Include="TextMateSharp" />
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Include="Avalonia">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
   </ItemGroup>
 </Project>
