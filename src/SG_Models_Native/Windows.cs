@@ -16,7 +16,7 @@ using SourceGit.Models;
 namespace SourceGit.Native
 {
     [SupportedOSPlatform("windows")]
-    internal class Windows : OS.IBackend, Sausa.IOSPlatform
+    internal class Windows : Sausa.IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         internal struct RECT
         {

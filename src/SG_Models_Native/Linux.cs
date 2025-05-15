@@ -10,7 +10,7 @@ using Avalonia.Platform;
 namespace SourceGit.Native
 {
     [SupportedOSPlatform("linux")]
-    internal class Linux : OS.IBackend
+    internal class Linux : Sausa.IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         public void SetupApp(AppBuilder builder)
         {

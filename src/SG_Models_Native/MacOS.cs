@@ -11,7 +11,7 @@ using Avalonia.Platform;
 namespace SourceGit.Native
 {
     [SupportedOSPlatform("macOS")]
-    internal class MacOS : OS.IBackend
+    internal class MacOS : Sausa.IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         public void SetupApp(AppBuilder builder)
         {
