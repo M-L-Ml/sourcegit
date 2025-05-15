@@ -7,6 +7,8 @@ using System.Runtime.Versioning;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using Sausa;
+using SourceGit.Models;
 
 namespace Sausa.Native
 {

@@ -12,6 +12,7 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 
 using SourceGit.Models;
+using Sausa;
 
 namespace Sausa.Native
 {

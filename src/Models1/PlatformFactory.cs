@@ -14,17 +14,28 @@ namespace Sausa
         /// <exception cref="PlatformNotSupportedException">Thrown when the current OS is not supported</exception>
         public IOSPlatform CreatePlatform()
         {
+            // Platform implementations are in the SG_Models_Native assembly
+            // and should be dynamically loaded/instantiated at runtime
+            // This factory uses reflection to avoid direct dependencies
+            // which would create circular references
+            Type platformType = null;
+            
             if (IsWindows())
             {
-                return new Sausa.Native.Windows();
+                platformType = Type.GetType("Sausa.Native.Windows, SG_Models_Native");
             }
             else if (IsMacOS())
             {
-                return new Sausa.Native.MacOS();
+                platformType = Type.GetType("Sausa.Native.MacOS, SG_Models_Native");
             }
             else if (IsLinux())
             {
-                return new Sausa.Native.Linux();
+                platformType = Type.GetType("Sausa.Native.Linux, SG_Models_Native");
+            }
+            
+            if (platformType != null)
+            {
+                return (IOSPlatform)Activator.CreateInstance(platformType);
             }
             
             throw new PlatformNotSupportedException("Current platform is not supported by Sausa");

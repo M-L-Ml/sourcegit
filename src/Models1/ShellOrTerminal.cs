@@ -1,25 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-
-namespace SourceGit.Models
+namespace SourceGit
 {
+    // Original file: src/SG_Models_Native/ShellOrTerminal.cs
     public class ShellOrTerminal
     {
         public string Type { get; set; }
         public string Name { get; set; }
         public string Exec { get; set; }
 
-        public Bitmap Icon
-        {
-            get
-            {
-                var icon = AssetLoader.Open(new Uri($"avares://Resources/Images/ShellIcons/{Type}.png", UriKind.RelativeOrAbsolute));
-                return new Bitmap(icon);
-            }
-        }
+        // Icon property removed to eliminate Avalonia dependency
+        // UI layer should handle icon loading based on Type property
+        public string IconPath => $"Resources/Images/ShellIcons/{Type}.png";
 
         public static readonly List<ShellOrTerminal> Supported;
 

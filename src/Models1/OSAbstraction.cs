@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-
-using Avalonia;
-using Avalonia.Controls;
-using SourceGit.Models;
+using System.Linq;
 
 namespace Sausa
 {
@@ -59,7 +56,7 @@ namespace Sausa
         /// <summary>
         /// List of available external tools
         /// </summary>
-        public List<SourceGit.Models.ExternalTool> ExternalTools { get; set; } = [];
+        public List<ExternalTool> ExternalTools { get; set; } = [];
 
         /// <summary>
         /// Whether to use the system window frame on Linux
@@ -80,10 +77,10 @@ namespace Sausa
         }
 
         /// <summary>
-        /// Sets up the Avalonia app builder with platform-specific options
+        /// Sets up the app builder with platform-specific options
         /// </summary>
         /// <param name="builder">App builder to set up</param>
-        public void SetupApp(AppBuilder builder)
+        public void SetupApp(object builder)
         {
             _platform.SetupApp(builder);
         }
@@ -126,7 +123,7 @@ namespace Sausa
         /// Sets up platform-specific window settings
         /// </summary>
         /// <param name="window">Window to set up</param>
-        public void SetupForWindow(Window window)
+        public void SetupForWindow(object window)
         {
             _platform.SetupWindow(window);
         }
@@ -145,7 +142,7 @@ namespace Sausa
         /// </summary>
         /// <param name="shell">Shell or terminal to test</param>
         /// <returns>True if available, false otherwise</returns>
-        public bool TestShellOrTerminal(SourceGit.Models.ShellOrTerminal shell)
+        public bool TestShellOrTerminal(ShellOrTerminal shell)
         {
             return !string.IsNullOrEmpty(_platform.FindTerminal(shell));
         }
@@ -154,7 +151,7 @@ namespace Sausa
         /// Sets the shell or terminal to use
         /// </summary>
         /// <param name="shell">Shell or terminal to use</param>
-        public void SetShellOrTerminal(SourceGit.Models.ShellOrTerminal shell)
+        public void SetShellOrTerminal(ShellOrTerminal shell)
         {
             if (shell == null)
                 ShellOrTerminal = string.Empty;

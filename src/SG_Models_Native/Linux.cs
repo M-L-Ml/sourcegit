@@ -6,6 +6,7 @@ using SourceGit.Models;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using Sausa;
 
 namespace Sausa.Native
 {
