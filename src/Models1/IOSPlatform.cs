@@ -1,4 +1,4 @@
-namespace SourceGit.Native
+namespace Sausa
 {
     /// <summary>
     /// Abstracts OS-specific operations needed for tool discovery and launching.
