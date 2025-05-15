@@ -1,6 +1,6 @@
 using System;
 
-namespace SourceGit.Models
+namespace Sausa
 {
     /// <summary>
     /// Default implementation of IPlatformFactory that creates platform-specific implementations
@@ -12,22 +12,22 @@ namespace SourceGit.Models
         /// </summary>
         /// <returns>Platform implementation for the current OS</returns>
         /// <exception cref="PlatformNotSupportedException">Thrown when the current OS is not supported</exception>
-        public Sausa.IOSPlatform CreatePlatform()
+        public IOSPlatform CreatePlatform()
         {
             if (IsWindows())
             {
-                return new SourceGit.Native.Windows();
+                return new Sausa.Native.Windows();
             }
             else if (IsMacOS())
             {
-                return new SourceGit.Native.MacOS();
+                return new Sausa.Native.MacOS();
             }
             else if (IsLinux())
             {
-                return new SourceGit.Native.Linux();
+                return new Sausa.Native.Linux();
             }
             
-            throw new PlatformNotSupportedException("Current platform is not supported by SourceGit");
+            throw new PlatformNotSupportedException("Current platform is not supported by Sausa");
         }
 
         /// <summary>

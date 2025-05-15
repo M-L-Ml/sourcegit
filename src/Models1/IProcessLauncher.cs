@@ -1,4 +1,4 @@
-namespace SourceGit.Models
+namespace Sausa
 {
     /// <summary>
     /// Interface for launching external processes and applications

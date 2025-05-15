@@ -7,10 +7,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
 
-namespace SourceGit.Native
+namespace Sausa.Native
 {
+    // Original file: src/SG_Models_Native/Linux.cs
     [SupportedOSPlatform("linux")]
-    internal class Linux : Sausa.IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
+    internal class Linux : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         public void SetupApp(AppBuilder builder)
         {

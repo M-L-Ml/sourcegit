@@ -13,10 +13,11 @@ using Avalonia.Threading;
 
 using SourceGit.Models;
 
-namespace SourceGit.Native
+namespace Sausa.Native
 {
+    // Original file: src/SG_Models_Native/Windows.cs
     [SupportedOSPlatform("windows")]
-    internal class Windows : Sausa.IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
+    internal class Windows : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         internal struct RECT
         {

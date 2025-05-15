@@ -1,6 +1,6 @@
 using System;
 
-namespace SourceGit.Models
+namespace Sausa
 {
     /// <summary>
     /// Interface for platform factory that creates appropriate platform implementation

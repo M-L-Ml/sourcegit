@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 
-namespace SourceGit.Models
+namespace Sausa
 {
     /// <summary>
     /// Interface for initializing and configuring application components

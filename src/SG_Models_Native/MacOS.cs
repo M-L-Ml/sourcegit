@@ -8,10 +8,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
 
-namespace SourceGit.Native
+namespace Sausa.Native
 {
+    // Original file: src/SG_Models_Native/MacOS.cs
     [SupportedOSPlatform("macOS")]
-    internal class MacOS : Sausa.IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
+    internal class MacOS : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         public void SetupApp(AppBuilder builder)
         {

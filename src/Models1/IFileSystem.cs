@@ -1,4 +1,4 @@
-namespace SourceGit.Models
+namespace Sausa
 {
     /// <summary>
     /// Interface for file system operations that require platform-specific implementations

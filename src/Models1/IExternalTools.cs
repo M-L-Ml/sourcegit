@@ -1,4 +1,6 @@
-namespace SourceGit.Models
+using SourceGit.Models;
+
+namespace Sausa
 {
     /// <summary>
     /// Interface for discovering and managing external tools
