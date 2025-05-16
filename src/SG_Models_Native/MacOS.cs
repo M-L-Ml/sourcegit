@@ -8,24 +8,20 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
 using Sausa;
+using OS = SourceGit.Native.OS;
+using ExternalToolsFinder = Sausa.ExternalToolsFinder;
 using SourceGit.Models;
 
-namespace Sausa.Native
+namespace SourceGit.Native
 {
     // Original file: src/SG_Models_Native/MacOS.cs
     [SupportedOSPlatform("macOS")]
-    internal class MacOS : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher, OS.IBackend
+    internal partial class MacOS : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         public void SetupApp(object builder)
         {
             var appBuilder = PlatformAdapters.AsAppBuilder(builder);
-            SetupApp(appBuilder);
-        }
-        
-        // Original file: src/SG_Models_Native/MacOS.cs MacOS.SetupApp
-        public void SetupApp(AppBuilder builder)
-        {
-            builder.With(new MacOSPlatformOptions()
+            appBuilder.With(new MacOSPlatformOptions()
             {
                 DisableDefaultApplicationMenuItems = true,
             });
@@ -50,15 +46,10 @@ namespace Sausa.Native
 
         public void SetupWindow(object window)
         {
+            // Original implementation from src/SG_Models_Native/MacOS.cs MacOS.SetupWindow
             var avWindow = PlatformAdapters.AsWindow(window);
-            SetupWindow(avWindow);
-        }
-        
-        // Original file: src/SG_Models_Native/MacOS.cs MacOS.SetupWindow
-        public void SetupWindow(Window window)
-        {
-            window.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.SystemChrome;
-            window.ExtendClientAreaToDecorationsHint = true;
+            avWindow.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.SystemChrome;
+            avWindow.ExtendClientAreaToDecorationsHint = true;
         }
 
         public string FindGitExecutable()
@@ -72,7 +63,7 @@ namespace Sausa.Native
             return string.Empty;
         }
 
-        public string FindTerminal(Models.ShellOrTerminal shell)
+        public string FindTerminal(Sausa.ShellOrTerminal shell)
         {
             switch (shell.Type)
             {
@@ -91,51 +82,7 @@ namespace Sausa.Native
             return string.Empty;
         }
 
-        public Models.ExternalToolsFinder FindExternalTools()
-        {
-            var finder = new Models.ExternalToolsFinder();
-            
-            // Add standard editor tools using ExternalToolInfo2 objects
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
-            { 
-                Name = "Visual Studio Code", 
-                LocationFinder = () => "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" 
-            });
-            
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
-            { 
-                Name = "Visual Studio Code - Insiders", 
-                LocationFinder = () => "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code" 
-            });
-            
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
-            { 
-                Name = "VSCodium", 
-                LocationFinder = () => "/Applications/VSCodium.app/Contents/Resources/app/bin/codium" 
-            });
-            
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
-            { 
-                Name = "Fleet", 
-                LocationFinder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Applications/Fleet.app/Contents/MacOS/Fleet" 
-            });
-            
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
-            { 
-                Name = "Sublime Text", 
-                LocationFinder = () => "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" 
-            });
-            
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
-            { 
-                Name = "Zed", 
-                LocationFinder = () => File.Exists("/usr/local/bin/zed") ? "/usr/local/bin/zed" : "/Applications/Zed.app/Contents/MacOS/cli" 
-            });
-            
-            finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}/Library/Application Support/JetBrains/Toolbox");
-            
-            return finder;
-        }
+        // FindExternalTools implementation is in the partial class MacOS_FindExternalTools.cs
 
         public void OpenBrowser(string url)
         {

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Sausa
 {
@@ -134,7 +136,8 @@ namespace Sausa
         /// <returns>Path to Git executable</returns>
         public string FindGitExecutable()
         {
-            return _platform.FindGitExecutable();
+            // Use the IExternalTools version of FindGitExecutable to avoid ambiguity
+            return ((IExternalTools)_platform).FindGitExecutable();
         }
 
         /// <summary>

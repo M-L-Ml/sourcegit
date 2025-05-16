@@ -26,6 +26,11 @@ namespace Sausa
             /// Function that returns the location of the tool
             /// </summary>
             public Func<string> LocationFinder { get; set; } = () => string.Empty;
+            
+            /// <summary>
+            /// Function that generates command line arguments for the tool
+            /// </summary>
+            public Func<string, string> ExecArgsGenerator { get; set; } = null;
         }
 
         /// <summary>

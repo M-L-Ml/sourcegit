@@ -12,13 +12,15 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 
 using SourceGit.Models;
+using SourceGit.Native;
 using Sausa;
+using OS = SourceGit.Native.OS;
 
-namespace Sausa.Native
+namespace SourceGit.Native
 {
     // Original file: src/SG_Models_Native/Windows.cs
     [SupportedOSPlatform("windows")]
-    internal class Windows : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher, OS.IBackend
+    internal class Windows : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         internal struct RECT
         {
@@ -170,7 +172,8 @@ namespace Sausa.Native
             return null;
         }
 
-        public string FindTerminal(Models.ShellOrTerminal shell)
+        // Original file: src/SG_Models_Native/Windows.cs Windows.FindTerminal
+        public string FindTerminal(Sausa.ShellOrTerminal shell)
         {
             switch (shell.Type)
             {
@@ -215,42 +218,42 @@ namespace Sausa.Native
             return string.Empty;
         }
 
-        public Models.ExternalToolsFinder FindExternalTools()
+        public Sausa.ExternalToolsFinder FindExternalTools()
         {
-            var finder = new Models.ExternalToolsFinder();
+            var finder = new Sausa.ExternalToolsFinder();
             
             // Add standard editor tools using ExternalToolInfo2 objects
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code", 
                 LocationFinder = FindVSCode 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code - Insiders", 
                 LocationFinder = FindVSCodeInsiders 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "VSCodium", 
                 LocationFinder = FindVSCodium 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Fleet", 
                 LocationFinder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\Fleet\\Fleet.exe" 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Sublime Text", 
                 LocationFinder = FindSublimeText 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
             { 
                 Name = "Visual Studio", 
                 LocationFinder = FindVisualStudio,

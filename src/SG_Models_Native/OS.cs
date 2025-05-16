@@ -79,22 +79,28 @@ namespace SourceGit.Native
 
         static OS()
         {
+            // Create the platform-agnostic implementation
+            Sausa.IOSPlatform platform;
+            
             if (OperatingSystem.IsWindows())
             {
-                _backend = new Sausa.Native.Windows();
+                platform = new SourceGit.Native.Windows();
             }
             else if (OperatingSystem.IsMacOS())
             {
-                _backend = new Sausa.Native.MacOS();
+                platform = new SourceGit.Native.MacOS();
             }
             else if (OperatingSystem.IsLinux())
             {
-                _backend = new Sausa.Native.Linux();
+                platform = new SourceGit.Native.Linux();
             }
             else
             {
                 throw new Exception("Platform unsupported!!!");
             }
+            
+            // Create the adapter that implements IBackend
+            _backend = new OSBackendAdapter(platform);
         }
 
         public static void SetupApp(AppBuilder builder)

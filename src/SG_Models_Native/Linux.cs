@@ -10,11 +10,11 @@ using Sausa;
 using SourceGit.Native;
 using OS = SourceGit.Native.OS;
 
-namespace Sausa.Native
+namespace SourceGit.Native
 {
     // Original file: src/SG_Models_Native/Linux.cs
     [SupportedOSPlatform("linux")]
-    internal class Linux : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher, OS.IBackend
+    internal class Linux : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         // Implementation for IOSPlatform interface
         public void SetupApp(object builder)
