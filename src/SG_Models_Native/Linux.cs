@@ -7,18 +7,39 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
 using Sausa;
+using SourceGit.Native;
+using OS = SourceGit.Native.OS;
 
 namespace Sausa.Native
 {
     // Original file: src/SG_Models_Native/Linux.cs
     [SupportedOSPlatform("linux")]
-    internal class Linux : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
+    internal class Linux : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher, OS.IBackend
     {
+        // Implementation for IOSPlatform interface
+        public void SetupApp(object builder)
+        {
+            var appBuilder = PlatformAdapters.AsAppBuilder(builder);
+            appBuilder.With(new X11PlatformOptions() { EnableIme = true });
+        }
+        
+        // Implementation for OS.IBackend interface
+        // Original file: src/SG_Models_Native/Linux.cs Linux.SetupApp
         public void SetupApp(AppBuilder builder)
         {
-            builder.With(new X11PlatformOptions() { EnableIme = true });
+            // Call our new implementation
+            SetupApp((object)builder);
         }
 
+        // Implementation for IOSPlatform interface
+        public void SetupWindow(object window)
+        {
+            var avWindow = PlatformAdapters.AsWindow(window);
+            SetupWindow(avWindow);
+        }
+        
+        // Implementation for OS.IBackend interface
+        // Original file: src/SG_Models_Native/Linux.cs Linux.SetupWindow
         public void SetupWindow(Window window)
         {
             if (OS.UseSystemWindowFrame)
@@ -30,6 +51,7 @@ namespace Sausa.Native
             {
                 window.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
                 window.ExtendClientAreaToDecorationsHint = true;
+                window.ExtendClientAreaTitleBarHeightHint = -1;
                 window.Classes.Add("custom_window_frame");
             }
         }
@@ -39,7 +61,7 @@ namespace Sausa.Native
             return FindExecutable("git");
         }
 
-        public string FindTerminal(Models.ShellOrTerminal shell)
+        public string FindTerminal(Sausa.ShellOrTerminal shell)
         {
             if (shell.Type.Equals("custom", StringComparison.Ordinal))
                 return string.Empty;
@@ -47,42 +69,43 @@ namespace Sausa.Native
             return FindExecutable(shell.Exec);
         }
 
-        public Models.ExternalToolsFinder FindExternalTools()
+        public Sausa.ExternalToolsFinder FindExternalTools()
         {
-            var finder = new Models.ExternalToolsFinder();
+            // Original implementation from src/SG_Models_Native/Linux.cs Linux.FindExternalTools
+            var finder = new SourceGit.Models.ExternalToolsFinder();
             
             // Add standard editor tools using ExternalToolInfo2 objects
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code", 
                 LocationFinder = () => FindExecutable("code") 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
             { 
                 Name = "Visual Studio Code - Insiders", 
                 LocationFinder = () => FindExecutable("code-insiders") 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
             { 
                 Name = "VSCodium", 
                 LocationFinder = () => FindExecutable("codium") 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
             { 
                 Name = "Fleet", 
                 LocationFinder = FindJetBrainsFleet 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
             { 
                 Name = "Sublime Text", 
                 LocationFinder = () => FindExecutable("subl") 
             });
             
-            finder.AddEditorTool(new Models.ExternalToolInfo2 
+            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
             { 
                 Name = "Zed", 
                 LocationFinder = () => FindExecutable("zeditor") 
@@ -90,7 +113,8 @@ namespace Sausa.Native
             
             finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/JetBrains/Toolbox");
             
-            return finder;
+            // Convert to Sausa namespace using adapter
+            return PlatformAdapters.AsExternalToolsFinder(finder);
         }
 
         public void OpenBrowser(string url)

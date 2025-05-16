@@ -14,8 +14,15 @@ namespace Sausa.Native
 {
     // Original file: src/SG_Models_Native/MacOS.cs
     [SupportedOSPlatform("macOS")]
-    internal class MacOS : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
+    internal class MacOS : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher, OS.IBackend
     {
+        public void SetupApp(object builder)
+        {
+            var appBuilder = PlatformAdapters.AsAppBuilder(builder);
+            SetupApp(appBuilder);
+        }
+        
+        // Original file: src/SG_Models_Native/MacOS.cs MacOS.SetupApp
         public void SetupApp(AppBuilder builder)
         {
             builder.With(new MacOSPlatformOptions()
@@ -41,6 +48,13 @@ namespace Sausa.Native
             Environment.SetEnvironmentVariable("PATH", path);
         }
 
+        public void SetupWindow(object window)
+        {
+            var avWindow = PlatformAdapters.AsWindow(window);
+            SetupWindow(avWindow);
+        }
+        
+        // Original file: src/SG_Models_Native/MacOS.cs MacOS.SetupWindow
         public void SetupWindow(Window window)
         {
             window.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.SystemChrome;

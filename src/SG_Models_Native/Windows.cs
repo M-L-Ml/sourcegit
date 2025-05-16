@@ -18,7 +18,7 @@ namespace Sausa.Native
 {
     // Original file: src/SG_Models_Native/Windows.cs
     [SupportedOSPlatform("windows")]
-    internal class Windows : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
+    internal class Windows : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher, OS.IBackend
     {
         internal struct RECT
         {
@@ -55,8 +55,10 @@ namespace Sausa.Native
         [DllImport("user32.dll")]
         private static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
 
-        public void SetupApp(AppBuilder builder)
+        public void SetupApp(object builder)
         {
+            var appBuilder = PlatformAdapters.AsAppBuilder(builder);
+            
             // Fix drop shadow issue on Windows 10
             if (!OperatingSystem.IsWindowsVersionAtLeast(10, 22000, 0))
             {
@@ -65,6 +67,22 @@ namespace Sausa.Native
             }
         }
 
+        // Implementation for OS.IBackend interface  
+        public void SetupApp(AppBuilder builder)
+        {
+            // Call our new implementation with the builder as object
+            SetupApp((object)builder);
+        }
+
+        // Implementation for IOSPlatform interface
+        public void SetupWindow(object window)
+        {
+            var avWindow = PlatformAdapters.AsWindow(window);
+            SetupWindow(avWindow);
+        }
+        
+        // Implementation for OS.IBackend interface
+        // Original file: src/SG_Models_Native/Windows.cs Windows.SetupWindow
         public void SetupWindow(Window window)
         {
             window.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;

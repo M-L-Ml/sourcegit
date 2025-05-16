@@ -81,15 +81,15 @@ namespace SourceGit.Native
         {
             if (OperatingSystem.IsWindows())
             {
-                _backend = new Windows();
+                _backend = new Sausa.Native.Windows();
             }
             else if (OperatingSystem.IsMacOS())
             {
-                _backend = new MacOS();
+                _backend = new Sausa.Native.MacOS();
             }
             else if (OperatingSystem.IsLinux())
             {
-                _backend = new Linux();
+                _backend = new Sausa.Native.Linux();
             }
             else
             {
