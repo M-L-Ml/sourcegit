@@ -173,7 +173,7 @@ namespace SourceGit.Native
         }
 
         // Original file: src/SG_Models_Native/Windows.cs Windows.FindTerminal
-        public string FindTerminal(Sausa.ShellOrTerminal shell)
+        public string FindTerminal(ShellOrTerminal shell)
         {
             switch (shell.Type)
             {

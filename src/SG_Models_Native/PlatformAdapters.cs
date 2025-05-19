@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Sausa;
+using SourceGit.Models;
 
 namespace SourceGit.Native
 {
@@ -43,12 +44,12 @@ namespace SourceGit.Native
         /// </summary>
         /// <param name="shell">SourceGit ShellOrTerminal</param>
         /// <returns>Sausa ShellOrTerminal</returns>
-        public static Sausa.ShellOrTerminal AsShellOrTerminal(SourceGit.Models.ShellOrTerminal shell)
+        public static ShellOrTerminal AsShellOrTerminal(ShellOrTerminal shell)
         {
             if (shell == null)
                 return null;
                 
-            return new Sausa.ShellOrTerminal(shell.Type, shell.Name, shell.Exec);
+            return new ShellOrTerminal(shell.Type, shell.Name, shell.Exec);
         }
         
         /// <summary>
@@ -56,10 +57,10 @@ namespace SourceGit.Native
         /// </summary>
         /// <param name="finder">SourceGit ExternalToolsFinder</param>
         /// <returns>Sausa ExternalToolsFinder</returns>
-        public static Sausa.ExternalToolsFinder AsExternalToolsFinder(SourceGit.Models.ExternalToolsFinder finder)
+        public static ExternalToolsFinder AsExternalToolsFinder(Models.ExternalToolsFinder finder)
         {
             // Create a new ExternalToolsFinder
-            var result = new Sausa.ExternalToolsFinder();
+            var result = new ExternalToolsFinder();
             
             // Copy tools from original finder
             // Implementation would be more complex in real code

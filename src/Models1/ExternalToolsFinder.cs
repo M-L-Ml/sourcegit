@@ -10,23 +10,23 @@ namespace Sausa
     /// </summary>
     public class ExternalToolsFinder
     {
-        private List<ExternalTool> _tools = new List<ExternalTool>();
+        protected List<ExternalTool> _tools = new List<ExternalTool>();
 
         /// <summary>
         /// Helper class for external tool information
         /// </summary>
-        public class ExternalToolInfo2
+        public class ExternalToolInfo2 : ExternalToolInfo
         {
             /// <summary>
             /// Name of the tool
             /// </summary>
             public string Name { get; set; } = string.Empty;
-            
+
             /// <summary>
             /// Function that returns the location of the tool
             /// </summary>
             public Func<string> LocationFinder { get; set; } = () => string.Empty;
-            
+
             /// <summary>
             /// Function that generates command line arguments for the tool
             /// </summary>
@@ -45,11 +45,11 @@ namespace Sausa
             if (!string.IsNullOrEmpty(location) && File.Exists(location))
             {
                 _tools.Add(new ExternalTool
-                {
-                    Name = info.Name,
-                    Location = location,
-                    Type = "editor"
-                });
+                (
+                    info: info,
+                    location: location,
+                    type: "editor"
+                ));
             }
         }
 
@@ -62,7 +62,7 @@ namespace Sausa
             var toolboxPath = toolboxPathProvider();
             if (string.IsNullOrEmpty(toolboxPath) || !Directory.Exists(toolboxPath))
                 return;
-            
+
             // This is a simplified implementation for now
             // In a real implementation, this would search for JetBrains tools in the toolbox directory
         }

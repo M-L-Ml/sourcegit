@@ -41,7 +41,7 @@ namespace SourceGit.Native
         public string FindTerminal(ShellOrTerminalModel shell)
         {
             // Create a Sausa.ShellOrTerminal with the same parameters
-            var adaptedShell = new Sausa.ShellOrTerminal(shell.Type, shell.Name, shell.Exec);
+            var adaptedShell = new ShellOrTerminalModel(shell.Type, shell.Name, shell.Exec);
             
             // Cast to specific platform implementations based on platform type
             if (_platform is Windows windows)

@@ -1,3 +1,6 @@
+using SourceGit;
+using SourceGit.Models;
+
 namespace Sausa
 {
     /// <summary>

@@ -69,33 +69,18 @@ namespace SourceGit.Models
         [JsonPropertyName("tools")]
         public Dictionary<string, string> Tools { get; set; } = new Dictionary<string, string>();
     }
-    /// <summary>
-    /// Encapsulates information for any external tool (editor or otherwise).
-    /// </summary>
-    public class ExternalToolInfo
-    {
-        public string Name { get; set; }
-        public string? IconName { get; set; }
-        public Func<string, string>? ExecArgsGenerator { get; set; }
-        // Add more as needed for broader tool support
-    }
 
-    /// <summary>
-    /// Information for parameterizing editor tools (inherits from ExternalToolInfo for backward compatibility).
-    /// </summary>
-    public class ExternalToolInfo2 : ExternalToolInfo
-    {
-        public required Func<string> LocationFinder { get; set; }
-    }
-    public class ExternalToolsFinder
+
+ 
+    public class ExternalToolsFinder : Sausa.ExternalToolsFinder
     {
         // private readonly SourceGit.Native.IOSPlatform _os;
 
         public List<ExternalTool> Founded
-        {
-            get;
-            private set;
-        } = new List<ExternalTool>();
+    => base._tools;        //{
+        //    get;
+        //    private set;
+        //} = new List<ExternalTool>();
 
         public ExternalToolsFinder()
         {

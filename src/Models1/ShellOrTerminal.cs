@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SourceGit
+namespace SourceGit.Models
 {
     // Original file: src/SG_Models_Native/ShellOrTerminal.cs
     public class ShellOrTerminal

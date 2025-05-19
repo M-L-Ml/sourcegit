@@ -72,40 +72,40 @@ namespace SourceGit.Native
         public Sausa.ExternalToolsFinder FindExternalTools()
         {
             // Original implementation from src/SG_Models_Native/Linux.cs Linux.FindExternalTools
-            var finder = new SourceGit.Models.ExternalToolsFinder();
+            var finder = new Models.ExternalToolsFinder();
             
             // Add standard editor tools using ExternalToolInfo2 objects
-            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
+            finder.AddEditorTool(new ExternalToolInfo2
             { 
                 Name = "Visual Studio Code", 
                 LocationFinder = () => FindExecutable("code") 
             });
             
-            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
+            finder.AddEditorTool(new ExternalToolInfo2
             { 
                 Name = "Visual Studio Code - Insiders", 
                 LocationFinder = () => FindExecutable("code-insiders") 
             });
             
-            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
+            finder.AddEditorTool(new ExternalToolInfo2
             { 
                 Name = "VSCodium", 
                 LocationFinder = () => FindExecutable("codium") 
             });
             
-            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
+            finder.AddEditorTool(new ExternalToolInfo2
             { 
                 Name = "Fleet", 
                 LocationFinder = FindJetBrainsFleet 
             });
             
-            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
+            finder.AddEditorTool(new ExternalToolInfo2
             { 
                 Name = "Sublime Text", 
                 LocationFinder = () => FindExecutable("subl") 
             });
             
-            finder.AddEditorTool(new SourceGit.Models.ExternalToolInfo2 
+            finder.AddEditorTool(new ExternalToolInfo2
             { 
                 Name = "Zed", 
                 LocationFinder = () => FindExecutable("zeditor") 

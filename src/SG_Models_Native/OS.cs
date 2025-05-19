@@ -19,8 +19,8 @@ namespace SourceGit.Native
             void SetupWindow(Window window);
 
             string FindGitExecutable();
-            string FindTerminal(Models.ShellOrTerminal shell);
-            Models.ExternalToolsFinder FindExternalTools();
+            string FindTerminal(ShellOrTerminal shell);
+            ExternalToolsFinder FindExternalTools();
 
             void OpenTerminal(string workdir);
             void OpenInFileManager(string path, bool select);
@@ -65,7 +65,7 @@ namespace SourceGit.Native
             set;
         } = string.Empty;
 
-        public static List<Models.ExternalTool> ExternalTools
+        public static List<ExternalTool> ExternalTools
         {
             get;
             set;
@@ -84,15 +84,15 @@ namespace SourceGit.Native
             
             if (OperatingSystem.IsWindows())
             {
-                platform = new SourceGit.Native.Windows();
+                platform = new Windows();
             }
             else if (OperatingSystem.IsMacOS())
             {
-                platform = new SourceGit.Native.MacOS();
+                platform = new MacOS();
             }
             else if (OperatingSystem.IsLinux())
             {
-                platform = new SourceGit.Native.Linux();
+                platform = new Linux();
             }
             else
             {
@@ -146,12 +146,12 @@ namespace SourceGit.Native
             return _backend.FindGitExecutable();
         }
 
-        public static bool TestShellOrTerminal(Models.ShellOrTerminal shell)
+        public static bool TestShellOrTerminal(ShellOrTerminal shell)
         {
             return !string.IsNullOrEmpty(_backend.FindTerminal(shell));
         }
 
-        public static void SetShellOrTerminal(Models.ShellOrTerminal shell)
+        public static void SetShellOrTerminal(ShellOrTerminal shell)
         {
             if (shell == null)
                 ShellOrTerminal = string.Empty;
