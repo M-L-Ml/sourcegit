@@ -72,7 +72,7 @@ namespace SourceGit.Native
         public Sausa.ExternalToolsFinder FindExternalTools()
         {
             // Original implementation from src/SG_Models_Native/Linux.cs Linux.FindExternalTools
-            var finder = new Models.ExternalToolsFinder();
+            var finder = new Models.ExternalToolsFinder2();
             
             // Add standard editor tools using ExternalToolInfo2 objects
             finder.AddEditorTool(new ExternalToolInfo2

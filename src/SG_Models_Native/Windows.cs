@@ -15,6 +15,7 @@ using SourceGit.Models;
 using SourceGit.Native;
 using Sausa;
 using OS = SourceGit.Native.OS;
+using ExternalToolInfo2 = Sausa.ExternalToolInfo2;
 
 namespace SourceGit.Native
 {
@@ -221,48 +222,150 @@ namespace SourceGit.Native
         public Sausa.ExternalToolsFinder FindExternalTools()
         {
             var finder = new Sausa.ExternalToolsFinder();
-            
-            // Add standard editor tools using ExternalToolInfo2 objects
-            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
-            { 
-                Name = "Visual Studio Code", 
-                LocationFinder = FindVSCode 
-            });
-            
-            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
-            { 
-                Name = "Visual Studio Code - Insiders", 
-                LocationFinder = FindVSCodeInsiders 
-            });
-            
-            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
-            { 
-                Name = "VSCodium", 
-                LocationFinder = FindVSCodium 
-            });
-            
-            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
-            { 
-                Name = "Fleet", 
-                LocationFinder = () => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\Programs\\Fleet\\Fleet.exe" 
-            });
-            
-            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
-            { 
-                Name = "Sublime Text", 
-                LocationFinder = FindSublimeText 
-            });
-            
-            finder.AddEditorTool(new Sausa.ExternalToolsFinder.ExternalToolInfo2 
-            { 
-                Name = "Visual Studio", 
-                LocationFinder = FindVisualStudio,
-                ExecArgsGenerator = GenerateCommandlineArgsForVisualStudio
-            });
-            
-            finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\JetBrains\\Toolbox");
-            
+
+            // Define standard editor tools with their custom LocationFinder delegates
+            ExternalToolInfo2[] editorTools =
+            [
+                new()
+                {
+                    Name = "Visual Studio Code",
+                    LocationFinder = FindVSCode
+                },
+                new()
+                {
+                    Name = "Visual Studio Code - Insiders",
+                    LocationFinder = FindVSCodeInsiders
+                },
+                new()
+                {
+                    Name = "VSCodium",
+                    LocationFinder = FindVSCodium
+                },
+                new()
+                {
+                    Name = "Fleet",
+                    LocationFinder = () => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Fleet", "Fleet.exe")
+                },
+                new()
+                {
+                    Name = "Sublime Text",
+                    LocationFinder = FindSublimeText
+                },
+                new()
+                {
+                    Name = "Visual Studio",
+                    LocationFinder = FindVisualStudio,
+                    ExecArgsGenerator = GenerateCommandlineArgsForVisualStudio
+                }
+            ];
+
+            // Add all editor tools in a loop
+            foreach (var tool in editorTools)
+                finder.AddEditorTool(tool);
+
+            finder.FindJetBrainsFromToolbox(() =>
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "JetBrains", "Toolbox"));
+
             return finder;
+        }
+
+        // --- Editor finder methods, now self-contained and private static ---
+
+        private static string FindVSCode()
+        {
+            // Try registry uninstall keys
+            var path = FindFromRegistryUninstall(
+                "{EA457B21-F73E-494C-ACAB-524FDE069978}_is1",
+                "{771FD6B0-FA20-440A-A002-3B3BAC16DC50}_is1");
+            if (!string.IsNullOrEmpty(path)) return path;
+
+            // Try default install locations
+            var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            var paths = new[]
+            {
+                Path.Combine(localApp, "Programs", "Microsoft VS Code", "Code.exe"),
+                Path.Combine(programFiles, "Microsoft VS Code", "Code.exe")
+            };
+            foreach (var p in paths)
+                if (File.Exists(p)) return p;
+
+            // Try on PATH
+            var builder = new StringBuilder("code.cmd", 259);
+            if (PathFindOnPath(builder, null))
+                return builder.ToString();
+
+            return string.Empty;
+        }
+
+        private static string FindVSCodeInsiders()
+        {
+            var path = FindFromRegistryUninstall(
+                "{1287CAD5-7C8D-410D-88B9-0D1EE4A83FF2}_is1",
+                "{217B4C08-948D-4276-BFBB-BEE930AE5A2C}_is1");
+            if (!string.IsNullOrEmpty(path)) return path;
+
+            var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var p = Path.Combine(localApp, "Programs", "Microsoft VS Code Insiders", "Code - Insiders.exe");
+            return File.Exists(p) ? p : string.Empty;
+        }
+
+        private static string FindVSCodium()
+        {
+            var path = FindFromRegistryUninstall(
+                "{88DA3577-054F-4CA1-8122-7D820494CFFB}_is1",
+                "{2E1F05D1-C245-4562-81EE-28188DB6FD17}_is1");
+            if (!string.IsNullOrEmpty(path)) return path;
+
+            var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var p = Path.Combine(localApp, "Programs", "VSCodium", "VSCodium.exe");
+            return File.Exists(p) ? p : string.Empty;
+        }
+
+        private static string FindSublimeText()
+        {
+            var path = FindFromRegistryUninstall("Sublime Text_is1", "Sublime Text 3_is1");
+            if (!string.IsNullOrEmpty(path))
+            {
+                var dir = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(dir))
+                {
+                    var subl = Path.Combine(dir, "subl.exe");
+                    if (File.Exists(subl)) return subl;
+                }
+            }
+
+            var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            var p = Path.Combine(programFiles, "Sublime Text", "sublime_text.exe");
+            return File.Exists(p) ? p : string.Empty;
+        }
+
+        private static string FindFromRegistryUninstall(string systemKey, string userKey)
+        {
+            const string uninstall = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\";
+            // Try system-wide
+            var localMachine = Microsoft.Win32.RegistryKey.OpenBaseKey(
+                Microsoft.Win32.RegistryHive.LocalMachine,
+                Microsoft.Win32.RegistryView.Registry64);
+            var sys = localMachine.OpenSubKey(uninstall + systemKey);
+            if (sys != null)
+            {
+                var path = sys.GetValue("DisplayIcon") as string;
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                    return path;
+            }
+            // Try user
+            var currentUser = Microsoft.Win32.RegistryKey.OpenBaseKey(
+                Microsoft.Win32.RegistryHive.CurrentUser,
+                Microsoft.Win32.RegistryView.Registry64);
+            var user = currentUser.OpenSubKey(uninstall + userKey);
+            if (user != null)
+            {
+                var path = user.GetValue("DisplayIcon") as string;
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                    return path;
+            }
+            return string.Empty;
         }
 
         public void OpenBrowser(string url)
@@ -360,120 +463,6 @@ namespace SourceGit.Native
             {
                 ILFree(pidl);
             }
-        }
-
-        /// <summary>
-        /// Registry-based editor finder that encapsulates the logic for finding editors in Windows registry
-        /// </summary>
-        private sealed class RegistryEditorFinder
-        {
-            private readonly string _systemRegistryPath;
-            private readonly string _userRegistryPath;
-            private readonly Func<string, string>? _pathProcessor;
-
-            public RegistryEditorFinder(string systemRegistryPath, string userRegistryPath, Func<string, string>? pathProcessor = null)
-            {
-                _systemRegistryPath = systemRegistryPath;
-                _userRegistryPath = userRegistryPath;
-                _pathProcessor = pathProcessor;
-            }
-
-            public string Find()
-            {
-                // Try system-wide installation first
-                var localMachine = Microsoft.Win32.RegistryKey.OpenBaseKey(
-                    Microsoft.Win32.RegistryHive.LocalMachine,
-                    Microsoft.Win32.RegistryView.Registry64);
-
-                var systemEditor = localMachine.OpenSubKey(_systemRegistryPath);
-                if (systemEditor != null)
-                {
-                    var path = systemEditor.GetValue("DisplayIcon") as string;
-                    if (path != null)
-                    {
-                        return _pathProcessor != null ? _pathProcessor(path) : path;
-                    }
-                }
-
-                // Then try user installation
-                if (!string.IsNullOrEmpty(_userRegistryPath))
-                {
-                    var currentUser = Microsoft.Win32.RegistryKey.OpenBaseKey(
-                        Microsoft.Win32.RegistryHive.CurrentUser,
-                        Microsoft.Win32.RegistryView.Registry64);
-
-                    var userEditor = currentUser.OpenSubKey(_userRegistryPath);
-                    if (userEditor != null)
-                    {
-                        var path = userEditor.GetValue("DisplayIcon") as string;
-                        if (path != null)
-                        {
-                            return _pathProcessor != null ? _pathProcessor(path) : path;
-                        }
-                    }
-                }
-
-                return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Factory for creating editor finders with appropriate configurations
-        /// </summary>
-        private static class EditorFinderFactory
-        {
-            private const string UninstallRegistryPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\";
-
-            // Dictionary mapping editor types to their registry finder configurations
-            private static readonly Dictionary<string, RegistryEditorFinder> EditorFinders = new()
-            {
-                ["VSCode"] = new RegistryEditorFinder(
-                    $"{UninstallRegistryPath}{{EA457B21-F73E-494C-ACAB-524FDE069978}}_is1",
-                    $"{UninstallRegistryPath}{{771FD6B0-FA20-440A-A002-3B3BAC16DC50}}_is1"),
-
-                ["VSCodeInsiders"] = new RegistryEditorFinder(
-                    $"{UninstallRegistryPath}{{1287CAD5-7C8D-410D-88B9-0D1EE4A83FF2}}_is1",
-                    $"{UninstallRegistryPath}{{217B4C08-948D-4276-BFBB-BEE930AE5A2C}}_is1"),
-
-                ["VSCodium"] = new RegistryEditorFinder(
-                    $"{UninstallRegistryPath}{{88DA3577-054F-4CA1-8122-7D820494CFFB}}_is1",
-                    $"{UninstallRegistryPath}{{2E1F05D1-C245-4562-81EE-28188DB6FD17}}_is1"),
-
-                ["SublimeText"] = new RegistryEditorFinder(
-                    $"{UninstallRegistryPath}Sublime Text_is1",
-                    $"{UninstallRegistryPath}Sublime Text 3_is1",
-                    path => Path.Combine(Path.GetDirectoryName(path)!, "subl.exe"))
-            };
-
-            public static RegistryEditorFinder GetFinder(string editorType)
-            {
-                if (EditorFinders.TryGetValue(editorType, out var finder))
-                {
-                    return finder;
-                }
-
-                throw new ArgumentException($"No finder configured for editor type: {editorType}", nameof(editorType));
-            }
-        }
-
-        private static string FindVSCode()
-        {
-            return EditorFinderFactory.GetFinder("VSCode").Find();
-        }
-
-        private static string FindVSCodeInsiders()
-        {
-            return EditorFinderFactory.GetFinder("VSCodeInsiders").Find();
-        }
-
-        private static string FindVSCodium()
-        {
-            return EditorFinderFactory.GetFinder("VSCodium").Find();
-        }
-
-        private static string FindSublimeText()
-        {
-            return EditorFinderFactory.GetFinder("SublimeText").Find();
         }
 
         private static string FindVisualStudio()

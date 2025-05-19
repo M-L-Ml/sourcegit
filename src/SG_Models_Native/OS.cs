@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 using Avalonia;
 using Avalonia.Controls;
+using Sausa;
 using SourceGit.Models;
 
 namespace SourceGit.Native
@@ -20,7 +21,7 @@ namespace SourceGit.Native
 
             string FindGitExecutable();
             string FindTerminal(ShellOrTerminal shell);
-            ExternalToolsFinder FindExternalTools();
+            ExternalToolsFinder2 FindExternalTools();
 
             void OpenTerminal(string workdir);
             void OpenInFileManager(string path, bool select);

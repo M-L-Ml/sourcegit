@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using ExternalToolsFinder = Sausa.ExternalToolsFinder;
 using static Sausa.ExternalToolsFinder;
+using Sausa;
 
 namespace SourceGit.Native
 {

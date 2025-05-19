@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using SourceGit.Models;
 // Original interfaces from Models1 project
 using Sausa;
-using ExternalToolsFinder = SourceGit.Models.ExternalToolsFinder;
+using ExternalToolsFinder2 = SourceGit.Models.ExternalToolsFinder2;
 using ShellOrTerminalModel = SourceGit.Models.ShellOrTerminal;
 
 namespace SourceGit.Native
@@ -60,7 +60,7 @@ namespace SourceGit.Native
             return string.Empty;
         }
 
-        public ExternalToolsFinder FindExternalTools()
+        public ExternalToolsFinder2 FindExternalTools()
         {
             // Convert between the two ExternalToolsFinder types
             var platformFinder = ((IExternalTools)_platform).FindExternalTools();

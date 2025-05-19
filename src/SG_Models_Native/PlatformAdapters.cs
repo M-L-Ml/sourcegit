@@ -57,7 +57,7 @@ namespace SourceGit.Native
         /// </summary>
         /// <param name="finder">SourceGit ExternalToolsFinder</param>
         /// <returns>Sausa ExternalToolsFinder</returns>
-        public static ExternalToolsFinder AsExternalToolsFinder(Models.ExternalToolsFinder finder)
+        public static ExternalToolsFinder AsExternalToolsFinder(Models.ExternalToolsFinder2 finder)
         {
             // Create a new ExternalToolsFinder
             var result = new ExternalToolsFinder();

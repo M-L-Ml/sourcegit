@@ -9,17 +9,16 @@ using Sausa;
 namespace SourceGit.Models
 {
     // Pure domain model: no UI dependencies
-    public class ExternalTool
+    public class ExternalToolOpen
     {
 
-        public ExternalToolInfo Info;
-        public string ExecFile { get; private set; }
+        public ExternalTool  Info { get; private set; }
 
-        public ExternalTool(ExternalToolInfo info, string execFile//, Func<string, string>? execArgsGenerator = null
+        public ExternalToolOpen(ExternalTool info//, string execFile//, Func<string, string>? execArgsGenerator = null
             )
         {
             Info = info ?? throw new ArgumentNullException(nameof(info));
-            ExecFile = execFile;
+        //    ExecFile = execFile;
             //  ExecArgsGenerator = info.ExecArgsGenerator //execArgsGenerator ??
             //   (repo => $"\"{repo}\"");
         }
@@ -29,7 +28,7 @@ namespace SourceGit.Models
             Process.Start(new ProcessStartInfo()
             {
                 WorkingDirectory = repo,
-                FileName = ExecFile,
+                FileName = Info.Location,
                 Arguments = Info.ExecArgsGenerator?.Invoke(repo) ?? $"\"{repo}\"",
                 UseShellExecute = false,
             });
@@ -76,18 +75,18 @@ namespace SourceGit.Models
 
 
 
-    public class ExternalToolsFinder : Sausa.ExternalToolsFinder
+    public class ExternalToolsFinder2 : Sausa.ExternalToolsFinder
     {
         // private readonly SourceGit.Native.IOSPlatform _os;
 
         public List<ExternalTool> Founded
-        //  => base._tools;      
-        {
-            get;
-            private set;
-        } = new List<ExternalTool>();
+          => base._tools;      
+        //{
+        //    get;
+        //    private set;
+        //} = new List<ExternalTool>();
 
-        public ExternalToolsFinder()
+        public ExternalToolsFinder2()
         {
             var customPathsConfig = Path.Combine(Native.OS.DataDir, "external_editors.json");
             try
@@ -128,7 +127,7 @@ namespace SourceGit.Models
             }
 
             // Add the tool with the found path
-            Founded_Add(new ExternalTool(toolInfo,
+            Founded_Add(new ExternalToolOpen(toolInfo,
                 ///.Name, toolInfo.IconName ?? 
                 ///toolInfo.Name.ToLowerInvariant(), 
                 toolPath));
@@ -155,7 +154,7 @@ namespace SourceGit.Models
             return TryAdd(toolInfo);
         }
 
-        private void Founded_Add(ExternalTool externalTool)
+        private void Founded_Add(ExternalToolOpen externalTool)
         {
             Founded.Add(externalTool);
         }
@@ -167,7 +166,7 @@ namespace SourceGit.Models
         /// <param name="toolInfo">Information about the editor tool to add</param>
         /// <returns>True if the tool was added, false otherwise</returns>
         public bool AddEditorTool(ExternalToolInfo2 toolInfo)
-        {
+        {base.AddEditorTool(toolInfo);
             // ExternalToolInfo2 toolInfo2;
             // Set the IconName based on the editor name if not already set
             if (string.IsNullOrEmpty(toolInfo.IconName) && EditorIconMap.TryGetValue(toolInfo.Name, out var iconName))
