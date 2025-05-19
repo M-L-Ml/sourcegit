@@ -5,12 +5,8 @@ using System.IO;
 using System.Runtime.Versioning;
 
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Platform;
 using Sausa;
-using OS = SourceGit.Native.OS;
-using ExternalToolsFinder = Sausa.ExternalToolsFinder;
-using SourceGit.Models;
 
 namespace SourceGit.Native
 {

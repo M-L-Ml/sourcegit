@@ -1,7 +1,6 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
-using SourceGit.Models;
 // Original interfaces from Models1 project
 using Sausa;
 using ExternalToolsFinder2 = SourceGit.Models.ExternalToolsFinder2;

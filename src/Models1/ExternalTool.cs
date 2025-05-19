@@ -17,8 +17,8 @@ namespace Sausa
 
       public record class ExternalToolInfo2(
         string Name,
-        string? IconName,
-        Func<string, string>? ExecArgsGenerator,
+        string? IconName=null,
+        Func<string, string>? ExecArgsGenerator = null,
          Func<string> LocationFinder
     ) : ExternalToolInfo(Name, IconName, ExecArgsGenerator);
 

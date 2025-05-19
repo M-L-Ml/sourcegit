@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -12,9 +11,7 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 
 using SourceGit.Models;
-using SourceGit.Native;
 using Sausa;
-using OS = SourceGit.Native.OS;
 using ExternalToolInfo2 = Sausa.ExternalToolInfo2;
 
 namespace SourceGit.Native
@@ -226,37 +223,31 @@ namespace SourceGit.Native
             // Define standard editor tools with their custom LocationFinder delegates
             ExternalToolInfo2[] editorTools =
             [
-                new()
-                {
-                    Name = "Visual Studio Code",
-                    LocationFinder = FindVSCode
-                },
-                new()
-                {
-                    Name = "Visual Studio Code - Insiders",
-                    LocationFinder = FindVSCodeInsiders
-                },
-                new()
-                {
-                    Name = "VSCodium",
-                    LocationFinder = FindVSCodium
-                },
-                new()
-                {
-                    Name = "Fleet",
-                    LocationFinder = () => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Fleet", "Fleet.exe")
-                },
-                new()
-                {
-                    Name = "Sublime Text",
-                    LocationFinder = FindSublimeText
-                },
-                new()
-                {
-                    Name = "Visual Studio",
-                    LocationFinder = FindVisualStudio,
-                    ExecArgsGenerator = GenerateCommandlineArgsForVisualStudio
-                }
+                new ExternalToolInfo2(
+                    Name: "Visual Studio Code",
+                    LocationFinder: FindVSCode
+                ),
+                new ExternalToolInfo2(
+                    Name: "Visual Studio Code - Insiders",
+                    LocationFinder: FindVSCodeInsiders
+                ),
+                new ExternalToolInfo2(
+                    Name: "VSCodium",
+                    LocationFinder: FindVSCodium
+                ),
+                new ExternalToolInfo2(
+                    Name: "Fleet",
+                    LocationFinder: () => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Fleet", "Fleet.exe")
+                ),
+                new ExternalToolInfo2(
+                    Name: "Sublime Text",
+                    LocationFinder: FindSublimeText
+                ),
+                new ExternalToolInfo2(
+                    Name: "Visual Studio",
+                    LocationFinder: FindVisualStudio,
+                    ExecArgsGenerator: GenerateCommandlineArgsForVisualStudio
+                )
             ];
 
             // Add all editor tools in a loop

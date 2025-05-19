@@ -7,8 +7,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
 using Sausa;
-using SourceGit.Native;
-using OS = SourceGit.Native.OS;
 
 namespace SourceGit.Native
 {
@@ -73,46 +71,42 @@ namespace SourceGit.Native
         {
             // Original implementation from src/SG_Models_Native/Linux.cs Linux.FindExternalTools
             var finder = new Models.ExternalToolsFinder2();
-            
-            // Add standard editor tools using ExternalToolInfo2 objects
-            finder.AddEditorTool(new ExternalToolInfo2
-            { 
-                Name = "Visual Studio Code", 
-                LocationFinder = () => FindExecutable("code") 
-            });
-            
-            finder.AddEditorTool(new ExternalToolInfo2
-            { 
-                Name = "Visual Studio Code - Insiders", 
-                LocationFinder = () => FindExecutable("code-insiders") 
-            });
-            
-            finder.AddEditorTool(new ExternalToolInfo2
-            { 
-                Name = "VSCodium", 
-                LocationFinder = () => FindExecutable("codium") 
-            });
-            
-            finder.AddEditorTool(new ExternalToolInfo2
-            { 
-                Name = "Fleet", 
-                LocationFinder = FindJetBrainsFleet 
-            });
-            
-            finder.AddEditorTool(new ExternalToolInfo2
-            { 
-                Name = "Sublime Text", 
-                LocationFinder = () => FindExecutable("subl") 
-            });
-            
-            finder.AddEditorTool(new ExternalToolInfo2
-            { 
-                Name = "Zed", 
-                LocationFinder = () => FindExecutable("zeditor") 
-            });
-            
+
+            // Define standard editor tools with their custom LocationFinder delegates
+            ExternalToolInfo2[] editorTools =
+            [
+                new ExternalToolInfo2(
+                    Name: "Visual Studio Code",
+                    LocationFinder: () => FindExecutable("code")
+                ),
+                new ExternalToolInfo2(
+                    Name: "Visual Studio Code - Insiders",
+                    LocationFinder: () => FindExecutable("code-insiders")
+                ),
+                new ExternalToolInfo2(
+                    Name: "VSCodium",
+                    LocationFinder: () => FindExecutable("codium")
+                ),
+                new ExternalToolInfo2(
+                    Name: "Fleet",
+                    LocationFinder: FindJetBrainsFleet
+                ),
+                new ExternalToolInfo2(
+                    Name: "Sublime Text",
+                    LocationFinder: () => FindExecutable("subl")
+                ),
+                new ExternalToolInfo2(
+                    Name: "Zed",
+                    LocationFinder: () => FindExecutable("zeditor")
+                )
+            ];
+
+            // Add all editor tools in a loop
+            foreach (var tool in editorTools)
+                finder.AddEditorTool(tool);
+
             finder.FindJetBrainsFromToolbox(() => $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/JetBrains/Toolbox");
-            
+
             // Convert to Sausa namespace using adapter
             return PlatformAdapters.AsExternalToolsFinder(finder);
         }
