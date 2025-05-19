@@ -4,20 +4,24 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Sausa;
 
 namespace SourceGit.Models
 {
     // Pure domain model: no UI dependencies
-    public class ExternalTool : ExternalToolInfo
+    public class ExternalTool
     {
+
+        public ExternalToolInfo Info;
         public string ExecFile { get; private set; }
 
-        public ExternalTool(string name, string iconName, string execFile, Func<string, string> execArgsGenerator = null)
+        public ExternalTool(ExternalToolInfo info, string execFile//, Func<string, string>? execArgsGenerator = null
+            )
         {
-            Name = name;
-            IconName = iconName;
+            Info = info ?? throw new ArgumentNullException(nameof(info));
             ExecFile = execFile;
-            ExecArgsGenerator = execArgsGenerator ?? (repo => $"\"{repo}\"");
+            //  ExecArgsGenerator = info.ExecArgsGenerator //execArgsGenerator ??
+            //   (repo => $"\"{repo}\"");
         }
 
         public void Open(string repo)
@@ -26,7 +30,7 @@ namespace SourceGit.Models
             {
                 WorkingDirectory = repo,
                 FileName = ExecFile,
-                Arguments = ExecArgsGenerator?.Invoke(repo) ?? $"\"{repo}\"",
+                Arguments = Info.ExecArgsGenerator?.Invoke(repo) ?? $"\"{repo}\"",
                 UseShellExecute = false,
             });
         }
@@ -71,16 +75,17 @@ namespace SourceGit.Models
     }
 
 
- 
+
     public class ExternalToolsFinder : Sausa.ExternalToolsFinder
     {
         // private readonly SourceGit.Native.IOSPlatform _os;
 
         public List<ExternalTool> Founded
-    => base._tools;        //{
-        //    get;
-        //    private set;
-        //} = new List<ExternalTool>();
+        //  => base._tools;      
+        {
+            get;
+            private set;
+        } = new List<ExternalTool>();
 
         public ExternalToolsFinder()
         {
@@ -88,7 +93,7 @@ namespace SourceGit.Models
             try
             {
                 if (File.Exists(customPathsConfig))
-                    _customPaths = JsonSerializer.Deserialize(File.ReadAllText(customPathsConfig),ModelsN. JsonCodeGen.Default.ExternalToolPaths);
+                    _customPaths = JsonSerializer.Deserialize(File.ReadAllText(customPathsConfig), ModelsN.JsonCodeGen.Default.ExternalToolPaths);
             }
             catch
             {
@@ -123,7 +128,10 @@ namespace SourceGit.Models
             }
 
             // Add the tool with the found path
-            Founded_Add(new ExternalTool(toolInfo.Name, toolInfo.IconName ?? toolInfo.Name.ToLowerInvariant(), toolPath, toolInfo.ExecArgsGenerator));
+            Founded_Add(new ExternalTool(toolInfo,
+                ///.Name, toolInfo.IconName ?? 
+                ///toolInfo.Name.ToLowerInvariant(), 
+                toolPath));
             return true;
         }
 
@@ -138,12 +146,12 @@ namespace SourceGit.Models
         private bool TryAdd(string name, string icon, Func<string> finder, Func<string, string>? execArgsGenerator = null)
         {
             var toolInfo = new ExternalToolInfo2
-            {
-                Name = name,
-                IconName = icon,
-                LocationFinder = finder,
-                ExecArgsGenerator = execArgsGenerator
-            };
+            (
+                Name: name,
+                IconName: icon,
+                LocationFinder: finder,
+                ExecArgsGenerator: execArgsGenerator
+            );
             return TryAdd(toolInfo);
         }
 
@@ -160,10 +168,11 @@ namespace SourceGit.Models
         /// <returns>True if the tool was added, false otherwise</returns>
         public bool AddEditorTool(ExternalToolInfo2 toolInfo)
         {
+            // ExternalToolInfo2 toolInfo2;
             // Set the IconName based on the editor name if not already set
             if (string.IsNullOrEmpty(toolInfo.IconName) && EditorIconMap.TryGetValue(toolInfo.Name, out var iconName))
             {
-                toolInfo.IconName = iconName;
+                TryAdd(toolInfo with { IconName = iconName });
             }
 
             return TryAdd(toolInfo);

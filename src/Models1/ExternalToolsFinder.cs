@@ -12,26 +12,6 @@ namespace Sausa
     {
         protected List<ExternalTool> _tools = new List<ExternalTool>();
 
-        /// <summary>
-        /// Helper class for external tool information
-        /// </summary>
-        public class ExternalToolInfo2 : ExternalToolInfo
-        {
-            /// <summary>
-            /// Name of the tool
-            /// </summary>
-            public string Name { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Function that returns the location of the tool
-            /// </summary>
-            public Func<string> LocationFinder { get; set; } = () => string.Empty;
-
-            /// <summary>
-            /// Function that generates command line arguments for the tool
-            /// </summary>
-            public Func<string, string> ExecArgsGenerator { get; set; } = null;
-        }
 
         /// <summary>
         /// Adds an editor tool to the finder
@@ -39,7 +19,8 @@ namespace Sausa
         /// <param name="info">Information about the editor tool</param>
         public void AddEditorTool(ExternalToolInfo2 info)
         {
-            if (info == null) return;
+            if (info == null)
+                return;
 
             var location = info.LocationFinder();
             if (!string.IsNullOrEmpty(location) && File.Exists(location))
@@ -47,6 +28,7 @@ namespace Sausa
                 _tools.Add(new ExternalTool
                 (
                     info: info,
+
                     location: location,
                     type: "editor"
                 ));
