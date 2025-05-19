@@ -3,7 +3,10 @@ using Avalonia;
 using Avalonia.Controls;
 // Original interfaces from Models1 project
 using Sausa;
-using ExternalToolsFinder2 = SourceGit.Models.ExternalToolsFinder2;
+using SourceGit.Models;
+using static SourceGit.Native.OS;
+
+//using ExternalToolsFinder2 = SourceGit.Models.ExternalToolsFinder2;
 using ShellOrTerminalModel = SourceGit.Models.ShellOrTerminal;
 
 namespace SourceGit.Native
@@ -11,7 +14,7 @@ namespace SourceGit.Native
     /// <summary>
     /// Adapter class to bridge between the platform-independent interfaces and OS.IBackend implementations
     /// </summary>
-    internal class OSBackendAdapter : OS.IBackend
+    internal class OSBackendAdapter : IBackend
     {
         private readonly IOSPlatform _platform;
 
@@ -63,7 +66,7 @@ namespace SourceGit.Native
         {
             // Convert between the two ExternalToolsFinder types
             var platformFinder = ((IExternalTools)_platform).FindExternalTools();
-            var result = new ExternalToolsFinder();
+            var result = new ExternalToolsFinder2();
             
             // Implementation of conversion logic would go here
             // This would typically involve copying over the tools from platformFinder to result

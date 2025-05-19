@@ -7,6 +7,7 @@ using System.Runtime.Versioning;
 using Avalonia;
 using Avalonia.Platform;
 using Sausa;
+using SourceGit.Models;
 
 namespace SourceGit.Native
 {
@@ -59,7 +60,7 @@ namespace SourceGit.Native
             return string.Empty;
         }
 
-        public string FindTerminal(Sausa.ShellOrTerminal shell)
+        public string FindTerminal(ShellOrTerminal shell)
         {
             switch (shell.Type)
             {

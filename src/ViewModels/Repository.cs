@@ -12,6 +12,7 @@ using Avalonia.Threading;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SourceGit.Models;
 
 namespace SourceGit.ViewModels
 {
@@ -652,7 +653,7 @@ namespace SourceGit.ViewModels
                     };
 
 
-                    item.Command = new RelayCommand(() => dupTool.Open(_fullpath));
+                    item.Command = new RelayCommand(() => new ExternalToolOpen(dupTool).Open(_fullpath));
                     menu.Items.Add(item);
                 }
             }

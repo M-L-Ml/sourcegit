@@ -19,7 +19,7 @@ namespace Sausa
         string Name,
         string? IconName=null,
         Func<string, string>? ExecArgsGenerator = null,
-         Func<string> LocationFinder
+         Func<string>? LocationFinder= null
     ) : ExternalToolInfo(Name, IconName, ExecArgsGenerator);
 
 
@@ -31,17 +31,19 @@ namespace Sausa
         : ExternalToolInfo //(Name, IconName, ExecArgsGenerator)
     {
         //ExternalToolInfo Info { get;init; }
-        public ExternalTool(string name, string? iconName, string location, string type,
+        public ExternalTool(string name, string? iconName, string location, string? type = default,
             Func<string, string>? ExecArgsGenerator = default) :
             base(name, iconName, ExecArgsGenerator)
         {
             Location = location;
+            Type = type;
         }
         public ExternalTool(ExternalToolInfo info, string location, string type
          ) :
             base(info)// name, iconName, ExecArgsGenerator)
         {
             Location = location;
+            Type = type;
         }
         //public ExternalTool(string name, string location, string icon, string type)
         //{

@@ -15,7 +15,7 @@ namespace SourceGit.Native
     internal class Linux : IOSPlatform, IApplicationSetup, IFileSystem, IExternalTools, IProcessLauncher
     {
         // Implementation for IOSPlatform interface
-        public void SetupApp(object builder)
+        void IApplicationSetup.SetupApp(object builder)
         {
             var appBuilder = PlatformAdapters.AsAppBuilder(builder);
             appBuilder.With(new X11PlatformOptions() { EnableIme = true });
@@ -26,11 +26,11 @@ namespace SourceGit.Native
         public void SetupApp(AppBuilder builder)
         {
             // Call our new implementation
-            SetupApp((object)builder);
+            ((IApplicationSetup)this).SetupApp(builder);
         }
 
         // Implementation for IOSPlatform interface
-        public void SetupWindow(object window)
+        void IApplicationSetup.SetupWindow(object window)
         {
             var avWindow = PlatformAdapters.AsWindow(window);
             SetupWindow(avWindow);
@@ -59,7 +59,7 @@ namespace SourceGit.Native
             return FindExecutable("git");
         }
 
-        public string FindTerminal(Sausa.ShellOrTerminal shell)
+        public string FindTerminal(ShellOrTerminal shell)
         {
             if (shell.Type.Equals("custom", StringComparison.Ordinal))
                 return string.Empty;

@@ -127,10 +127,10 @@ namespace SourceGit.Models
             }
 
             // Add the tool with the found path
-            Founded_Add(new ExternalToolOpen(toolInfo,
+            Founded_Add(new ExternalTool(info:toolInfo,
                 ///.Name, toolInfo.IconName ?? 
                 ///toolInfo.Name.ToLowerInvariant(), 
-                toolPath));
+                toolPath , type:" external tool"));
             return true;
         }
 
@@ -154,7 +154,7 @@ namespace SourceGit.Models
             return TryAdd(toolInfo);
         }
 
-        private void Founded_Add(ExternalToolOpen externalTool)
+        private void Founded_Add(ExternalTool externalTool)
         {
             Founded.Add(externalTool);
         }
@@ -203,16 +203,6 @@ namespace SourceGit.Models
         }
 
 
-        [Obsolete("Use the AddEditorTool method with ExternalToolInfo2 instead")]
-        public static readonly ExternalToolInfo[] DefaultEditors =
-                {
-            new() { Name = "Visual Studio Code", IconName = "vscode" },
-            new() { Name = "Visual Studio Code - Insiders", IconName = "vscode_insiders" },
-            new() { Name = "VSCodium", IconName = "codium" },
-            new() { Name = "Fleet", IconName = "fleet" },
-            new() { Name = "Sublime Text", IconName = "sublime_text" },
-            new() { Name = "Zed", IconName = "zed" },
-        };
 
 
         public void FindJetBrainsFromToolbox(Func<string> platformFinder)
