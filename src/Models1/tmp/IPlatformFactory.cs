@@ -1,18 +1,20 @@
 using System;
+using Sausa;
 
-namespace Sausa
+namespace Models1.tmp
 {
     /// <summary>
     /// Interface for platform factory that creates appropriate platform implementation
     /// based on the current operating system
     /// </summary>
+    [Obsolete("Not used. TODO: make usable or delete")]
     public interface IPlatformFactory
     {
         /// <summary>
         /// Creates and returns the appropriate platform implementation for the current OS
         /// </summary>
         /// <returns>Platform implementation</returns>
-        Sausa.IOSPlatform CreatePlatform();
+        IOSPlatform CreatePlatform();
         
         /// <summary>
         /// Determines if the current operating system is Windows

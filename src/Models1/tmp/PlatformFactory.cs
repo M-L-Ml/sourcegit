@@ -1,10 +1,12 @@
 using System;
+using Sausa;
 
-namespace Sausa
+namespace Models1.tmp
 {
     /// <summary>
     /// Default implementation of IPlatformFactory that creates platform-specific implementations
     /// </summary>
+    [Obsolete("Not used. TODO: make usable or delete")]
     public class PlatformFactory : IPlatformFactory
     {
         /// <summary>
