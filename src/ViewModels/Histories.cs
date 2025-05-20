@@ -13,7 +13,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace SourceGit.ViewModels
 {
-    public class Histories : ObservableObject
+    public class Histories : ObservableObject, IDisposable
     {
         public Repository Repo
         {
@@ -58,7 +58,7 @@ namespace SourceGit.ViewModels
             private set => SetProperty(ref _navigationId, value);
         }
 
-        public object DetailContext
+        public IDisposable DetailContext
         {
             get => _detailContext;
             set => SetProperty(ref _detailContext, value);
@@ -99,23 +99,13 @@ namespace SourceGit.ViewModels
             _repo = repo;
         }
 
-        public void Cleanup()
+        public void Dispose()
         {
-            Commits = new List<Models.Commit>();
-
+            Commits = [];
             _repo = null;
             _graph = null;
             _autoSelectedCommit = null;
-
-            if (_detailContext is CommitDetail cd)
-            {
-                cd.Cleanup();
-            }
-            else if (_detailContext is RevisionCompare rc)
-            {
-                rc.Cleanup();
-            }
-
+            _detailContext?.Dispose();
             _detailContext = null;
         }
 
@@ -221,7 +211,7 @@ namespace SourceGit.ViewModels
             else
             {
                 _repo.SelectedSearchedCommit = null;
-                DetailContext = commits.Count;
+                DetailContext = new Models.Count(commits.Count);
             }
         }
 
@@ -387,7 +377,7 @@ namespace SourceGit.ViewModels
                     {
                         var builder = new StringBuilder();
                         foreach (var c in selected)
-                            builder.AppendLine($"{c.SHA.Substring(0, 10)} - {c.Subject}");
+                            builder.AppendLine($"{c.SHA.AsSpan(0, 10)} - {c.Subject}");
                         App.CopyText(builder.ToString());
                     })
                 };
@@ -745,7 +735,7 @@ menu.Items.Add(revert);
             var copyInfo = new MenuItemModel {
     Header = App.ResText("CommitCM.CopyInfo"),
     IconKey = App.MenuIconKey("Icons.Info"),
-    Command = new RelayCommand(() => App.CopyText($"{commit.SHA.Substring(0, 10)} - {commit.Subject}"))
+    Command = new RelayCommand(() => App.CopyText($"{commit.SHA.AsSpan(0, 10)} - {commit.Subject}"))
 };
 
             var copyAuthor = new MenuItemModel {
@@ -927,15 +917,15 @@ submenu.Items.Add(rename);
 
             if (!_repo.IsBare)
             {
-                var detect = Commands.GitFlow.DetectType(_repo.FullPath, _repo.Branches, current.Name);
-                if (detect.IsGitFlowBranch)
+                var type = _repo.GetGitFlowType(current);
+                if (type != Models.GitFlowBranchType.None)
                 {
                     var finish = new MenuItemModel {
     Header = App.ResText("BranchCM.Finish", current.Name),
     IconKey = App.MenuIconKey("Icons.GitFlow"),
     Command = new RelayCommand(() => {
         if (_repo.CanCreatePopup())
-            _repo.ShowPopup(new GitFlowFinish(_repo, current, detect.Type, detect.Prefix));
+            _repo.ShowPopup(new GitFlowFinish(_repo, current, type));
     })
 };
 submenu.Items.Add(finish);
@@ -1007,15 +997,15 @@ submenu.Items.Add(MenuModel.Separator());
 
             if (!_repo.IsBare)
             {
-                var detect = Commands.GitFlow.DetectType(_repo.FullPath, _repo.Branches, branch.Name);
-                if (detect.IsGitFlowBranch)
+                var type = _repo.GetGitFlowType(branch);
+                if (type != Models.GitFlowBranchType.None)
                 {
                     var finish = new MenuItemModel {
     Header = App.ResText("BranchCM.Finish", branch.Name),
     IconKey = App.MenuIconKey("Icons.GitFlow"),
     Command = new RelayCommand(() => {
         if (_repo.CanCreatePopup())
-            _repo.ShowPopup(new GitFlowFinish(_repo, branch, detect.Type, detect.Prefix));
+            _repo.ShowPopup(new GitFlowFinish(_repo, branch, type));
     })
 };
 submenu.Items.Add(finish);
@@ -1173,7 +1163,7 @@ submenu.Items.Add(copy);
         private Models.CommitGraph _graph = null;
         private Models.Commit _autoSelectedCommit = null;
         private long _navigationId = 0;
-        private object _detailContext = null;
+        private IDisposable _detailContext = null;
 
         private Models.Bisect _bisect = null;
 

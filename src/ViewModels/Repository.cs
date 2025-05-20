@@ -51,6 +51,12 @@ namespace SourceGit.ViewModels
             get => _settings;
         }
 
+        public Models.GitFlow GitFlow
+        {
+            get;
+            set;
+        } = new Models.GitFlow();
+
         public Models.FilterMode HistoriesFilterMode
         {
             get => _historiesFilterMode;
@@ -198,7 +204,21 @@ namespace SourceGit.ViewModels
             private set => SetProperty(ref _tags, value);
         }
 
-        public List<Models.Tag> VisibleTags
+        public bool ShowTagsAsTree
+        {
+            get => Preferences.Instance.ShowTagsAsTree;
+            set
+            {
+                if (value != Preferences.Instance.ShowTagsAsTree)
+                {
+                    Preferences.Instance.ShowTagsAsTree = value;
+                    VisibleTags = BuildVisibleTags();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public object VisibleTags
         {
             get => _visibleTags;
             private set => SetProperty(ref _visibleTags, value);
@@ -210,7 +230,21 @@ namespace SourceGit.ViewModels
             private set => SetProperty(ref _submodules, value);
         }
 
-        public List<Models.Submodule> VisibleSubmodules
+        public bool ShowSubmodulesAsTree
+        {
+            get => Preferences.Instance.ShowSubmodulesAsTree;
+            set
+            {
+                if (value != Preferences.Instance.ShowSubmodulesAsTree)
+                {
+                    Preferences.Instance.ShowSubmodulesAsTree = value;
+                    VisibleSubmodules = BuildVisibleSubmodules();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public object VisibleSubmodules
         {
             get => _visibleSubmodules;
             private set => SetProperty(ref _visibleSubmodules, value);
@@ -266,6 +300,7 @@ namespace SourceGit.ViewModels
                         SelectedSearchedCommit = null;
                         SearchCommitFilter = string.Empty;
                         MatchedFilesForSearching = null;
+                        _requestingWorktreeFiles = false;
                         _worktreeFiles = null;
                     }
                 }
@@ -531,9 +566,9 @@ namespace SourceGit.ViewModels
             _historiesFilterMode = Models.FilterMode.None;
 
             _watcher?.Dispose();
-            _histories.Cleanup();
-            _workingCopy.Cleanup();
-            _stashesPage.Cleanup();
+            _histories.Dispose();
+            _workingCopy.Dispose();
+            _stashesPage.Dispose();
 
             _watcher = null;
             _histories = null;
@@ -548,12 +583,13 @@ namespace SourceGit.ViewModels
             _localBranchTrees.Clear();
             _remoteBranchTrees.Clear();
             _tags.Clear();
-            _visibleTags.Clear();
+            _visibleTags = null;
             _submodules.Clear();
-            _visibleSubmodules.Clear();
+            _visibleSubmodules = null;
             _searchedCommits.Clear();
             _selectedSearchedCommit = null;
 
+            _requestingWorktreeFiles = false;
             _worktreeFiles = null;
             _matchedFilesForSearching = null;
         }
@@ -585,6 +621,28 @@ namespace SourceGit.ViewModels
             GetOwnerPage()?.StartPopup(popup);
         }
 
+        public bool IsGitFlowEnabled()
+        {
+            return GitFlow is { IsValid: true } &&
+                _branches.Find(x => x.IsLocal && x.Name.Equals(GitFlow.Master, StringComparison.Ordinal)) != null &&
+                _branches.Find(x => x.IsLocal && x.Name.Equals(GitFlow.Develop, StringComparison.Ordinal)) != null;
+        }
+
+        public Models.GitFlowBranchType GetGitFlowType(Models.Branch b)
+        {
+            if (!IsGitFlowEnabled())
+                return Models.GitFlowBranchType.None;
+
+            var name = b.Name;
+            if (name.StartsWith(GitFlow.FeaturePrefix, StringComparison.Ordinal))
+                return Models.GitFlowBranchType.Feature;
+            if (name.StartsWith(GitFlow.ReleasePrefix, StringComparison.Ordinal))
+                return Models.GitFlowBranchType.Release;
+            if (name.StartsWith(GitFlow.HotfixPrefix, StringComparison.Ordinal))
+                return Models.GitFlowBranchType.Hotfix;
+            return Models.GitFlowBranchType.None;
+        }
+
         public CommandLog CreateLog(string name)
         {
             var log = new CommandLog(name);
@@ -594,19 +652,30 @@ namespace SourceGit.ViewModels
 
         public void RefreshAll()
         {
-            Task.Run(() =>
-            {
-                var allowedSignersFile = new Commands.Config(_fullpath).Get("gpg.ssh.allowedSignersFile");
-                _hasAllowedSignersFile = !string.IsNullOrEmpty(allowedSignersFile);
-            });
-
+            Task.Run(RefreshCommits);
             Task.Run(RefreshBranches);
             Task.Run(RefreshTags);
-            Task.Run(RefreshCommits);
             Task.Run(RefreshSubmodules);
             Task.Run(RefreshWorktrees);
             Task.Run(RefreshWorkingCopyChanges);
             Task.Run(RefreshStashes);
+            
+            Task.Run(() =>
+            {
+                var config = new Commands.Config(_fullpath).ListAll();
+                _hasAllowedSignersFile = config.TryGetValue("gpg.ssh.allowedSignersFile", out var allowedSignersFile) && !string.IsNullOrEmpty(allowedSignersFile);
+
+                if (config.TryGetValue("gitflow.branch.master", out var masterName))
+                    GitFlow.Master = masterName;
+                if (config.TryGetValue("gitflow.branch.develop", out var developName))
+                    GitFlow.Develop = developName;
+                if (config.TryGetValue("gitflow.prefix.feature", out var featurePrefix))
+                    GitFlow.FeaturePrefix = featurePrefix;
+                if (config.TryGetValue("gitflow.prefix.release", out var releasePrefix))
+                    GitFlow.ReleasePrefix = releasePrefix;
+                if (config.TryGetValue("gitflow.prefix.hotfix", out var hotfixPrefix))
+                    GitFlow.HotfixPrefix = hotfixPrefix;
+            });
         }
 
         public void OpenInFileManager()
@@ -1368,8 +1437,7 @@ namespace SourceGit.ViewModels
                 [ViewPropertySetting.Placement] = "PlacementMode.BottomEdgeAlignedLeft"
             }
              ;
-            var isGitFlowEnabled = Commands.GitFlow.IsEnabled(_fullpath, _branches);
-            if (isGitFlowEnabled)
+            if (IsGitFlowEnabled())
             {
                 items.Add(new MenuItemModel
                 {
@@ -1378,8 +1446,7 @@ namespace SourceGit.ViewModels
                     Command = StartFeatureCommand,
                     IsEnabled = true
                 });
-                //  StartFeatureCommand = new ViewModels.DelegateCommand( );
-                //  var startFeature =
+
                 items.Add(new MenuItemModel
                 {
                     Header = App.ResText("GitFlow.StartRelease"),
@@ -1417,22 +1484,28 @@ namespace SourceGit.ViewModels
         private void GitFlowStartFeature()
         {
             if (CanCreatePopup())
-                ShowPopup(new GitFlowStart(this, "feature"));
+                ShowPopup(new GitFlowStart(this, Models.GitFlowBranchType.Feature));
         }
         private void GitFlowStartRelease()
         {
             if (CanCreatePopup())
-                ShowPopup(new GitFlowStart(this, "release"));
+                ShowPopup(new GitFlowStart(this, Models.GitFlowBranchType.Release));
         }
         private void GitFlowStartHotfix()
         {
             if (CanCreatePopup())
-                ShowPopup(new GitFlowStart(this, "hotfix"));
+                ShowPopup(new GitFlowStart(this, Models.GitFlowBranchType.Hotfix));
         }
         private void GitFlowInit()
         {
-            if (CanCreatePopup())
+            if (_currentBranch == null)
+            {
+                App.RaiseException(_fullpath, "Git flow init failed: No branch found!!!");
+            }
+            else if (CanCreatePopup())
+            {
                 ShowPopup(new InitGitFlow(this));
+            }
         }
 
 
@@ -1715,9 +1788,22 @@ namespace SourceGit.ViewModels
                         Header = App.ResText("BranchCM.FastForward", upstream.FriendlyName),
                         IconKey = App.MenuIconKey("Icons.FastForward"),
                         IsEnabled = branch.TrackStatus.Ahead.Count == 0,
-                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new FastForwardWithoutCheckout(this, branch, upstream)); })
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowAndStartPopup(new ResetWithoutCheckout(this, branch, upstream)); })
                     });
-                    items.Add(new MenuItemModel { Header = "-" });
+                    items.Add( MenuModel.Separator());
+                    var selectedCommit = (_histories?.DetailContext as CommitDetail)?.Commit;
+                    if (selectedCommit != null && !selectedCommit.SHA.Equals(branch.Head, StringComparison.Ordinal))
+                    {
+                        var move = new MenuItemModel();
+                        move.Header = App.ResText("BranchCM.ResetToSelectedCommit", branch.Name, selectedCommit.SHA.Substring(0, 10));
+                        move.IconKey = App.MenuIconKey("Icons.Reset");
+                        move.Command = new RelayCommand(() =>
+                        {
+                            if (CanCreatePopup())
+                                ShowPopup(new ResetWithoutCheckout(this, branch, selectedCommit));
+                        });
+                        menu.Items.Add(move);
+                    }
                     items.Add(new MenuItemModel
                     {
                         Header = App.ResText("BranchCM.FetchInto", upstream.FriendlyName, branch.Name),
@@ -1770,15 +1856,15 @@ namespace SourceGit.ViewModels
             }
             if (!IsBare)
             {
-                var detect = Commands.GitFlow.DetectType(_fullpath, _branches, branch.Name);
-                if (detect.IsGitFlowBranch)
+                var type = GetGitFlowType(branch);
+                if (type != Models.GitFlowBranchType.None)
                 {
                     items.Add(new MenuItemModel { Header = "-" });
                     items.Add(new MenuItemModel
                     {
                         Header = App.ResText("BranchCM.Finish", branch.Name),
                         IconKey = App.MenuIconKey("Icons.GitFlow"),
-                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new GitFlowFinish(this, branch, detect.Type, detect.Prefix)); })
+                        Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new GitFlowFinish(this, branch, type)); })
                     });
                 }
             }
@@ -2241,7 +2327,7 @@ namespace SourceGit.ViewModels
             return builder;
         }
 
-        private List<Models.Tag> BuildVisibleTags()
+        private object BuildVisibleTags()
         {
             switch (_settings.TagSortMode)
             {
@@ -2272,10 +2358,14 @@ namespace SourceGit.ViewModels
 
             var historiesFilters = _settings.CollectHistoriesFilters();
             UpdateTagFilterMode(historiesFilters);
-            return visible;
+
+            if (Preferences.Instance.ShowTagsAsTree)
+                return TagCollectionAsTree.Build(visible, _visibleTags as TagCollectionAsTree);
+            else
+                return new TagCollectionAsList() { Tags = visible };
         }
 
-        private List<Models.Submodule> BuildVisibleSubmodules()
+        private object BuildVisibleSubmodules()
         {
             var visible = new List<Models.Submodule>();
             if (string.IsNullOrEmpty(_filter))
@@ -2290,7 +2380,11 @@ namespace SourceGit.ViewModels
                         visible.Add(s);
                 }
             }
-            return visible;
+
+            if (Preferences.Instance.ShowSubmodulesAsTree)
+                return SubmoduleCollectionAsTree.Build(visible, _visibleSubmodules as SubmoduleCollectionAsTree);
+            else
+                return new SubmoduleCollectionAsList() { Submodules = visible };
         }
 
         private void RefreshHistoriesFilters(bool refresh)
@@ -2359,7 +2453,7 @@ namespace SourceGit.ViewModels
                 if (node.Path.Equals(path, StringComparison.Ordinal))
                     return node;
 
-                if (path!.StartsWith(node.Path, StringComparison.Ordinal))
+                if (path.StartsWith(node.Path, StringComparison.Ordinal))
                 {
                     var founded = FindBranchNode(node.Children, path);
                     if (founded != null)
@@ -2407,19 +2501,27 @@ namespace SourceGit.ViewModels
         {
             if (!IsSearchingCommitsByFilePath())
             {
+                _requestingWorktreeFiles = false;
                 _worktreeFiles = null;
                 MatchedFilesForSearching = null;
                 GC.Collect();
                 return;
             }
 
+            if (_requestingWorktreeFiles)
+                return;
+
+            _requestingWorktreeFiles = true;
+
             Task.Run(() =>
             {
                 _worktreeFiles = new Commands.QueryRevisionFileNames(_fullpath, "HEAD").Result();
                 Dispatcher.UIThread.Invoke(() =>
                 {
-                    if (IsSearchingCommitsByFilePath())
+                    if (IsSearchingCommitsByFilePath() && _requestingWorktreeFiles)
                         CalcMatchedFilesForSearching();
+
+                    _requestingWorktreeFiles = false;
                 });
             });
         }
@@ -2505,6 +2607,7 @@ namespace SourceGit.ViewModels
         private string _searchCommitFilter = string.Empty;
         private List<Models.Commit> _searchedCommits = new List<Models.Commit>();
         private Models.Commit _selectedSearchedCommit = null;
+        private bool _requestingWorktreeFiles = false;
         private List<string> _worktreeFiles = null;
         private List<string> _matchedFilesForSearching = null;
 
@@ -2517,9 +2620,9 @@ namespace SourceGit.ViewModels
         private List<BranchTreeNode> _remoteBranchTrees = new List<BranchTreeNode>();
         private List<Models.Worktree> _worktrees = new List<Models.Worktree>();
         private List<Models.Tag> _tags = new List<Models.Tag>();
-        private List<Models.Tag> _visibleTags = new List<Models.Tag>();
+        private object _visibleTags = null;
         private List<Models.Submodule> _submodules = new List<Models.Submodule>();
-        private List<Models.Submodule> _visibleSubmodules = new List<Models.Submodule>();
+        private object _visibleSubmodules = null;
 
         private bool _isAutoFetching = false;
         private Timer _autoFetchTimer = null;

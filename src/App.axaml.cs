@@ -135,14 +135,25 @@ namespace SourceGit
             /// <see cref="SourceGit.ViewModels.App.ShowWindow"/>
             /// </summary>
             var current = ThisChecked;
+            var impl = (Views.ChromelessWindow target, bool isDialog) =>
+            {
+                
+                if (current?.DesktopAppLifetime is { MainWindow: { } owner })
+                {
+                    if (isDialog)
+                        target.ShowDialog(owner);
+                    else
+                        target.Show(owner);
+                }
+                else
+                {
+                    target.Show();
+                }
+            };
 
             if (data is Views.ChromelessWindow window)
             {
-                if (showAsDialog && current?.DesktopAppLifetime is { MainWindow: { } owner })
-                    window.ShowDialog(owner);
-                else
-                    window.Show();
-
+                impl(window, showAsDialog);
                 return;
             }
 
@@ -179,10 +190,7 @@ namespace SourceGit
             if (window != null)
             {
                 window.DataContext = data;
-                if (showAsDialog && current?.DesktopAppLifetime is { MainWindow: { } owner })
-                    window.ShowDialog(owner);
-                else
-                    window.Show();
+                impl(window, showAsDialog);
             }
         }
 

@@ -14,7 +14,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace SourceGit.ViewModels
 {
-    public partial class CommitDetail : ObservableObject
+    public partial class CommitDetail : ObservableObject, IDisposable
     {
         public int ActivePageIndex
         {
@@ -136,7 +136,7 @@ namespace SourceGit.ViewModels
             WebLinks = Models.CommitLink.Get(repo.Remotes);
         }
 
-        public void Cleanup()
+        public void Dispose()
         {
             _repo = null;
             _commit = null;
@@ -148,6 +148,7 @@ namespace SourceGit.ViewModels
             _diffContext = null;
             _viewRevisionFileContent = null;
             _cancellationSource = null;
+            _requestingRevisionFiles = false;
             _revisionFiles = null;
             _revisionFileSearchSuggestion = null;
         }
@@ -518,6 +519,7 @@ namespace SourceGit.ViewModels
         private void Refresh()
         {
             _changes = null;
+            _requestingRevisionFiles = false;
             _revisionFiles = null;
 
             SignInfo = null;
@@ -798,16 +800,22 @@ namespace SourceGit.ViewModels
             {
                 if (_revisionFiles == null)
                 {
+                    if (_requestingRevisionFiles)
+                        return;
+
                     var sha = Commit.SHA;
+                    _requestingRevisionFiles = true;
 
                     Task.Run(() =>
                     {
                         var files = new Commands.QueryRevisionFileNames(_repo.FullPath, sha).Result();
                         Dispatcher.UIThread.Invoke(() =>
                         {
-                            if (sha == Commit.SHA)
+                            if (sha == Commit.SHA && _requestingRevisionFiles)
                             {
                                 _revisionFiles = files;
+                                _requestingRevisionFiles = false;
+
                                 if (!string.IsNullOrEmpty(_revisionFileSearchFilter))
                                     CalcRevisionFileSearchSuggestion();
                             }
@@ -893,6 +901,7 @@ namespace SourceGit.ViewModels
         private DiffContext _diffContext = null;
         private object _viewRevisionFileContent = null;
         private CancellationTokenSource _cancellationSource = null;
+        private bool _requestingRevisionFiles = false;
         private List<string> _revisionFiles = null;
         private string _revisionFileSearchFilter = string.Empty;
         private List<string> _revisionFileSearchSuggestion = null;

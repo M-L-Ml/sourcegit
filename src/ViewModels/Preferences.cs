@@ -184,15 +184,21 @@ namespace SourceGit.ViewModels
 
         public bool ShowTagsAsTree
         {
-            get => _showTagsAsTree;
-            set => SetProperty(ref _showTagsAsTree, value);
-        }
+            get;
+            set;
+        } = false;
 
         public bool ShowTagsInGraph
         {
             get => _showTagsInGraph;
             set => SetProperty(ref _showTagsInGraph, value);
         }
+
+        public bool ShowSubmodulesAsTree
+        {
+            get;
+            set;
+        } = false;
 
         public bool UseTwoColumnsLayoutInHistories
         {
@@ -1203,7 +1209,6 @@ namespace SourceGit.ViewModels
         private double _lastCheckUpdateTime = 0;
         private string _ignoreUpdateTag = string.Empty;
 
-        private bool _showTagsAsTree = false;
         private bool _showTagsInGraph = true;
         private bool _useTwoColumnsLayoutInHistories = false;
         private bool _displayTimeAsPeriodInHistories = false;
