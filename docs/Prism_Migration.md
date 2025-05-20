@@ -81,6 +81,10 @@ Certainly! Here's a detailed comparison between **.NET Community Toolkit** (ofte
 ---
 ## Migration Steps
 1. Audit current CommunityToolkit usages.
+1.1 TODO: Dependency inversion : use it for   `Dispatcher.UIThread.Post`
+```
+                Dispatcher.UIThread.Post(() => App.RaiseException(Context, rs.StdErr));                
+```
 2. Replace with Prism equivalents (ViewModels, Commands, Navigation, etc.).
 3. Refactor for Prism's modular structure.
 4. Test all features and add regression tests.
