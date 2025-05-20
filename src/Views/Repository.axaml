@@ -206,6 +206,7 @@
               <Path Grid.Column="0" Width="11" Height="11" HorizontalAlignment="Left" Data="{StaticResource Icons.Local}" Fill="{DynamicResource Brush.FG2}"/>
               <TextBlock Grid.Column="1" Classes="group_header_label" Margin="0">
                 <Run Text="{DynamicResource Text.Repository.LocalBranches}"/>
+                <!--TODO: fix-->
                 <Run Text="{Binding LocalBranchesCount, StringFormat='({0})'}"/>
               </TextBlock>
               <Button Grid.Column="2"
@@ -236,6 +237,7 @@
               <Path Grid.Column="0" Width="12" Height="12" HorizontalAlignment="Left" Data="{StaticResource Icons.Remotes}" Fill="{DynamicResource Brush.FG2}"/>
               <TextBlock Grid.Column="1" Classes="group_header_label" Margin="0">
                 <Run Text="{DynamicResource Text.Repository.Remotes}"/>
+                <!--TODO: fix-->
                 <Run Text="{Binding Remotes, Converter={x:Static c:ListConverters.ToCount}}"/>
               </TextBlock>
               <Button Grid.Column="2"
