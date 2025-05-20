@@ -63,6 +63,15 @@ namespace PSGit.Views
                 menu.Items.Add(item);
         }
 
+        //TODO: refactor : use this method for cases where menuModel.CreateContextMenuFromModel(); and then `Open` called
+        public static ContextMenu Open(this ContextMenuModel menuModel, Control? control)
+        {
+            var menu = menuModel.CreateContextMenuFromModel();
+            menu.Open(control);
+            return menu;
+
+        }
+
         public static ContextMenu CreateContextMenuFromModel(this ContextMenuModel menuModel)
         {
             var menu = menuModel.CreateMenuFromModelInternal<ContextMenu>();
@@ -85,7 +94,7 @@ namespace PSGit.Views
                             ((ContextMenu)menu).Placement = placementMode;
                         }
                         else
-                                Debug.Assert(false);
+                            Debug.Assert(false);
                         break;
 
                     case ViewPropertySetting.Views_MenuItemExtension_CommandProperty:
