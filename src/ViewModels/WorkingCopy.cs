@@ -367,7 +367,7 @@ namespace SourceGit.ViewModels
             Filter = string.Empty;
         }
 
-        public async void UseTheirs(List<Models.Change> changes)
+        public async Task UseTheirs(List<Models.Change> changes)
         {
             _repo.SetWatcherEnabled(false);
 
@@ -409,7 +409,7 @@ namespace SourceGit.ViewModels
             _repo.SetWatcherEnabled(true);
         }
 
-        public async void UseMine(List<Models.Change> changes)
+        public async Task UseMine(List<Models.Change> changes)
         {
             _repo.SetWatcherEnabled(false);
 
@@ -451,7 +451,7 @@ namespace SourceGit.ViewModels
             _repo.SetWatcherEnabled(true);
         }
 
-        public async void UseExternalMergeTool(Models.Change change)
+        public async Task UseExternalMergeTool(Models.Change change)
         {
             var toolType = Preferences.Instance.ExternalMergeToolType;
             var toolPath = Preferences.Instance.ExternalMergeToolPath;
@@ -1430,7 +1430,7 @@ namespace SourceGit.ViewModels
             }
         }
 
-        private async void StageChanges(List<Models.Change> changes, Models.Change next)
+        private async Task StageChanges(List<Models.Change> changes, Models.Change next)
         {
             var count = changes.Count;
             if (count == 0)
@@ -1476,7 +1476,7 @@ namespace SourceGit.ViewModels
             IsStaging = false;
         }
 
-        private async void UnstageChanges(List<Models.Change> changes, Models.Change next)
+        private async Task UnstageChanges(List<Models.Change> changes, Models.Change next)
         {
             var count = changes.Count;
             if (count == 0)

@@ -321,7 +321,7 @@ namespace SourceGit
             }
         }
 
-        public static async void CopyText(string data)
+        public static async Task CopyText(string data)
         {
             if (CurrentDesktopAppLifetime is { } desktop)
             {
