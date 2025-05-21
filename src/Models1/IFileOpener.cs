@@ -3,7 +3,7 @@ namespace Sausa
     /// <summary>
     /// Interface for file system operations that require platform-specific implementations
     /// </summary>
-    public interface IFileSystem
+    public interface IFileOpener
     {
 
         /// <summary>
