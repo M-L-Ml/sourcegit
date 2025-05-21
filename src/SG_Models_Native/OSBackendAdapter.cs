@@ -37,29 +37,33 @@ namespace SourceGit.Native
 
         public string FindGitExecutable()
         {
-            return ((IFileSystem)_platform).FindGitExecutable();
+            return _platform.FindGitExecutable();
         }
 
         public string FindTerminal(ShellOrTerminalModel shell)
         {
             // Create a Sausa.ShellOrTerminal with the same parameters
-            var adaptedShell = new ShellOrTerminalModel(shell.Type, shell.Name, shell.Exec);
-            
+         //   var adaptedShell = new ShellOrTerminalModel(shell.Type, shell.Name, shell.Exec);
+
+
+            return _platform.FindTerminal(shell);
+       
             // Cast to specific platform implementations based on platform type
-            if (_platform is Windows windows)
-            {
-                return windows.FindTerminal(adaptedShell);
-            }
-            else if (_platform is MacOS macOS)
-            {
-                return macOS.FindTerminal(adaptedShell);
-            }
-            else if (_platform is Linux linux)
-            {
-                return linux.FindTerminal(adaptedShell);
-            }
+
+            //    if (_platform is Windows windows)
+            //{
+            //    return windows.FindTerminal(adaptedShell);
+            //}
+            //else if (_platform is MacOS macOS)
+            //{
+            //    return macOS.FindTerminal(adaptedShell);
+            //}
+            //else if (_platform is Linux linux)
+            //{
+            //    return linux.FindTerminal(adaptedShell);
+            //}
             
-            return string.Empty;
+            //return string.Empty;
         }
 
         public ExternalToolsFinder2 FindExternalTools()

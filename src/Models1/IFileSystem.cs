@@ -5,11 +5,6 @@ namespace Sausa
     /// </summary>
     public interface IFileSystem
     {
-        /// <summary>
-        /// Locates the Git executable on the system
-        /// </summary>
-        /// <returns>Path to the Git executable, or empty string if not found</returns>
-        string FindGitExecutable();
 
         /// <summary>
         /// Opens the specified path in the system's file manager
@@ -23,5 +18,12 @@ namespace Sausa
         /// </summary>
         /// <param name="file">File to open</param>
         void OpenWithDefaultEditor(string file);
+
+        /// <summary>
+        /// Locates the Git executable on the system
+        /// </summary>
+        /// <returns>Path to the Git executable, or empty string if not found</returns>
+        //   string FindGitExecutable();
+
     }
 }
