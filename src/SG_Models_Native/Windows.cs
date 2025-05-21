@@ -40,9 +40,8 @@ namespace SourceGit.Native
         [LibraryImport("dwmapi.dll")]
         private static partial int DwmExtendFrameIntoClientArea(nint hwnd, ref MARGINS margins);
 
-        [LibraryImport("shlwapi.dll", StringMarshalling = StringMarshalling.Utf16)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool PathFindOnPath([MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[]? ppszOtherDirs);
+        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = false)]
+        private static extern bool PathFindOnPath([In, Out] StringBuilder pszFile, [In] string[] ppszOtherDirs);
 
         [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
         private static partial nint ILCreateFromPathW(string pszPath);
@@ -54,6 +53,7 @@ namespace SourceGit.Native
         private static partial int SHOpenFolderAndSelectItems(nint pidlFolder, int cild, nint apidl, int dwFlags);
 
         [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool GetWindowRect(nint hwnd, out RECT lpRect);
 
         public void SetupApp(object builder)
