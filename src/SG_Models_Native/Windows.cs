@@ -41,7 +41,8 @@ namespace SourceGit.Native
         private static partial int DwmExtendFrameIntoClientArea(nint hwnd, ref MARGINS margins);
 
         [LibraryImport("shlwapi.dll", StringMarshalling = StringMarshalling.Utf16)]
-        private static partial bool PathFindOnPath(StringBuilder pszFile, string[] ppszOtherDirs);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static partial bool PathFindOnPath([MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[]? ppszOtherDirs);
 
         [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
         private static partial nint ILCreateFromPathW(string pszPath);
