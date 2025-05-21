@@ -2,148 +2,215 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
-using Avalonia;
-using Avalonia.Controls;
-using Sausa;
+using System.Threading.Tasks;
+using SourceGit;
 using SourceGit.Models;
 
-namespace SourceGit.Native
+namespace Sausa
 {
-    public static partial class OS
+    /// <summary>
+    /// Provides OS abstraction services through dependency inversion.
+    /// This class replaces the static OS class with a proper dependency-injected service.
+    /// </summary>
+    public partial class OSAbstraction
     {
-        public interface IBackend
+        private readonly IOSPlatform _platform;
+        private string _gitExecutable = string.Empty;
+        private bool _enableSystemWindowFrame = false;
+
+        /// <summary>
+        /// Directory for application data storage
+        /// </summary>
+        public string DataDir { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Path to the Git executable
+        /// </summary>
+        public string GitExecutable
         {
-            void SetupApp(AppBuilder builder);
-            void SetupWindow(Window window);
-
-            string FindGitExecutable();
-            string FindTerminal(ShellOrTerminal shell);
-            ExternalToolsFinder2 FindExternalTools();
-
-            void OpenTerminal(string workdir);
-            void OpenInFileManager(string path, bool select);
-            void OpenBrowser(string url);
-            void OpenWithDefaultEditor(string file);
+            get => _gitExecutable;
+            set
+            {
+                if (_gitExecutable != value)
+                {
+                    _gitExecutable = value;
+                    UpdateGitVersion();
+                }
+            }
         }
 
-        public static string DataDir
-             => s_OSAbstraction.DataDir;
+        /// <summary>
+        /// Git version string
+        /// </summary>
+        public string GitVersionString { get; set; } = string.Empty;
 
-        public static string GitExecutable
+        /// <summary>
+        /// Git version as a Version object
+        /// </summary>
+        public Version GitVersion { get; set; } = new Version(0, 0, 0);
+
+        /// <summary>
+        /// Path to the configured shell or terminal
+        /// </summary>
+        public string ShellOrTerminal { get; set; } = string.Empty;
+
+        /// <summary>
+        /// List of available external tools
+        /// </summary>
+        public IReadOnlyList<ExternalTool> ExternalTools { get; set; } = [];
+
+        /// <summary>
+        /// Whether to use the system window frame on Linux
+        /// </summary>
+        public bool UseSystemWindowFrame
         {
-            get => s_OSAbstraction.GitExecutable;
-            set => s_OSAbstraction.GitExecutable = value;
+            get => OperatingSystem.IsLinux() && _enableSystemWindowFrame;
+            set => _enableSystemWindowFrame = value;
         }
 
-        public static string GitVersionString
-            => s_OSAbstraction.GitVersionString;
-
-        public static Version GitVersion
-            => s_OSAbstraction.GitVersion;
-        public static string ShellOrTerminal
+        /// <summary>
+        /// Creates a new instance of OSAbstraction with the specified platform
+        /// </summary>
+        /// <param name="platform">Platform implementation to use</param>
+        public OSAbstraction(IOSPlatform platform)
         {
-            get => s_OSAbstraction.ShellOrTerminal;
-            set => s_OSAbstraction.ShellOrTerminal = value;
-        }
-        public static IReadOnlyList<ExternalTool> ExternalTools
-        => s_OSAbstraction.ExternalTools;
-
-        public static bool UseSystemWindowFrame
-        {
-            get => s_OSAbstraction.UseSystemWindowFrame;
-            set => s_OSAbstraction.UseSystemWindowFrame = value;
+            _platform = platform ?? throw new ArgumentNullException(nameof(platform));
         }
 
-        static OS()
+        /// <summary>
+        /// Sets up the app builder with platform-specific options
+        /// </summary>
+        /// <param name="builder">App builder to set up</param>
+        public void SetupApp(object builder)
         {
-            // Create the platform-agnostic implementation
-            Sausa.IOSPlatform platform;
+            _platform.SetupApp(builder);
+        }
 
+        /// <summary>
+        /// Sets up the data directory for the application
+        /// </summary>
+        public void SetupDataDir()
+        {
             if (OperatingSystem.IsWindows())
             {
-                platform = new Windows();
+                var execFile = Process.GetCurrentProcess().MainModule!.FileName;
+                var portableDir = Path.Combine(Path.GetDirectoryName(execFile), "data");
+                if (Directory.Exists(portableDir))
+                {
+                    DataDir = portableDir;
+                    return;
+                }
             }
-            else if (OperatingSystem.IsMacOS())
-            {
-                platform = new MacOS();
-            }
-            else if (OperatingSystem.IsLinux())
-            {
-                platform = new Linux();
-            }
+
+            var osAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            if (string.IsNullOrEmpty(osAppDataDir))
+                DataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".sourcegit");
             else
-            {
-                throw new NotSupportedException("Platform unsupported!!!");
-            }
+                DataDir = Path.Combine(osAppDataDir, "SourceGit");
 
-            // Create the adapter that implements IBackend
-            _backend = new OSBackendAdapter(platform);
-            s_OSAbstraction = new OSAbstraction(platform);
+            if (!Directory.Exists(DataDir))
+                Directory.CreateDirectory(DataDir);
         }
 
-        public static void SetupApp(AppBuilder builder)
+        /// <summary>
+        /// Sets up external tools
+        /// </summary>
+        public void SetupExternalTools()
         {
-            s_OSAbstraction.SetupApp(builder);
+            ExternalTools = _platform.FindExternalTools().ToList();
         }
 
-        public static void SetupDataDir()
+        /// <summary>
+        /// Sets up platform-specific window settings
+        /// </summary>
+        /// <param name="window">Window to set up</param>
+        public void SetupForWindow(object window)
         {
-            s_OSAbstraction.SetupDataDir();
+            _platform.SetupWindow(window);
         }
 
-        public static void SetupEnternalTools()
+        /// <summary>
+        /// Finds the Git executable on the system
+        /// </summary>
+        /// <returns>Path to Git executable</returns>
+        public string FindGitExecutable()
         {
-            s_OSAbstraction.SetupExternalTools();
+            // Use the IExternalTools version of FindGitExecutable to avoid ambiguity
+            return _platform.FindGitExecutable();
         }
 
-        public static void SetupForWindow(Window window)
+        /// <summary>
+        /// Tests if the specified shell or terminal is available
+        /// </summary>
+        /// <param name="shell">Shell or terminal to test</param>
+        /// <returns>True if available, false otherwise</returns>
+        public bool TestShellOrTerminal(ShellOrTerminal shell)
         {
-            _backend.SetupWindow(window);
+            return !string.IsNullOrEmpty(_platform.FindTerminal(shell));
         }
 
-        public static string FindGitExecutable()
+        /// <summary>
+        /// Sets the shell or terminal to use
+        /// </summary>
+        /// <param name="shell">Shell or terminal to use</param>
+        public void SetShellOrTerminal(ShellOrTerminal shell)
         {
-            return s_OSAbstraction.FindGitExecutable();
+            if (shell == null)
+                ShellOrTerminal = string.Empty;
+            else
+                ShellOrTerminal = _platform.FindTerminal(shell);
         }
 
-        public static bool TestShellOrTerminal(ShellOrTerminal shell)
+        /// <summary>
+        /// Opens the specified path in the file manager
+        /// </summary>
+        /// <param name="path">Path to open</param>
+        /// <param name="select">Whether to select the item in the file manager</param>
+        public void OpenInFileManager(string path, bool select = false)
         {
-            return !string.IsNullOrEmpty(_backend.FindTerminal(shell));
+            _platform.OpenInFileManager(path, select);
         }
 
-        public static void SetShellOrTerminal(ShellOrTerminal shell)
+        /// <summary>
+        /// Opens the specified URL in the browser
+        /// </summary>
+        /// <param name="url">URL to open</param>
+        public void OpenBrowser(string url)
         {
-            s_OSAbstraction.SetShellOrTerminal(shell);
+            _platform.OpenBrowser(url);
         }
 
-        public static void OpenInFileManager(string path, bool select = false)
-        {
-            s_OSAbstraction.OpenInFileManager(path, select);
-        }
-
-        public static void OpenBrowser(string url)
-        {
-            s_OSAbstraction.OpenBrowser(url);
-        }
-
-        public static void OpenTerminal(string workdir)
+        /// <summary>
+        /// Opens a terminal in the specified working directory
+        /// </summary>
+        /// <param name="workdir">Working directory to open the terminal in</param>
+        public void OpenTerminal(string workdir)
         {
             if (string.IsNullOrEmpty(ShellOrTerminal))
-                App.RaiseException(workdir, $"Terminal is not specified! Please confirm that the correct shell/terminal has been configured.");
+                throw new InvalidOperationException("Terminal is not specified! Please confirm that the correct shell/terminal has been configured.");
             else
-                s_OSAbstraction.OpenTerminal(workdir);
-            //_backend.OpenTerminal(workdir);
+                _platform.OpenTerminal(workdir);
         }
 
-        public static void OpenWithDefaultEditor(string file)
+        /// <summary>
+        /// Opens the specified file with the default editor
+        /// </summary>
+        /// <param name="file">File to open</param>
+        public void OpenWithDefaultEditor(string file)
         {
-            s_OSAbstraction.OpenWithDefaultEditor(file);
+            _platform.OpenWithDefaultEditor(file);
         }
 
-        public static string GetAbsPath(string root, string sub)
+        /// <summary>
+        /// Gets the absolute path for a file or directory
+        /// </summary>
+        /// <param name="root">Root directory</param>
+        /// <param name="sub">Subdirectory or file</param>
+        /// <returns>Absolute path</returns>
+        public string GetAbsPath(string root, string sub)
         {
             var fullpath = Path.Combine(root, sub);
             if (OperatingSystem.IsWindows())
@@ -152,14 +219,57 @@ namespace SourceGit.Native
             return fullpath;
         }
 
-        public static void UpdateGitVersion()
+        public void UpdateGitVersion()
         {
+            if (string.IsNullOrEmpty(_gitExecutable) || !File.Exists(_gitExecutable))
+            {
+                GitVersionString = string.Empty;
+                GitVersion = new Version(0, 0, 0);
+                return;
+            }
 
-            s_OSAbstraction.UpdateGitVersion();
+            var start = new ProcessStartInfo();
+            start.FileName = _gitExecutable;
+            start.Arguments = "--version";
+            start.UseShellExecute = false;
+            start.CreateNoWindow = true;
+            start.RedirectStandardOutput = true;
+            start.RedirectStandardError = true;
+            start.StandardOutputEncoding = Encoding.UTF8;
+            start.StandardErrorEncoding = Encoding.UTF8;
 
+            var proc = new Process() { StartInfo = start };
+            try
+            {
+                proc.Start();
+
+                var rs = proc.StandardOutput.ReadToEnd();
+                proc.WaitForExit();
+                if (proc.ExitCode == 0 && !string.IsNullOrWhiteSpace(rs))
+                {
+                    GitVersionString = rs.Trim();
+
+                    var match = REG_GIT_VERSION().Match(GitVersionString);
+                    if (match.Success)
+                    {
+                        var major = int.Parse(match.Groups[1].Value);
+                        var minor = int.Parse(match.Groups[2].Value);
+                        var build = int.Parse(match.Groups[3].Value);
+                        GitVersion = new Version(major, minor, build);
+                        GitVersionString = GitVersionString.Substring(11).Trim();
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore errors
+            }
+
+            proc.Close();
         }
+        [GeneratedRegex(@"^git version[\s\w]*(\d+)\.(\d+)[\.\-](\d+).*$")]
+        private static partial Regex REG_GIT_VERSION();
 
-        private static OSAbstraction s_OSAbstraction;
-        private static IBackend _backend = null;
     }
+
 }
