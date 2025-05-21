@@ -14,7 +14,7 @@ namespace SourceGit.Models
         // UI layer should handle icon loading based on Type property
         public string IconPath => $"Resources/Images/ShellIcons/{Type}.png";
 
-        public static readonly List<ShellOrTerminal> Supported;
+        public static readonly IReadOnlyList<ShellOrTerminal> Supported;
 
         static ShellOrTerminal()
         {

@@ -513,6 +513,7 @@ namespace SourceGit.ViewModels
             {
                 // For worktrees, we need to watch the $GIT_COMMON_DIR instead of the $GIT_DIR.
                 var gitDirForWatcher = _gitDir;
+                //TODO: check warning : 0 is a valid index, but this check ignores it.
                 if (_gitDir.Replace("\\", "/").IndexOf("/worktrees/", StringComparison.Ordinal) > 0)
                 {
                     var commonDir = new Commands.QueryGitCommonDir(_fullpath).Result();
