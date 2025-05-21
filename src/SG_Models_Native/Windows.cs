@@ -18,7 +18,7 @@ namespace SourceGit.Native
 {
     // Original file: src/SG_Models_Native/Windows.cs
     [SupportedOSPlatform("windows")]
-    internal class Windows : IOSPlatform, IApplicationSetup, IFileOpener, IExternalTools, IProcessLauncher
+    internal partial class Windows : IOSPlatform, IApplicationSetup, IFileOpener, IExternalTools, IProcessLauncher
     {
         internal struct RECT
         {
@@ -37,23 +37,23 @@ namespace SourceGit.Native
             public int cyBottomHeight;
         }
 
-        [DllImport("dwmapi.dll")]
-        private static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
+        [LibraryImport("dwmapi.dll")]
+        private static partial int DwmExtendFrameIntoClientArea(nint hwnd, ref MARGINS margins);
 
-        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = false)]
-        private static extern bool PathFindOnPath([In, Out] StringBuilder pszFile, [In] string[] ppszOtherDirs);
+        [LibraryImport("shlwapi.dll", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial bool PathFindOnPath(StringBuilder pszFile, string[] ppszOtherDirs);
 
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = false)]
-        private static extern IntPtr ILCreateFromPathW(string pszPath);
+        [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial nint ILCreateFromPathW(string pszPath);
 
-        [DllImport("shell32.dll", SetLastError = false)]
-        private static extern void ILFree(IntPtr pidl);
+        [LibraryImport("shell32.dll")]
+        private static partial void ILFree(nint pidl);
 
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = false)]
-        private static extern int SHOpenFolderAndSelectItems(IntPtr pidlFolder, int cild, IntPtr apidl, int dwFlags);
+        [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial int SHOpenFolderAndSelectItems(nint pidlFolder, int cild, nint apidl, int dwFlags);
 
-        [DllImport("user32.dll")]
-        private static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
+        [LibraryImport("user32.dll")]
+        private static partial bool GetWindowRect(nint hwnd, out RECT lpRect);
 
         public void SetupApp(object builder)
         {
