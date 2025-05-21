@@ -1454,7 +1454,7 @@ namespace SourceGit.ViewModels
                     paths.Add(c.Path);
 
                 var tmpFile = Path.GetTempFileName();
-                File.WriteAllLines(tmpFile, paths);
+                await File.WriteAllLinesAsync(tmpFile, paths);
                 await Task.Run(() => new Commands.Add(_repo.FullPath, tmpFile).Use(log).Exec());
                 File.Delete(tmpFile);
             }

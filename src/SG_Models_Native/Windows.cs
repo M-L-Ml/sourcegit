@@ -56,10 +56,10 @@ namespace SourceGit.Native
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool GetWindowRect(nint hwnd, out RECT lpRect);
 
-        public void SetupApp(object builder)
+        void IApplicationSetup.SetupApp(object builder)
         {
             var appBuilder = PlatformAdapters.AsAppBuilder(builder);
-            
+
             // Fix drop shadow issue on Windows 10
             if (!OperatingSystem.IsWindowsVersionAtLeast(10, 22000, 0))
             {
@@ -72,16 +72,16 @@ namespace SourceGit.Native
         public void SetupApp(AppBuilder builder)
         {
             // Call our new implementation with the builder as object
-            SetupApp((object)builder);
+            ((IApplicationSetup)this).SetupApp(builder);
         }
 
         // Implementation for IOSPlatform interface
-        public void SetupWindow(object window)
+        void IApplicationSetup.SetupWindow(object window)
         {
             var avWindow = PlatformAdapters.AsWindow(window);
             SetupWindow(avWindow);
         }
-        
+
         // Implementation for OS.IBackend interface
         // Original file: src/SG_Models_Native/Windows.cs Windows.SetupWindow
         public void SetupWindow(Window window)
@@ -269,7 +269,8 @@ namespace SourceGit.Native
             var path = FindFromRegistryUninstall(
                 "{EA457B21-F73E-494C-ACAB-524FDE069978}_is1",
                 "{771FD6B0-FA20-440A-A002-3B3BAC16DC50}_is1");
-            if (!string.IsNullOrEmpty(path)) return path;
+            if (!string.IsNullOrEmpty(path))
+                return path;
 
             // Try default install locations
             var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -280,7 +281,8 @@ namespace SourceGit.Native
                 Path.Combine(programFiles, "Microsoft VS Code", "Code.exe")
             };
             foreach (var p in paths)
-                if (File.Exists(p)) return p;
+                if (File.Exists(p))
+                    return p;
 
             // Try on PATH
             var builder = new StringBuilder("code.cmd", 259);
@@ -295,7 +297,8 @@ namespace SourceGit.Native
             var path = FindFromRegistryUninstall(
                 "{1287CAD5-7C8D-410D-88B9-0D1EE4A83FF2}_is1",
                 "{217B4C08-948D-4276-BFBB-BEE930AE5A2C}_is1");
-            if (!string.IsNullOrEmpty(path)) return path;
+            if (!string.IsNullOrEmpty(path))
+                return path;
 
             var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var p = Path.Combine(localApp, "Programs", "Microsoft VS Code Insiders", "Code - Insiders.exe");
@@ -307,7 +310,8 @@ namespace SourceGit.Native
             var path = FindFromRegistryUninstall(
                 "{88DA3577-054F-4CA1-8122-7D820494CFFB}_is1",
                 "{2E1F05D1-C245-4562-81EE-28188DB6FD17}_is1");
-            if (!string.IsNullOrEmpty(path)) return path;
+            if (!string.IsNullOrEmpty(path))
+                return path;
 
             var localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var p = Path.Combine(localApp, "Programs", "VSCodium", "VSCodium.exe");
@@ -323,7 +327,8 @@ namespace SourceGit.Native
                 if (!string.IsNullOrEmpty(dir))
                 {
                     var subl = Path.Combine(dir, "subl.exe");
-                    if (File.Exists(subl)) return subl;
+                    if (File.Exists(subl))
+                        return subl;
                 }
             }
 
