@@ -13,7 +13,7 @@ namespace SourceGit.Native
 {
     // Original file: src/SG_Models_Native/MacOS.cs
     [SupportedOSPlatform("macOS")]
-    internal partial class MacOS : IOSPlatform, IApplicationSetup, IFileOpener, IExternalTools, IProcessLauncher
+    internal partial class MacOS : IOSPlatform//, IApplicationSetup, IFileOpener, IExternalTools, IProcessLauncher
     {
         public void SetupApp(object builder)
         {

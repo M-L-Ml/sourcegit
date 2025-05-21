@@ -15,7 +15,7 @@ namespace Sausa
     /// Provides OS abstraction services through dependency inversion.
     /// This class replaces the static OS class with a proper dependency-injected service.
     /// </summary>
-    public class OSAbstraction
+    public partial class OSAbstraction
     {
         private readonly IOSPlatform _platform;
         private string _gitExecutable = string.Empty;
@@ -45,12 +45,12 @@ namespace Sausa
         /// <summary>
         /// Git version string
         /// </summary>
-        public string GitVersionString { get; private set; } = string.Empty;
+        public string GitVersionString { get; set; } = string.Empty;
 
         /// <summary>
         /// Git version as a Version object
         /// </summary>
-        public Version GitVersion { get; private set; } = new Version(0, 0, 0);
+        public Version GitVersion { get; set; } = new Version(0, 0, 0);
 
         /// <summary>
         /// Path to the configured shell or terminal
@@ -139,7 +139,7 @@ namespace Sausa
         public string FindGitExecutable()
         {
             // Use the IExternalTools version of FindGitExecutable to avoid ambiguity
-            return ((IExternalTools)_platform).FindGitExecutable();
+            return _platform.FindGitExecutable();
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Sausa
             return fullpath;
         }
 
-        private void UpdateGitVersion()
+        public void UpdateGitVersion()
         {
             if (string.IsNullOrEmpty(_gitExecutable) || !File.Exists(_gitExecutable))
             {
@@ -234,34 +234,42 @@ namespace Sausa
             start.UseShellExecute = false;
             start.CreateNoWindow = true;
             start.RedirectStandardOutput = true;
+            start.RedirectStandardError = true;
+            start.StandardOutputEncoding = Encoding.UTF8;
+            start.StandardErrorEncoding = Encoding.UTF8;
 
+            var proc = new Process() { StartInfo = start };
             try
             {
-                using var proc = Process.Start(start);
-                if (proc == null) return;
+                proc.Start();
 
-                var line = proc.StandardOutput.ReadLine();
-                if (!string.IsNullOrEmpty(line))
+                var rs = proc.StandardOutput.ReadToEnd();
+                proc.WaitForExit();
+                if (proc.ExitCode == 0 && !string.IsNullOrWhiteSpace(rs))
                 {
-                    GitVersionString = line;
+                    GitVersionString = rs.Trim();
 
-                    var ver = line.Split(' ').Last().Split('.');
-                    if (ver.Length >= 3)
+                    var match = REG_GIT_VERSION().Match(GitVersionString);
+                    if (match.Success)
                     {
-                        var major = int.Parse(ver[0]);
-                        var minor = int.Parse(ver[1]);
-                        var build = int.Parse(ver[2]);
+                        var major = int.Parse(match.Groups[1].Value);
+                        var minor = int.Parse(match.Groups[2].Value);
+                        var build = int.Parse(match.Groups[3].Value);
                         GitVersion = new Version(major, minor, build);
+                        GitVersionString = GitVersionString.Substring(11).Trim();
                     }
                 }
-
-                proc.WaitForExit();
             }
             catch
             {
-                GitVersionString = string.Empty;
-                GitVersion = new Version(0, 0, 0);
+                // Ignore errors
             }
+
+            proc.Close();
         }
+        [GeneratedRegex(@"^git version[\s\w]*(\d+)\.(\d+)[\.\-](\d+).*$")]
+        private static partial Regex REG_GIT_VERSION();
+
     }
+
 }

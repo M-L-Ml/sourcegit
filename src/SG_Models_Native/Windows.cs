@@ -16,9 +16,8 @@ using ExternalToolInfo2 = Sausa.ExternalToolInfo2;
 
 namespace SourceGit.Native
 {
-    // Original file: src/SG_Models_Native/Windows.cs
     [SupportedOSPlatform("windows")]
-    internal partial class Windows : IOSPlatform, IApplicationSetup, IFileOpener, IExternalTools, IProcessLauncher
+    internal partial class Windows : IOSPlatform //, IApplicationSetup, IFileOpener, IExternalTools, IProcessLauncher
     {
         internal struct RECT
         {

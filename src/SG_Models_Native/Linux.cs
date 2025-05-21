@@ -12,7 +12,8 @@ namespace SourceGit.Native
 {
     // Original file: src/SG_Models_Native/Linux.cs
     [SupportedOSPlatform("linux")]
-    internal class Linux : IOSPlatform, IApplicationSetup, IFileOpener, IExternalTools, IProcessLauncher
+    internal class Linux : IOSPlatform//, IApplicationSetup//, IFileOpener//, IExternalTools
+       // , IProcessLauncher
     {
         // Implementation for IOSPlatform interface
         void IApplicationSetup.SetupApp(object builder)

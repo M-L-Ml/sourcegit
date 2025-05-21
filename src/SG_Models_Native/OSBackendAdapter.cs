@@ -68,13 +68,13 @@ namespace SourceGit.Native
         public ExternalToolsFinder2 FindExternalTools()
         {
             // Convert between the two ExternalToolsFinder types
-            var platformFinder = ((IExternalTools)_platform).FindExternalTools();
-            var result = new ExternalToolsFinder2();
+            var platformFinder = _platform.FindExternalTools();
+           // var result = new ExternalToolsFinder2();
             
             // Implementation of conversion logic would go here
             // This would typically involve copying over the tools from platformFinder to result
             
-            return result;
+            return (ExternalToolsFinder2)platformFinder;
         }
 
         public void OpenTerminal(string workdir)
