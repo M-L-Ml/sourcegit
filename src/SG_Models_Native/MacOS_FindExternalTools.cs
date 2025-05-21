@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using ExternalToolsFinder = Sausa.ExternalToolsFinder;
 using Sausa;
+using SourceGit.Models;
 
 namespace SourceGit.Native
 {
@@ -11,7 +11,7 @@ namespace SourceGit.Native
         // Original file: src/SG_Models_Native/MacOS.cs MacOS.FindExternalTools
         public ExternalToolsFinder FindExternalTools()
         {
-            var finder = new ExternalToolsFinder();
+            var finder = new ExternalToolsFinder2();
 
             // Define standard editor tools with their custom LocationFinder delegates
             ExternalToolInfo2[] editorTools =

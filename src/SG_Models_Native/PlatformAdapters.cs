@@ -60,12 +60,12 @@ namespace SourceGit.Native
         public static ExternalToolsFinder AsExternalToolsFinder(Models.ExternalToolsFinder2 finder)
         {
             // Create a new ExternalToolsFinder
-            var result = new ExternalToolsFinder();
+            //var result = new ExternalToolsFinder();
             
             // Copy tools from original finder
             // Implementation would be more complex in real code
             
-            return result;
+            return finder;
         }
     }
 }

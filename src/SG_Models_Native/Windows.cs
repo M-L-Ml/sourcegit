@@ -219,7 +219,7 @@ namespace SourceGit.Native
 
         public Sausa.ExternalToolsFinder FindExternalTools()
         {
-            var finder = new Sausa.ExternalToolsFinder();
+            var finder = new ExternalToolsFinder2();
 
             // Define standard editor tools with their custom LocationFinder delegates
             ExternalToolInfo2[] editorTools =

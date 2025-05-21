@@ -66,7 +66,7 @@ namespace SourceGit.Native
             set;
         } = string.Empty;
 
-        public static List<ExternalTool> ExternalTools
+        public static IReadOnlyList<ExternalTool> ExternalTools
         {
             get;
             set;

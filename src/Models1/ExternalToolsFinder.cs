@@ -8,7 +8,7 @@ namespace Sausa
     /// <summary>
     /// Utility for finding external tools on the system
     /// </summary>
-    public class ExternalToolsFinder
+    public abstract class ExternalToolsFinder
     {
         protected List<ExternalTool> _tools = new List<ExternalTool>();
 
@@ -17,45 +17,56 @@ namespace Sausa
         /// Adds an editor tool to the finder
         /// </summary>
         /// <param name="info">Information about the editor tool</param>
-        public void AddEditorTool(ExternalToolInfo2 info)
+        protected void AddTool(ExternalToolInfo2 info, string? type)
         {
-            if (info == null)
-                return;
-
             var location = info.LocationFinder();
-            if (!string.IsNullOrEmpty(location) && File.Exists(location))
+            if (!TryAdd(info, location, type))
             {
-                _tools.Add(new ExternalTool
-                (
-                    info: info,
-
-                    location: location,
-                    type: "editor"
-                ));
+                throw new InvalidProgramException("External tool location not found.");
             }
+        }
+        protected void Founded_Add(ExternalTool externalTool)
+        {
+            _tools.Add(externalTool);
+        }
+        protected bool TryAdd(ExternalToolInfo toolInfo, string location, string? type = "external tool")
+        {
+            if (toolInfo == null)
+                throw new ArgumentNullException(nameof(toolInfo));
+
+            if (string.IsNullOrEmpty(location) || !File.Exists(location))
+                return false;
+
+            _tools.Add(new ExternalTool
+            (
+                info: toolInfo,
+
+                location: location,
+                type: type
+            ));
+
+            return true;
         }
 
         /// <summary>
         /// Finds JetBrains tools from the toolbox
         /// </summary>
         /// <param name="toolboxPathProvider">Function that returns the toolbox path</param>
-        public void FindJetBrainsFromToolbox(Func<string> toolboxPathProvider)
-        {
-            var toolboxPath = toolboxPathProvider();
-            if (string.IsNullOrEmpty(toolboxPath) || !Directory.Exists(toolboxPath))
-                return;
+        public abstract void FindJetBrainsFromToolbox(Func<string> toolboxPathProvider);
+        //{
+        //    var toolboxPath = toolboxPathProvider();
+        //    if (string.IsNullOrEmpty(toolboxPath) || !Directory.Exists(toolboxPath))
+        //        return;
 
-            // This is a simplified implementation for now
-            // In a real implementation, this would search for JetBrains tools in the toolbox directory
-        }
+        // }
 
         /// <summary>
         /// Converts the finder results to a list of external tools
         /// </summary>
         /// <returns>List of found external tools</returns>
-        public List<ExternalTool> ToList()
+        public IReadOnlyList<ExternalTool> ToList()
         {
-            return new List<ExternalTool>(_tools);
+            return _tools;
         }
     }
 }

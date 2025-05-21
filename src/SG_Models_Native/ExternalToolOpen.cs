@@ -12,13 +12,13 @@ namespace SourceGit.Models
     public class ExternalToolOpen
     {
 
-        public ExternalTool  Info { get; private set; }
+        public ExternalTool Info { get; private set; }
 
         public ExternalToolOpen(ExternalTool info//, string execFile//, Func<string, string>? execArgsGenerator = null
             )
         {
             Info = info ?? throw new ArgumentNullException(nameof(info));
-        //    ExecFile = execFile;
+            //    ExecFile = execFile;
             //  ExecArgsGenerator = info.ExecArgsGenerator //execArgsGenerator ??
             //   (repo => $"\"{repo}\"");
         }
@@ -79,8 +79,8 @@ namespace SourceGit.Models
     {
         // private readonly SourceGit.Native.IOSPlatform _os;
 
-        public List<ExternalTool> Founded
-          => base._tools;      
+        public IReadOnlyList<ExternalTool> Founded
+          => base._tools;
         //{
         //    get;
         //    private set;
@@ -107,7 +107,7 @@ namespace SourceGit.Models
         /// </summary>
         /// <param name="toolInfo">Information about the tool to add</param>
         /// <returns>True if the tool was added, false otherwise</returns>
-        public bool TryAdd(ExternalToolInfo2 toolInfo)
+        public bool TryAdd(ExternalToolInfo2 toolInfo, string? type = "external tool")
         {
             string toolPath;
 
@@ -120,18 +120,14 @@ namespace SourceGit.Models
             {
                 // Then try to find the tool using the provided finder
                 toolPath = toolInfo.LocationFinder();
-                if (string.IsNullOrEmpty(toolPath) || !File.Exists(toolPath))
-                {
-                    return false;
-                }
+
             }
 
-            // Add the tool with the found path
-            Founded_Add(new ExternalTool(info:toolInfo,
-                ///.Name, toolInfo.IconName ?? 
-                ///toolInfo.Name.ToLowerInvariant(), 
-                toolPath , type:" external tool"));
-            return true;
+            return TryAdd(toolInfo,
+                 ///.Name, toolInfo.IconName ?? 
+                 ///toolInfo.Name.ToLowerInvariant(), 
+                 toolPath, type: type);//:
+
         }
 
         /// <summary>
@@ -154,10 +150,7 @@ namespace SourceGit.Models
             return TryAdd(toolInfo);
         }
 
-        private void Founded_Add(ExternalTool externalTool)
-        {
-            Founded.Add(externalTool);
-        }
+
 
 
         /// <summary>
@@ -166,7 +159,7 @@ namespace SourceGit.Models
         /// <param name="toolInfo">Information about the editor tool to add</param>
         /// <returns>True if the tool was added, false otherwise</returns>
         public bool AddEditorTool(ExternalToolInfo2 toolInfo)
-        {base.AddEditorTool(toolInfo);
+        {
             // ExternalToolInfo2 toolInfo2;
             // Set the IconName based on the editor name if not already set
             if (string.IsNullOrEmpty(toolInfo.IconName) && EditorIconMap.TryGetValue(toolInfo.Name, out var iconName))
@@ -205,7 +198,7 @@ namespace SourceGit.Models
 
 
 
-        public void FindJetBrainsFromToolbox(Func<string> platformFinder)
+        public override void FindJetBrainsFromToolbox(Func<string> platformFinder) 
         {
             var exclude = new List<string> { "fleet", "dotmemory", "dottrace", "resharper-u", "androidstudio" };
             var supported_icons = new List<string> { "CL", "DB", "DL", "DS", "GO", "JB", "PC", "PS", "PY", "QA", "QD", "RD", "RM", "RR", "WRS", "WS" };
@@ -229,7 +222,7 @@ namespace SourceGit.Models
             }
         }
 
-        public List<ExternalTool> ToList()
+        public IReadOnlyList<ExternalTool> ToList()
         {
             return Founded;
         }

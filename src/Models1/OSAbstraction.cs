@@ -60,7 +60,7 @@ namespace Sausa
         /// <summary>
         /// List of available external tools
         /// </summary>
-        public List<ExternalTool> ExternalTools { get; set; } = [];
+        public IReadOnlyList<ExternalTool> ExternalTools { get; set; } = [];
 
         /// <summary>
         /// Whether to use the system window frame on Linux
