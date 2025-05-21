@@ -6,7 +6,6 @@ using Sausa;
 using SourceGit.Models;
 using static SourceGit.Native.OS;
 
-//using ExternalToolsFinder2 = SourceGit.Models.ExternalToolsFinder2;
 using ShellOrTerminalModel = SourceGit.Models.ShellOrTerminal;
 
 namespace SourceGit.Native
@@ -80,48 +79,48 @@ namespace SourceGit.Native
 
         public void OpenTerminal(string workdir)
         {
-            ((IProcessLauncher)_platform).OpenTerminal(workdir);
+            _platform.OpenTerminal(workdir);
         }
 
         public void OpenInFileManager(string path, bool select)
         {
-            // This is not part of IProcessLauncher, but we need to implement for OS.IBackend
-            // We can't call through the interface directly
-            if (_platform is Windows windows)
-            {
-                windows.OpenInFileManager(path, select);
-            }
-            else if (_platform is MacOS macOS)
-            {
-                macOS.OpenInFileManager(path, select);
-            }
-            else if (_platform is Linux linux)
-            {
-                linux.OpenInFileManager(path, select);
-            }
+            _platform.OpenInFileManager(path, select);
+
+            //if (_platform is Windows windows)
+            //{
+            //    windows.OpenInFileManager(path, select);
+            //}
+            //else if (_platform is MacOS macOS)
+            //{
+            //    macOS.OpenInFileManager(path, select);
+            //}
+            //else if (_platform is Linux linux)
+            //{
+            //    linux.OpenInFileManager(path, select);
+            //}
         }
 
         public void OpenBrowser(string url)
         {
-            ((IProcessLauncher)_platform).OpenBrowser(url);
+            _platform.OpenBrowser(url);
         }
 
         public void OpenWithDefaultEditor(string file)
         {
-            // This is not part of IProcessLauncher, but we need to implement for OS.IBackend
-            // We can't call through the interface directly
-            if (_platform is Windows windows)
-            {
-                windows.OpenWithDefaultEditor(file);
-            }
-            else if (_platform is MacOS macOS)
-            {
-                macOS.OpenWithDefaultEditor(file);
-            }
-            else if (_platform is Linux linux)
-            {
-                linux.OpenWithDefaultEditor(file);
-            }
+            _platform.OpenWithDefaultEditor(file);
+
+            //if (_platform is Windows windows)
+            //{
+            //    windows.OpenWithDefaultEditor(file);
+            //}
+            //else if (_platform is MacOS macOS)
+            //{
+            //    macOS.OpenWithDefaultEditor(file);
+            //}
+            //else if (_platform is Linux linux)
+            //{
+            //    linux.OpenWithDefaultEditor(file);
+            //}
         }
     }
 }

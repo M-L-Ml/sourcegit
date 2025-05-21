@@ -1524,6 +1524,7 @@ namespace SourceGit.ViewModels
                     IconKey = App.MenuIconKey("Icons.File.Add"),
                     Command = new RelayCommand(() => { if (CanCreatePopup()) ShowPopup(new LFSTrackCustomPattern(this)); })
                 });
+                //TODO: replace all `new MenuItemModel { Header = "-" });` with  MenuModel.Separator()
                 items.Add(new MenuItemModel { Header = "-" });
 
                 items.Add(new MenuItemModel
